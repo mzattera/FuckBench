@@ -4,5 +4,5 @@
 @rem Please change the rest of the file, accordingly to your C compiler.
 @rem The below example is using MS VS 2017 and assumes it is running in Developer Command Prompt.
 	
-rem cl %1.c /Fo: %1.obj /Fe: %1.exe
-rem if exist %1.obj del %1.obj
+cl %1.c /Fo: %1.obj /Fe: %1.exe
+if exist %1.obj del %1.obj

@@ -15,7 +15,7 @@
 @rem compiles FBF %1.fbf into BF %1.bf
 
 "%FB_FBF%\LUA Binaries\LUA Binaries for Windows\lua5.1" "%FB_FBF%\FBF.lua" < %1.fbf > %1.bf
-
-@rem compiles %1.bf into C code %1.exe
-
-@call "%FB_BIN%FB_bf.bat" %1
+@if exist %1.bf (
+	rem compiles %1.bf into C code %1.exe
+	call "%FB_BIN%FB_bf.bat" %1
+)
