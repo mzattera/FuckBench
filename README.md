@@ -50,22 +50,22 @@ Optional - the below steps are required if you want to compile C code generated 
 
 To successfully run, BF code created by FB the emulator requires:
 
-	* Unsigned wrapping 16 bit cells (0-65565).
+ * Unsigned wrapping 16 bit cells (0-65565).
 	
-	* A tape of at least 131193 cells.
-	  At the beginning of execution the tape head is assumed to be in the leftmost cell
-	  and will move ony to cells on its right.
+ * A tape of at least 131193 cells.
+   At the beginning of execution the tape head is assumed to be in the leftmost cell
+   and will move ony to cells on its right.
 	  
-	* The compiler used for testing on an input ("," comand) will read a string from console until
-      user presses enter. The string is returned with a terminating $0D char.
+* The compiler used for testing on an input ("," comand) will read a string from console until
+  user presses enter. The string is returned with a terminating $0D char.
 
-	  For example, when the code contains a "," execution stops waiting for user input.
-	  Users enters "A1!" followed by "enter" key.
-	  BrainFuck will receive the characters with decimal ASCII code: 65, 49, 33, 10 in this sequence.
+  For example, when the code contains a "," execution stops waiting for user input.
+  Users enters "A1!" followed by "enter" key.
+  BrainFuck will receive the characters with decimal ASCII code: 65, 49, 33, 10 in this sequence.
 	  
-	  Notice this has implications in using the C libraries. The code in read.s reads input
-	  until a $00 or $A0 character is returned; if $00 ir read, it is replaced by $A0 before returning
-	  from C call.
+  Notice this has implications in using the C libraries. The code in read.s reads input
+  until a $00 or $A0 character is returned; if $00 ir read, it is replaced by $A0 before returning
+  from C call.
 	  
 ### Compiling BrainFuck code
 

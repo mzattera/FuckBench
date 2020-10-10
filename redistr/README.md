@@ -1,7 +1,9 @@
-This folder contiains tools needed by FuckBench.
+# Re-distribution
 
-The files in this folder are not created nor modified byt the author of FuckBench;
-they are only redistributed, accordingly to their respective lincenses.
+This folder contains external tools needed by FuckBench.
+
+The files in this folder are neither created nor modified by the author of FuckBench;
+they are only re-distributed, accordingly to their respective licenses.
 
 * [FuckBrainFuck](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck) v1.7.1
 is distributed under GPL 3.0 license.
