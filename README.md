@@ -41,25 +41,25 @@ Others are made available under the `<root>\redistr` folder, for your convenienc
   4. Download [cc65](https://cc65.github.io/) 6502 C cross-compiler and install it as explained in the
 	 "[Getting Started](https://cc65.github.io/getting-started.html)" page. Notice that *the installation folder
 	 for cc65 must NOT contain any space*.
-  5. Edit `<root>\bin\config.bat` and set FB_CC65 to the folder where you installed cc65. 
+  5. Edit `<root>\bin\config.bat` and set `FB_CC65` to the folder where you installed cc65. 
   
 Optional - the below steps are required if you want to compile generated BF code into C.
 If you skip the below configuration, BF compilation will stop after genereating BF code.
 
   6. Install [Python 2](https://www.python.org/downloads/).
-  7. Edit `<root>\bin\config.bat` and set FB_PYTHON to the Python interpreter executable. 
+  7. Edit `<root>\bin\config.bat` and set `FB_PYTHON` to the Python interpreter executable. 
   
 Optional - the below steps are required if you want to compile C code generated above into a Windows executable.
 
   8. Edit `<root>\bin\FB_cc.bat` an adapt it to your C compiler.
-    This batch file receives the name of a .c file to compile (e.g. `f.c`) and it is assumed
+    This batch file receives the name of a .c file (*without* extension) to compile and it is assumed
 	to call any intalled C compiler to do the job.
-	It is up to you to modify this batch file to properly invoce any C compiler you are using.
+	It is up to you to modify this batch file to properly invoke any C compiler you are using.
 	If you are not using any C compler, just leave this file blank.
 
 ### Specifications for the BrainFuck environment
 
-To successfully run, BF code created by FB the emulator requires:
+To successfully run, BF code created by FB the emulator requires an interpreter or compile withbelow specifications:
 
  * Unsigned wrapping 16 bit cells (0-65565).
 	
@@ -105,7 +105,7 @@ Again, if Python or C compilers have not been configured, compilation will stop 
 ### Compiling 6502 assembly
 
 FB uses [ca65](https://www.cc65.org/doc/ca65.html), a 6502 assembler contained within [cc65](https://cc65.github.io/) 6502 C cross-compiler,
-to compile 6502 assembly code into a 6502 executable that is then linked to the 6502 BF emulator to produce final BF code.
+to compile 6502 assembly code into a 6502 executable that is then linked to the 6502bf BF emulator to produce final BF code.
 
 You can invoke:
 
@@ -123,7 +123,25 @@ The code can use zeropage variables (except for about 20 bytes reserved by ca65)
 with the exception of a 4KB stack located in high memory. For more information, please refer to `cc65\6502bf.cfg`
 configuration file and [cc65 documentation](https://cc65.github.io/doc/customizing.html).
 
-## The 6502 emulator
+### Compiling ANSI C
+
+FB uses [cc65](https://cc65.github.io/) 6502 C cross-compiler,
+to compile C code into a 6502 executable that is then linked to the 6502bf BF emulator to produce final BF code.
+
+You can invoke:
+
+```
+FB_c f
+```
+
+To compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f_c.exe`.
+
+Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+
+Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_c` will enable maximum optimization.
+Please notices that cc65 somehow [differs](https://www.cc65.org/doc/cc65-4.html) from ANSI C.
+
+## The 6502bf emulator
 
  * DEC mode
  * SYSCALLS

@@ -5,9 +5,11 @@
 
 [AUTOMATION]
 
-Rebuild 6502bd emu
+Rebuild 6502bf emu
 
 Rebuild cc65 libraries
+
+Rebuild java tools and make sure they are exported as JARs into the bin folder
 
 Regression tests
 
