@@ -1,9 +1,0 @@
-Klaus Dormann's 6502 tests, edited to build correctly using cc65's assembler and linker for Windows.
-
-This folder contains functional tests to ensure the 6502 is working properly.
-
-Tests are qritten in 6502 assembler with ca65 (cc65 assembler) syntax.
-
-.ca65 files in this folder are downloaded from: https://github.com/amb5l/6502_65C02_functional_tests
-
-build.bat can be used to (re)build the tests.
