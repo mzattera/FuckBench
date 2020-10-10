@@ -1,17 +1,32 @@
-REM builds the test. Pass it the name of the .ca65 file to build.
+@rem This builds 6502 functional tests contained in this folder.
+@rem You *MUST* pass it the name of the .ca65 file to build (without .ca65 extension).
 
-D:\Programs\cc65\bin\ca65 -l %1.txt -o %1.o %1.ca65
-D:\Programs\cc65\bin\ld65  -C example.cfg -o %1.bin %1.o
+@rem Configuration
+@set "FB_FT=%~dp0%"
+@if not "%FB_FT:~-1%"=="\" set "FB_FT=%FB_FT%\"
+@set "FB_BIN=%FB_FT%..\..\bin\"
+@call "%FB_BIN%FB_config.bat"
+@set "FB_HOME=%FB_BIN%.."
 
-del /F /Q %1.o
+@if exist %1.bin del /F /Q %1.bin
 
-java -jar ..\..\CodeMerge.jar %1.bin %1.bf -i ..\..\6502bf.bf -a 1024 -l 0
+"%FB_CC65%\bin\ca65" -o %1.o %1.ca65
+"%FB_CC65%\bin\ld65" -C "%FB_FT%example.cfg" -o %1.bin %1.o
 
-del /F /Q %1.bin
+@if exist %1.o del /F /Q %1.o
 
-"D:\Programs\WPy64-2.7.13.1Zero\python-2.7.13.amd64\python.exe" "D:\Programs\esotope-bfc\esotope-bfc" %1.bf > %1.c
-java -jar ..\..\TweakEmu.jar -i %1.c -o %1.c
+@rem merges 6502bf.bf and %1.out into %1.bf
 
-cl %1.c /Fo: %1.obj /Fe: %1.exe
-del /F /Q %1.c
-del %1.obj
+@if exist %1.bin (
+	echo.
+	echo Invoking Java linker	
+	java -jar "%FB_BIN%Linker.jar" %1.bin %1.bf -i "%FB_HOME%\6502bf.bf" -a 1024 -l 0
+
+	rem compiles %1.bf into C code %1.c
+	if errorlevel 0 (
+		echo.
+		call "%FB_BIN%FB_bf.bat" %1
+	)
+
+	del /F /Q %1.bin
+)

@@ -86,7 +86,7 @@ If you followed the above optional steps, you can invoke:
 FB_bf f
 ```
 
-To compile BrainFuck `f.bf` source file into `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile BrainFuck `f.bf` source file into `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
@@ -98,7 +98,7 @@ You can invoke:
 FB_fbf f
 ```
 
-To compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
@@ -113,13 +113,13 @@ You can invoke:
 FB_asm f
 ```
 
-To compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
 The file `cc65\6502bf.inc` contains a set of macros that expose some features available in the 6502bf emulator.
 
-The code can use zeropage variables (except for about 20 bytes reserved by ca65) and the whole of RAM (starting from $200),
+The code can use zeropage variables (except for 26 bytes reserved by ca65) and the whole of RAM (starting from $200),
 with the exception of a 4KB stack located in high memory. For more information, please refer to `cc65\6502bf.cfg`
 configuration file and [cc65 documentation](https://cc65.github.io/doc/customizing.html).
 
@@ -134,7 +134,7 @@ You can invoke:
 FB_c f
 ```
 
-To compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f_c.exe`.
+to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f_c.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
