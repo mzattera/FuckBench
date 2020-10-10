@@ -1,0 +1,441 @@
+Modules list:
+-------------
+sm-fide 760.o:
+    CODE              Offs=000000  Size=0005C4  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=000036  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=00000D  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=000084  Align=00001  Fill=0000
+6502bf.lib(_file.o):
+    DATA              Offs=000084  Size=00001E  Align=00001  Fill=0000
+6502bf.lib(add.o):
+    CODE              Offs=0005C4  Size=00001C  Align=00001  Fill=0000
+6502bf.lib(addeqsp.o):
+    CODE              Offs=0005E0  Size=000011  Align=00001  Fill=0000
+6502bf.lib(addysp.o):
+    CODE              Offs=0005F1  Size=00000E  Align=00001  Fill=0000
+6502bf.lib(and.o):
+    CODE              Offs=0005FF  Size=000010  Align=00001  Fill=0000
+6502bf.lib(aslax4.o):
+    CODE              Offs=00060F  Size=000011  Align=00001  Fill=0000
+6502bf.lib(asrax1.o):
+    CODE              Offs=000620  Size=00000A  Align=00001  Fill=0000
+6502bf.lib(asrax2.o):
+    CODE              Offs=00062A  Size=00000F  Align=00001  Fill=0000
+6502bf.lib(bneg.o):
+    CODE              Offs=000639  Size=00000E  Align=00001  Fill=0000
+6502bf.lib(condes.o):
+    CODE              Offs=000647  Size=00000C  Align=00001  Fill=0000
+    DATA              Offs=0000A2  Size=000025  Align=00001  Fill=0000
+    ONCE              Offs=000000  Size=00000C  Align=00001  Fill=0000
+6502bf.lib(copydata.o):
+    CODE              Offs=000653  Size=00002D  Align=00001  Fill=0000
+6502bf.lib(crt0.o):
+    STARTUP           Offs=000000  Size=00004C  Align=00001  Fill=0000
+6502bf.lib(decax1.o):
+    CODE              Offs=000680  Size=000007  Align=00001  Fill=0000
+6502bf.lib(decaxy.o):
+    CODE              Offs=000687  Size=000009  Align=00001  Fill=0000
+6502bf.lib(decsp1.o):
+    CODE              Offs=000690  Size=000009  Align=00001  Fill=0000
+6502bf.lib(decsp2.o):
+    CODE              Offs=000699  Size=00000D  Align=00001  Fill=0000
+6502bf.lib(fgetc.o):
+    CODE              Offs=0006A6  Size=00008C  Align=00001  Fill=0000
+6502bf.lib(fputc.o):
+    CODE              Offs=000732  Size=000057  Align=00001  Fill=0000
+    RODATA            Offs=000036  Size=000002  Align=00001  Fill=0000
+6502bf.lib(gets.o):
+    CODE              Offs=000789  Size=00008F  Align=00001  Fill=0000
+6502bf.lib(icmp.o):
+    CODE              Offs=000818  Size=00002E  Align=00001  Fill=0000
+6502bf.lib(incaxy.o):
+    CODE              Offs=000846  Size=00000B  Align=00001  Fill=0000
+6502bf.lib(incsp2.o):
+    CODE              Offs=000851  Size=000016  Align=00001  Fill=0000
+6502bf.lib(incsp3.o):
+    CODE              Offs=000867  Size=000005  Align=00001  Fill=0000
+6502bf.lib(incsp4.o):
+    CODE              Offs=00086C  Size=000005  Align=00001  Fill=0000
+6502bf.lib(incsp8.o):
+    CODE              Offs=000871  Size=000005  Align=00001  Fill=0000
+6502bf.lib(interrupt.o):
+    CODE              Offs=000876  Size=00004C  Align=00001  Fill=0000
+6502bf.lib(ldaxsp.o):
+    CODE              Offs=0008C2  Size=000009  Align=00001  Fill=0000
+6502bf.lib(leaaxsp.o):
+    CODE              Offs=0008CB  Size=00000C  Align=00001  Fill=0000
+6502bf.lib(makebool.o):
+    CODE              Offs=0008D7  Size=00002C  Align=00001  Fill=0000
+6502bf.lib(mulax6.o):
+    CODE              Offs=000903  Size=000016  Align=00001  Fill=0000
+6502bf.lib(negabs.o):
+    CODE              Offs=000919  Size=000012  Align=00001  Fill=0000
+6502bf.lib(or.o):
+    CODE              Offs=00092B  Size=000012  Align=00001  Fill=0000
+6502bf.lib(popptr1.o):
+    CODE              Offs=00093D  Size=00000E  Align=00001  Fill=0000
+6502bf.lib(pushax.o):
+    CODE              Offs=00094B  Size=00001A  Align=00001  Fill=0000
+6502bf.lib(pushwsp.o):
+    CODE              Offs=000965  Size=00001C  Align=00001  Fill=0000
+6502bf.lib(putchar.o):
+    CODE              Offs=000981  Size=00000C  Align=00001  Fill=0000
+6502bf.lib(regswap2.o):
+    CODE              Offs=00098D  Size=000016  Align=00001  Fill=0000
+6502bf.lib(staspidx.o):
+    CODE              Offs=0009A3  Size=000016  Align=00001  Fill=0000
+6502bf.lib(staxsp.o):
+    CODE              Offs=0009B9  Size=00000B  Align=00001  Fill=0000
+6502bf.lib(sub.o):
+    CODE              Offs=0009C4  Size=000015  Align=00001  Fill=0000
+6502bf.lib(subeqsp.o):
+    CODE              Offs=0009D9  Size=000015  Align=00001  Fill=0000
+6502bf.lib(subysp.o):
+    CODE              Offs=0009EE  Size=00000D  Align=00001  Fill=0000
+6502bf.lib(zerobss.o):
+    CODE              Offs=0009FB  Size=000023  Align=00001  Fill=0000
+6502bf.lib(zeropage.o):
+    ZEROPAGE          Offs=000000  Size=00001A  Align=00001  Fill=0000
+6502bf.lib(read.o):
+    CODE              Offs=000A1E  Size=00003F  Align=00001  Fill=0000
+6502bf.lib(write.o):
+    CODE              Offs=000A5D  Size=00002E  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+ZEROPAGE              000000  000019  00001A  00001
+STARTUP               000200  00024B  00004C  00001
+CODE                  00024C  000CD6  000A8B  00001
+RODATA                000CD7  000D0E  000038  00001
+ONCE                  000D0F  000D1A  00000C  00001
+DATA                  000D1B  000DE1  0000C7  00001
+BSS                   000DE2  000DEE  00000D  00001
+
+
+Exports list by name:
+---------------------
+__BSS_RUN__               000DE2 RLA    __BSS_SIZE__              00000D REA    
+__CONSTRUCTOR_COUNT__     000000 REA    __CONSTRUCTOR_TABLE__     00024C RLA    
+__DATA_LOAD__             000D1B RLA    __DATA_RUN__              000D1B RLA    
+__DATA_SIZE__             0000C7 REA    __DESTRUCTOR_COUNT__      000000 REA    
+__DESTRUCTOR_TABLE__      00024C RLA    __MAIN_SIZE__             00F5FA REA    
+__MAIN_START__            000200 RLA    __STACKSIZE__             000800 REA    
+__STARTUP__               000001 REA    _fgetc                    0008F2 RLA    
+_fputc                    00097E RLA    _gets                     0009D5 RLA    
+_irq_int                  000AD9 RLA    _main                     00068E RLA    
+_nmi_int                  000AC2 RLA    _putchar                  000BCD RLA    
+_read                     000C6A RLA    _stdin                    000DB7 RLA    
+_stdout                   000DB9 RLA    _write                    000CA9 RLA    
+addeq0sp                  00082C RLA    addeqysp                  00082E RLA    
+addysp                    00083E RLA    addysp1                   00083D RLA    
+asrax1                    00086C RLA    asrax2                    000876 RLA    
+bnega                     000889 RLA    bnegax                    000885 RLA    
+booleq                    000B29 RLA    copydata                  00089F RLA    
+decax1                    0008CC RLA    decaxy                    0008D3 RLA    
+decsp1                    0008DC RLA    decsp2                    0008E5 RLA    
+donelib                   000893 RLA    incaxy                    000A94 RLA    
+incsp2                    000AA5 RLA    incsp3                    000AB3 RLA    
+incsp4                    000AB8 RLA    incsp8                    000ABD RLA    
+initlib                   000D0F RLA    ldax0sp                   000B0E RLA    
+ldaxysp                   000B10 RLA    leaa0sp                   000B17 RLA    
+mulax6                    000B4F RLA    negax                     000B69 RLA    
+popax                     000A9D RLA    popptr1                   000B89 RLA    
+ptr1                      000008 RLZ    ptr2                      00000A RLZ    
+ptr3                      00000C RLZ    push0                     000B97 RLA    
+pusha0                    000B99 RLA    pushax                    000B9B RLA    
+pushw0sp                  000BB1 RLA    pushwysp                  000BB3 RLA    
+regbank                   000014 RLZ    regsave                   000004 RLZ    
+regswap2                  000BD9 RLA    shlax4                    00085B RLA    
+sp                        000000 RLZ    sreg                      000002 RLZ    
+staspidx                  000BEF RLA    stax0sp                   000C05 RLA    
+staxysp                   000C07 RLA    subeq0sp                  000C25 RLA    
+subysp                    000C3A RLA    tmp1                      000010 RLZ    
+tosaddax                  000812 RLA    tosanda0                  00084B RLA    
+tosicmp                   000A66 RLA    tosorax                   000B79 RLA    
+tossuba0                  000C10 RLA    tossubax                  000C12 RLA    
+zerobss                   000C47 RLA    
+
+
+Exports list by value:
+----------------------
+__DESTRUCTOR_COUNT__      000000 REA    sp                        000000 RLZ    
+__CONSTRUCTOR_COUNT__     000000 REA    __STARTUP__               000001 REA    
+sreg                      000002 RLZ    regsave                   000004 RLZ    
+ptr1                      000008 RLZ    ptr2                      00000A RLZ    
+ptr3                      00000C RLZ    __BSS_SIZE__              00000D REA    
+tmp1                      000010 RLZ    regbank                   000014 RLZ    
+__DATA_SIZE__             0000C7 REA    __MAIN_START__            000200 RLA    
+__DESTRUCTOR_TABLE__      00024C RLA    __CONSTRUCTOR_TABLE__     00024C RLA    
+_main                     00068E RLA    __STACKSIZE__             000800 REA    
+tosaddax                  000812 RLA    addeq0sp                  00082C RLA    
+addeqysp                  00082E RLA    addysp1                   00083D RLA    
+addysp                    00083E RLA    tosanda0                  00084B RLA    
+shlax4                    00085B RLA    asrax1                    00086C RLA    
+asrax2                    000876 RLA    bnegax                    000885 RLA    
+bnega                     000889 RLA    donelib                   000893 RLA    
+copydata                  00089F RLA    decax1                    0008CC RLA    
+decaxy                    0008D3 RLA    decsp1                    0008DC RLA    
+decsp2                    0008E5 RLA    _fgetc                    0008F2 RLA    
+_fputc                    00097E RLA    _gets                     0009D5 RLA    
+tosicmp                   000A66 RLA    incaxy                    000A94 RLA    
+popax                     000A9D RLA    incsp2                    000AA5 RLA    
+incsp3                    000AB3 RLA    incsp4                    000AB8 RLA    
+incsp8                    000ABD RLA    _nmi_int                  000AC2 RLA    
+_irq_int                  000AD9 RLA    ldax0sp                   000B0E RLA    
+ldaxysp                   000B10 RLA    leaa0sp                   000B17 RLA    
+booleq                    000B29 RLA    mulax6                    000B4F RLA    
+negax                     000B69 RLA    tosorax                   000B79 RLA    
+popptr1                   000B89 RLA    push0                     000B97 RLA    
+pusha0                    000B99 RLA    pushax                    000B9B RLA    
+pushw0sp                  000BB1 RLA    pushwysp                  000BB3 RLA    
+_putchar                  000BCD RLA    regswap2                  000BD9 RLA    
+staspidx                  000BEF RLA    stax0sp                   000C05 RLA    
+staxysp                   000C07 RLA    tossuba0                  000C10 RLA    
+tossubax                  000C12 RLA    subeq0sp                  000C25 RLA    
+subysp                    000C3A RLA    zerobss                   000C47 RLA    
+_read                     000C6A RLA    _write                    000CA9 RLA    
+initlib                   000D0F RLA    __DATA_RUN__              000D1B RLA    
+__DATA_LOAD__             000D1B RLA    _stdin                    000DB7 RLA    
+_stdout                   000DB9 RLA    __BSS_RUN__               000DE2 RLA    
+__MAIN_SIZE__             00F5FA REA    
+
+
+Imports list:
+-------------
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+__CONSTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__CONSTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__DATA_LOAD__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_RUN__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DATA_SIZE__ ([linker generated]):
+    copydata.o                common/copydata.s(8)
+__DESTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__DESTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__MAIN_SIZE__ ([linker generated]):
+    crt0.o                    crt0.s(7)
+__MAIN_START__ ([linker generated]):
+    crt0.o                    crt0.s(7)
+__STACKSIZE__ ([linker generated]):
+    [linker generated]        6502bf.cfg(18)
+__STARTUP__ (crt0.o):
+    sm-fide 760.o             sm-fide 760.s(13)
+_fgetc (fgetc.o):
+    gets.o                    ../libwrk/none/gets.s(14)
+_fputc (fputc.o):
+    putchar.o                 common/putchar.s(10)
+_gets (gets.o):
+    sm-fide 760.o             sm-fide 760.s(14)
+_irq_int (interrupt.o):
+    crt0.o                    crt0.s(9)
+_main (sm-fide 760.o):
+    crt0.o                    crt0.s(8)
+_nmi_int (interrupt.o):
+    crt0.o                    crt0.s(9)
+_putchar (putchar.o):
+    sm-fide 760.o             sm-fide 760.s(15)
+_read (read.o):
+    fgetc.o                   ../libwrk/none/fgetc.s(14)
+_stdin (_file.o):
+    gets.o                    ../libwrk/none/gets.s(13)
+_stdout (_file.o):
+    putchar.o                 common/putchar.s(9)
+_write (write.o):
+    fputc.o                   ../libwrk/none/fputc.s(14)
+addeq0sp (addeqsp.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+addeqysp (addeqsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+addysp (addysp.o):
+    incsp4.o                  runtime/incsp4.s(8)
+    incsp3.o                  runtime/incsp3.s(8)
+    incsp8.o                  runtime/incsp8.s(8)
+    sm-fide 760.o             sm-fide 760.s(768)
+addysp1 (addysp.o):
+    sub.o                     runtime/sub.s(8)
+    or.o                      runtime/or.s(9)
+    and.o                     runtime/and.s(8)
+asrax1 (asrax1.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+asrax2 (asrax2.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+bnega (bneg.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+bnegax (bneg.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+booleq (makebool.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+copydata (copydata.o):
+    crt0.o                    crt0.s(8)
+decax1 (decax1.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+decaxy (decaxy.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+decsp1 (decsp1.o):
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+decsp2 (decsp2.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+donelib (condes.o):
+    crt0.o                    crt0.s(8)
+incaxy (incaxy.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+incsp2 (incsp2.o):
+    popptr1.o                 runtime/popptr1.s(8)
+    staspidx.o                runtime/staspidx.s(8)
+incsp3 (incsp3.o):
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+incsp4 (incsp4.o):
+    fputc.o                   ../libwrk/none/fputc.s(75)
+incsp8 (incsp8.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+initlib (condes.o):
+    crt0.o                    crt0.s(8)
+ldax0sp (ldaxsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+ldaxysp (ldaxsp.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+leaa0sp (leaaxsp.o):
+    fputc.o                   ../libwrk/none/fputc.s(75)
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+mulax6 (mulax6.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+negax (negabs.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+popax (incsp2.o):
+    write.o                   write.s(7)
+    read.o                    read.s(7)
+popptr1 (popptr1.o):
+    write.o                   write.s(7)
+    read.o                    read.s(7)
+ptr1 (zeropage.o):
+    popptr1.o                 runtime/popptr1.s(9)
+    write.o                   write.s(8)
+    read.o                    read.s(8)
+    copydata.o                common/copydata.s(9)
+    zerobss.o                 common/zerobss.s(9)
+    staspidx.o                runtime/staspidx.s(9)
+    mulax6.o                  runtime/mulax6.s(9)
+    gets.o                    ../libwrk/none/gets.s(11)
+    sm-fide 760.o             sm-fide 760.s(11)
+ptr2 (zeropage.o):
+    write.o                   write.s(8)
+    read.o                    read.s(8)
+    copydata.o                common/copydata.s(9)
+ptr3 (zeropage.o):
+    write.o                   write.s(8)
+    read.o                    read.s(8)
+push0 (pushax.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+pusha0 (pushax.o):
+    fputc.o                   ../libwrk/none/fputc.s(75)
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+pushax (pushax.o):
+    fputc.o                   ../libwrk/none/fputc.s(75)
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+    putchar.o                 common/putchar.s(8)
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+pushw0sp (pushwsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+pushwysp (pushwsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+regbank (zeropage.o):
+    regswap2.o                runtime/regswap2.s(8)
+    fputc.o                   ../libwrk/none/fputc.s(10)
+    fgetc.o                   ../libwrk/none/fgetc.s(10)
+    gets.o                    ../libwrk/none/gets.s(10)
+regsave (zeropage.o):
+    sm-fide 760.o             sm-fide 760.s(10)
+regswap2 (regswap2.o):
+    fputc.o                   ../libwrk/none/fputc.s(75)
+    fgetc.o                   ../libwrk/none/fgetc.s(96)
+shlax4 (aslax4.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+sp (zeropage.o):
+    popptr1.o                 runtime/popptr1.s(9)
+    decsp1.o                  runtime/decsp1.s(8)
+    regswap2.o                runtime/regswap2.s(8)
+    leaaxsp.o                 runtime/leaaxsp.s(8)
+    incsp2.o                  runtime/incsp2.s(8)
+    fputc.o                   ../libwrk/none/fputc.s(10)
+    fgetc.o                   ../libwrk/none/fgetc.s(10)
+    subysp.o                  runtime/subysp.s(9)
+    subeqsp.o                 runtime/subeqsp.s(8)
+    sub.o                     runtime/sub.s(9)
+    staxsp.o                  runtime/staxsp.s(8)
+    staspidx.o                runtime/staspidx.s(9)
+    pushwsp.o                 runtime/pushwsp.s(8)
+    pushax.o                  runtime/pushax.s(8)
+    or.o                      runtime/or.s(10)
+    ldaxsp.o                  runtime/ldaxsp.s(8)
+    icmp.o                    runtime/icmp.s(9)
+    gets.o                    ../libwrk/none/gets.s(10)
+    decsp2.o                  runtime/decsp2.s(8)
+    crt0.o                    zeropage.inc(11)
+    and.o                     runtime/and.s(9)
+    addysp.o                  runtime/addysp.s(8)
+    addeqsp.o                 runtime/addeqsp.s(8)
+    add.o                     runtime/add.s(12)
+    sm-fide 760.o             sm-fide 760.s(10)
+sreg (zeropage.o):
+    icmp.o                    runtime/icmp.s(9)
+    sm-fide 760.o             sm-fide 760.s(10)
+staspidx (staspidx.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+stax0sp (staxsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+staxysp (staxsp.o):
+    gets.o                    ../libwrk/none/gets.s(96)
+    sm-fide 760.o             sm-fide 760.s(768)
+subeq0sp (subeqsp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+subysp (subysp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tmp1 (zeropage.o):
+    copydata.o                common/copydata.s(9)
+    staspidx.o                runtime/staspidx.s(9)
+    or.o                      runtime/or.s(10)
+    incaxy.o                  runtime/incaxy.s(8)
+    decaxy.o                  runtime/decaxy.s(8)
+    asrax2.o                  runtime/asrax2.s(8)
+    asrax1.o                  runtime/asrax1.s(8)
+    aslax4.o                  runtime/aslax4.s(8)
+    add.o                     runtime/add.s(12)
+    sm-fide 760.o             sm-fide 760.s(11)
+tosaddax (add.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tosanda0 (and.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tosicmp (icmp.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tosorax (or.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tossuba0 (sub.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+tossubax (sub.o):
+    sm-fide 760.o             sm-fide 760.s(768)
+    sm-fide 760.o             sm-fide 760.s(768)
+zerobss (zerobss.o):
+    crt0.o                    crt0.s(8)
+

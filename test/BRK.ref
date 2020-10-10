@@ -1,0 +1,20 @@
+
+P:	$100B	4107
+IR:	$0042	66
+A:	$0010	16
+X:	$0000	0
+Y:	$0000	0
+SP:	$00FD	253
+Status:	NV-BDIZC
+	00110000
+Entered interrupt routine.
+Returned from interrupt.
+
+P:	$102C	4140
+IR:	$0042	66
+A:	$0010	16
+X:	$0000	0
+Y:	$0000	0
+SP:	$00FD	253
+Status:	NV-BDIZC
+	00110000

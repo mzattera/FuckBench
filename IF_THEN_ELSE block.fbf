@@ -1,0 +1,87 @@
+#dim a b c cond x cell[2]
+
+-- if (x == cond) then (a) else (b)
+
+#block if_then_else 
+	byte2ascii cond a b c
+	print a b c 
+	line
+	byte2ascii x a b c
+	print a b c 
+	line
+
+	moveto cond
+	brainfuck [->-<]						cond=0 x=(x minus cond) tmp=cond 
+
+	brainfuck >[							if (x!=0) that is x!= cond
+
+			returnfrom x
+			msg ELSE body
+			line			
+			moveto x
+
+	brainfuck 	[-]<+>						x=0 cond=1
+	brainfuck ] 
+	brainfuck <-							cond = cond minus 1; it is either 0 if x==cond at the beginning or MAXINT now because of wrapping
+	brainfuck [			
+
+			returnfrom cond
+			msg IF body
+			line			
+			moveto cond
+
+	brainfuck 	[+]							cond=0
+	brainfuck ]
+	returnfrom cond
+
+	line
+#endblock
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set cond 5
+set x 10
+if_then_else
+
+set cond 5
+set x 3
+if_then_else
+
+set cond 5
+set x 5
+if_then_else
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set cond 0
+set x 10
+if_then_else
+
+set cond 0
+set x 0
+if_then_else
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set cond 65555
+set x 10
+if_then_else
+
+set cond 65555
+set x 65555
+if_then_else
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set cond 5
+set x 0
+if_then_else
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set cond 5
+set x 65535
+if_then_else
+
+-- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+

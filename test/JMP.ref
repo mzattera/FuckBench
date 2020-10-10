@@ -1,0 +1,14 @@
+Jumped to lbl1:
+Jumped to lbl2:
+Jumped to lbl3:
+
+*LOOP* detected
+
+P:	$108B	4235
+IR:	$004C	76
+A:	$0077	119
+X:	$0000	0
+Y:	$0000	0
+SP:	$00FD	253
+Status:	NV-BDIZC
+	00110000
