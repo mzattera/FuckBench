@@ -1,4 +1,4 @@
-@rem this compiles %1.bf into %1.exe
+@rem This compiles %1.bf into %1.exe
 
 @rem In the process it creates:
 @rem     %1.c with C code.

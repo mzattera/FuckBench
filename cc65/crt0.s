@@ -22,7 +22,7 @@
 ; ---------------------------------------------------------------------------
 ; A little light 6502 housekeeping
 
-_init:  EMU_PRINTLNS "INIT"
+_init:  
 		LDX     #$FF                 ; Initialize stack pointer to $01FF
         TXS
         CLD                          ; Clear decimal mode
@@ -30,7 +30,6 @@ _init:  EMU_PRINTLNS "INIT"
 ; ---------------------------------------------------------------------------
 ; Set cc65 argument stack pointer right below 6502 vectors
 
-;        LDA     #<($FFFA-1)
         LDA     #<(__MAIN_START__ + __MAIN_SIZE__)
         STA     sp
         LDA     #>(__MAIN_START__ + __MAIN_SIZE__)
@@ -38,18 +37,14 @@ _init:  EMU_PRINTLNS "INIT"
 
 ; ---------------------------------------------------------------------------
 ; Set interrupt vectors
-; IRQ/BRK	FFFE	FFFF
-; NMI		FFFA	FFFB
+; IRQ/BRK	FFFE	FFFF 
+; NMI		FFFA	FFFB ; this can be ignored, as no interrups are generated in code 
 ; RESET		FFFC	FFFD ; this is set up at emulator start by the emu itself
 
         LDA     #<_irq_int			 
         STA     $FFFE
         LDA     #>_irq_int
         STA     $FFFF
-        LDA     #<_nmi_int			 
-        STA     $FFFA
-        LDA     #>_nmi_int
-        STA     $FFFB
 
 ; ---------------------------------------------------------------------------
 ; Initialize memory storage
@@ -61,12 +56,11 @@ _init:  EMU_PRINTLNS "INIT"
 ; ---------------------------------------------------------------------------
 ; Call main()
 
-		EMU_PRINTLNS "MAIN"
         JSR     _main
 
 ; ---------------------------------------------------------------------------
 ; Back from main (this is also the _exit entry): 
 
-_exit:	EMU_PRINTLNS "EXIT"
+_exit:	
 		JSR     donelib              ; Run destructors
         EMU_QUIT

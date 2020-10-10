@@ -35,7 +35,8 @@ rem     %1.c with merged BrainFuck code (6502 emu + 6502 code to run).
 	if errorlevel 0 (
 		echo.
 		call "%FB_BIN%FB_bf.bat" %1
-		del /F /Q %1.out
 	)
+
+	del /F /Q %1.out
 )
 

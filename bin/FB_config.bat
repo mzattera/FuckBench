@@ -28,5 +28,3 @@ set "FB_FBF=%FB_HOME%\redistr\FBF 1.7.1"
 
 rem Esotope BF 2 C compiler.
 set "FB_ESOTOPE=%FB_HOME%\redistr\esotope-bfc-master 2009.12.27"
-
-echo on

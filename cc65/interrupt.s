@@ -5,18 +5,11 @@
 .P02
 
 .import   _exit
-.export   _irq_int, _nmi_int
+.export   _irq_int
 
 .include "6502bf.inc"
 
 .CODE
-
-; ---------------------------------------------------------------------------
-; Non-maskable interrupt (NMI) service routine
-; One should never jump here within the emulator
-
-_nmi_int:   EMU_PRINTLNS "*NMI* detected!"
-			JMP stop
 
 ; ---------------------------------------------------------------------------
 ; Maskable interrupt (IRQ) service routine

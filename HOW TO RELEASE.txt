@@ -2,3 +2,12 @@
    Make sure bin\config.bat reflects any change you made (es. folder names).
    
 2. Make sure config.bat and FB_cc.bat do NOT configure Python or C compiler.
+
+[AUTOMATION]
+
+Rebuild 6502bd emu
+
+Rebuild cc65 libraries
+
+Regression tests
+
