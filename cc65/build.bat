@@ -15,6 +15,7 @@ if exist *.o del /F /Q *.o
 if exist *.lib del /F /Q *.lib
 
 copy /Y "%FB_CC65%\lib\none.lib" 6502bf.lib
+copy /Y "%FB_CC65%\asminc\zeropage.inc" .
 
 for /r %%i in (.\*.s) do (
 	echo %%i
