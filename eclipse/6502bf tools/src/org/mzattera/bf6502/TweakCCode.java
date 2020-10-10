@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class TweakCCode {
 
-	private final static String CODE_NAME = CodeMerge.CODE_NAME + ".c";
+	private final static String CODE_NAME = Linker.CODE_NAME + ".c";
 
-	private final static int TAPE_SIZE = CodeMerge.SKIP + 2 * 65536 + 3 ;
+	private final static int TAPE_SIZE = Linker.SKIP + 2 * 65536 + 3;
 
 	/**
 	 * @param args
@@ -75,14 +75,12 @@ public class TweakCCode {
 	private static void printUsage() {
 		System.out.println();
 		System.out.println();
-		System.out.println("Usage: TweakEmu [-i <in>] [-o <out>] [-s <size>]");
+		System.out.println("Usage: TweakCCode [-i <in>] [-o <out>] [-s <size>]");
 		System.out.println();
-		System.out.println(
-				"    <in>   : Input .c file name (defaults to \"" + CODE_NAME + "\").");
+		System.out.println("    <in>   : Input .c file name (defaults to \"" + CODE_NAME + "\").");
 		System.out.println(
 				"    <out>  : Output .c file name; can be same of inupt file (defaults to \"" + CODE_NAME + "\").");
-		System.out.println(
-				"    <size> : Total size of tape (defaults to " + TAPE_SIZE + ").");
+		System.out.println("    <size> : Total size of tape (defaults to " + TAPE_SIZE + ").");
 		System.out.println();
 	}
 }

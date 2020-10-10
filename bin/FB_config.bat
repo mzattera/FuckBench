@@ -2,6 +2,10 @@
 
 rem Configures FuckBench
 
+rem cc65 home. NOTICE IT MUST *NOT* CONTAIN SPACES
+set "FB_CC65=D:\Programs\cc65"
+
+
 rem Python Executable.
 rem This is optional and only needed if you want to generate C out of BF code.
 rem You can leave it unset but compilation will stop after generationg BrainFuck code.

@@ -1,5 +1,5 @@
 ;
-; 6502bf BrainFuck emulator definition
+; Macros for 6502bf BrainFuck emulator
 ;
 
 ; ---------------------------------------------------------------------------
@@ -24,7 +24,7 @@
 .endmacro
 
 ; Reads a character and stores its ASCII code in the accumulator 
-; Z flag set if ASCII $00 is read, reset otherwise!!!
+; Z flag set if ASCII $00 is read, reset otherwise
 .macro EMU_GETC  
 	.byte $42, $11
 .endmacro

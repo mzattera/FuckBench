@@ -30,7 +30,7 @@ public class TestHarness {
 	// Folder where binary (batch) files are stored
 	private static final File BIN_FOLDER = new File("D:\\Users\\mzatt\\Projects\\FBF - 6502bf");
 
-	private final static String CODE_NAME = CodeMerge.CODE_NAME;
+	private final static String CODE_NAME = Linker.CODE_NAME;
 
 	/**
 	 * @param args

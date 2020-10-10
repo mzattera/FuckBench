@@ -12,6 +12,7 @@
 
 @if defined FB_PYTHON (
 	rem compiles %1.bf into C code %1.c
+	echo "%FB_PYTHON%" "%FB_ESOTOPE%\esotope-bfc" %1.bf %1.c
 	"%FB_PYTHON%" "%FB_ESOTOPE%\esotope-bfc" %1.bf > %1.c
 	java -jar "%FB_BIN%TweakCCode.jar" -i %1.c -o %1.c
 		

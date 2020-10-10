@@ -1,7 +1,7 @@
 /**
- * This takes a 6502 compiled code, translate it into BrainFuck commands to write it on table, 
- * then appends it at the beginning of 6502 emulator BrainFuck code, creating a single BrainFuck 
- * listing that contains both the 6502 emulator and the code to run on the emulated CPU.
+ * This takes a 6502 compiled code, translates it into BrainFuck commands necessary to write
+ * to write it into 6502bf emulator mem table. Then, it appends the code at the beginning of 6502 emulator BrainFuck code, 
+ * creating a single BrainFuck source that contains both the 6502bf emulator and the code to run on the emulated CPU.
  */
 package org.mzattera.bf6502;
 
@@ -17,13 +17,12 @@ import org.mzattera.util.FormattedPrintWriterWrapper;
  * @author Massimliano "Maxi" Zattera
  *
  */
-public class CodeMerge {
-	
-	// TODO when merging, we could do a "naive" check of all the values appearing in the 6502 binary, assuming they are opcodes.
-	// then remove from emulator code the check for those opcode not found in the code.
-	// This is not optimal, as data will be interpreted as opcode but it could still improve execution time.
-	
-	
+public class Linker {
+
+	// TODO when merging, check of all the values appearing in the 6502 binary,
+	// then remove from emulator code the check for those opcode not found in the
+	// code.
+
 	public final static String CODE_NAME = "6502bf";
 
 	// Cells on the BF tape to skip before finding 6502 memory
@@ -78,34 +77,30 @@ public class CodeMerge {
 	/**
 	 * Merge 6502 code and emulator source.
 	 * 
-	 * @param inputFileName
-	 *            Binary file with executable 6502 code.
-	 * @param outputFileName
-	 *            Name of resulting BrainFuck file.
-	 * @param emuCodeFileName
-	 *            Name of BrainFuck code for the 6502 emulator.
-	 * @param skip
-	 *            Number of cells to skip on tape before writing the 6502 code. It
-	 *            is wher the 6502 memory starts on tape.
-	 * @param startAddress
-	 *            Address in 6502 memory where the program start. Use -1 if the code
-	 *            sets up start (reset vector) address itself.
-	 * @param loadAddress
-	 *            Address in 6502 memory where to load the code.
-	 * @throws IOException 
+	 * @param inputFileName   Binary file with executable 6502 code.
+	 * @param outputFileName  Name of resulting BrainFuck file.
+	 * @param emuCodeFileName Name of BrainFuck code for the 6502 emulator.
+	 * @param skip            Number of cells to skip on tape before writing the
+	 *                        6502 code. It is wher the 6502 memory starts on tape.
+	 * @param startAddress    Address in 6502 memory where the program start. Use -1
+	 *                        if the code sets up start (reset vector) address
+	 *                        itself.
+	 * @param loadAddress     Address in 6502 memory where to load the code.
+	 * @throws IOException
 	 */
 	public static void execute(String inputFileName, String outputFileName, String emuCodeFileName, int skip,
 			int startAddress, int loadAddress) throws IOException {
 
 		// TODO Add parameters error checking
-		// TODO check that pos stays within 6502 memory 
+		// TODO check that pos stays within 6502 memory
 
-		System.out.println("Input File Name (6502 Code) : " + new File(inputFileName).getCanonicalPath());
-		System.out.println("Input File Name (6502 Emu.) : " + new File(emuCodeFileName).getCanonicalPath());
-		System.out.println("Output File Name            : " + new File(outputFileName).getCanonicalPath());
-		System.out.println("6502 memory position on tape: " + skip);
-		System.out.println("6502 code load address      : " + loadAddress);
-		System.out.println("6502 program start address  : " + startAddress);
+		System.out.println("Input File Name (6502 Code)              : " + new File(inputFileName).getCanonicalPath());
+		System.out
+				.println("Input File Name (6502 Emu.)              : " + new File(emuCodeFileName).getCanonicalPath());
+		System.out.println("Output File Name                         : " + new File(outputFileName).getCanonicalPath());
+		System.out.println("6502bf mem[] position on tape            : " + skip);
+		System.out.println("6502 code load address in emulated memory: " + loadAddress);
+		System.out.println("6502 program start address               : " + startAddress);
 
 		// How many cells to skip on the tape before writing 6502 code
 		// We need to skip the variables the FBF emulator uses and locate ourself at the
@@ -151,7 +146,7 @@ public class CodeMerge {
 				}
 
 				// Writes reset vector notice we cannot assume now it is 0 as we loaded code
-				writer.print("[-]");				
+				writer.print("[-]");
 				for (int i = 0; i < startAddress % 256; ++i) {
 					writer.print("+");
 				}
@@ -178,20 +173,20 @@ public class CodeMerge {
 	private static void printUsage() {
 		System.out.println();
 		System.out.println();
-		System.out.println("Usage: CodeMerge <code> <out> [-i <emu>] [-a <addr>] [-l <ldaddr>] [-s <skip>]");
+		System.out.println("Usage: Linker <code> <out> [-i <emu>] [-a <addr>] [-l <ldaddr>] [-s <skip>]");
 		System.out.println();
-		System.out.println("    <code>: Name of binary file with 6502 code.");
-		System.out.println("    <out> : Name of output file.");
-		System.out.println("    <emu> : Name of 6502 BrainFuck emulator (defaults to \"" + CODE_NAME + ".bf\").");
+		System.out.println("    <code>  : Name of binary file with 6502 code.");
+		System.out.println("    <out>   : Name of output BF file.");
+		System.out.println("    <emu>   : Name of 6502bf emulator (defaults to \"" + CODE_NAME + ".bf\").");
 		System.out.println(
-				"    <addr>: Starting address of 6502 code in 6502 memory (defaults to " + START_ADDRESS + ").");
+				"    <addr>  : Starting address of 6502 code in 6502 memory (defaults to " + START_ADDRESS + ").");
 		System.out.println(
 				"    <ldaddr>: Address in 6502 memory where to load the binaries (defaults to " + LOAD_ADDRESS + ").");
 		System.out.println(
-				"              Use -1 to NOT overwrite 6502 reset vector. Code will neede to set it up correctly.");
+				"              Use -1 to NOT overwrite 6502 reset vector. Emulator code must then set it up correctly.");
 		System.out.println(
-				"    <skip>: How many cells to skip before writing 6502 code onto tape (defaults to " + SKIP + ").");
-		System.out.println("            It is the position on tape wher ethe 6502 memory starts.");
+				"    <skip>  : How many cells to skip before writing 6502 code onto tape (defaults to " + SKIP + ").");
+		System.out.println("              This is the position on tape where mem[] array containg 6502 memory starts.");
 		System.out.println();
 	}
 }
