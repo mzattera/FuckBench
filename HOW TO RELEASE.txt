@@ -1,0 +1,2 @@
+1. Optionally, refresh software released under the 'redistr' folder.
+   Make sure bin\config.bat reflects any change you made (es. folder names).

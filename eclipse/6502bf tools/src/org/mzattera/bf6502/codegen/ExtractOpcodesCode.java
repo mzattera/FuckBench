@@ -7,10 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,11 +81,12 @@ public class ExtractOpcodesCode {
 					newCode.add(original.get(i));
 				}
 			}
-			
+
 			// Outputs FBF code for each opcode as separate #block
 			System.out.println(blocks.toString());
 
-			// Outputs new FBF code for the emulator (if bodies replaced by calls to corresponding blocks)
+			// Outputs new FBF code for the emulator (if bodies replaced by calls to
+			// corresponding blocks)
 			System.out.println(format(newCode));
 
 		} catch (Exception e) {
@@ -100,7 +98,7 @@ public class ExtractOpcodesCode {
 	/**
 	 * Returns a FBF block with code for given opcode.
 	 * 
-	 * @param key 6502 opcode
+	 * @param key   6502 opcode
 	 * @param value the FBF code to emulate corresponding instruction
 	 */
 	private static String blockCode(Integer key, List<String> value) {

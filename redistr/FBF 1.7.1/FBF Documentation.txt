@@ -1,0 +1,725 @@
+          /--------------------------------------\
+          |                                      |
+          |          FBF Documentation           |
+          |             Revision 3               |
+          |             By Tritonio              |
+          |        For FBF version 1.7.x         |
+          | Copyright 2007 Asimakis Konstantinos |
+          |     Licensed under the GNU/GPL v3    |
+          |                                      |
+          \--------------------------------------/
+
+
+ **********************************************************
+ *  Before reading this make sure that:                   *
+ *     1. You have selected a fixed width font.           *
+ *     2. You have turned text wrapping ON.               *
+ *     3. You know the basics of the Brainfuck language.  *
+ *     4. You don't get insulted by the F word.           *
+ *     5. You know quite well how to use the DOS (command *
+ *        line) or the Linux console.                     *
+ **********************************************************
+
+
+
+CONTENTS:
+A. Overview
+B. How to use the compiler
+C. Some important notes regarding the language
+D. Compiler's instructions
+E. FBF commands
+F. Tutorial
+  1. Hello World!
+  2. Basic I/O
+  3. Basic arithmetic
+  4. Basic code structures
+  5. Tables
+  6. Blocks
+  7. Advanced FBF programming
+G. Change log
+H. License
+I. Contact information
+
+
+A. Overview
+------------
+
+ FuckBrainfuck (or FBF if you get easily insulted or are bored to type) is a, perhaps, useless programming language somewhere between Assembly and Basic that compiles to Brainfuck. The Hello World program in FBF is:
+MSG Hello World!
+
+
+B. How to use the compiler
+---------------------------
+
+The FBF compiler reads source code from the stdin and prints Brainfuck code to stdout. So here is how things go...
+
+Linux:
+I personally use Ubuntu Linux. I installed Lua 5.1 using Synaptic Package Manager. Alternatively you can use the included Lua Binaries from the "LUA Binaries" folder. So, to compile a file named source.fbf and put the Brainfuck code to another one called compiled.bf use this command:
+lua5.1 FBF.lua < source.fbf > compiled.bf
+(if you use the binaries that came with FBF then substitute the command "lua5.1" with "./lua5.1")
+Then you will need a Brainfuck interpreter. You can find many ultra-fast interpreters in the ubuntu repositories. I like better bf ('Yet  another  Brainfuck interpreter') by Stephan Beyer ( s-beyer@gmx.net ).
+
+Windows:
+Get the included Lua Binaries from the "LUA Binaries" folder and use this command:
+lua5.1 FBF.lua < source.fbf > compiled.bf 
+This will compile source.fbf into compiled.bf. Then you will need a Brainfuck interpreter to run the compiled code. Try BRAINFUCK DEVELOPER 1.4.3 by Tim Rohlfs ( http://4mhz.de/ ).
+
+FBF was designed with 8 bit cells in mind. It should work with bigger cell sizes as long as you do not use the #BYTECELLS instruction. (see chapter D)
+
+C. Some important notes regarding the language
+-----------------------------------------------
+
+1. There is only one variable type. Normally it is the byte type but that depends on what Brainfuck interpreter you will later use. Its size is the same with the cell size that your Brainfuck interpreter uses.
+
+2. There are no expressions. You must break any expression down to the basic calculations and then execute them separately. For example when in basic you type this:
+
+input a
+input b
+b=a+b*2
+print a
+
+In FBF you have to type:
+
+read a
+read b
+multi b 2 b
+add b a b
+print a
+
+3. There are no functions or subroutines.
+
+4. There are no dynamic arrays.
+
+5. To pass the ASCII value of a character you can type 'x' where x is a printable character (except for the space and the new line).
+
+6. FBF is not case sensitive!
+
+7. The code produced by the FBF compiler needs cell wrapping to work.
+
+8. The commands are trimmed before processing. Take care when using the MSG command.
+
+9. All variables must be declared with the #DIM or #TABLE instruction.
+
+10. To embed comments in your FBF code start your line with REM -- or // followed by a space.
+
+12. A table with size x can be indexed with numbers [0,x-1].
+
+13. The maximum array size is the same with the cell size your Brainfuck interpreter uses.
+
+14. To maximize performance, declare the variables before any tables.
+
+15. Do not leave extra spaces between arguments! That's considered a syntax error. Two exceptions to this rule are the MSG and the BRAINFUCK command.
+
+16. The keyword TRUE equals to 1 while the keyword FALSE equals to 0. You can use them as values when values are accepted.
+
+17. Code blocks are not subroutines. They can be called from any place but recursions are not allowed!
+
+18. Ghost variables don't need to be declared with the #DIM instruction because they are not actual variables. They are just names used to refer to existing variables. And they are destroyed after the execution of their corresponding block.
+
+19. Do not declare variables inside of code blocks; after all there isn't any variable scoping in FBF.
+
+20. When you declare a table with X cells then this table will reserve 2*X+3 cells on the Brianfuck array.
+
+21. Ghost variables should have unique names across all blocks.
+
+
+D. Compiler's instructions
+---------------------------
+
+It's better to put these commands at the beginning of the program because they control the behavior of the compiler. But in some cases you might need to use some of them inside the program. Just remember that they are not commands. They are not directly converted into Brainfuck code
+
+#BLOCK <block's name> <variable> ... <variable>
+ex: #BLOCK factorial x result
+Instructs the compiler that the following commands, up to the first #ENDBLOCK instruction, should not be compiled right now because they consist a block of code which will replace any calls to this block. The block of code can use some ghost variables. They are called "ghost" variables because they will be replaced by other variables that a later call to the block will define. Blocks can be called like normal commands with their name followed by the variables that will replace the ghost variables inside the block. Ghost variables should have unique names across all blocks.
+
+#BYTECELLS
+Instructs the compiler to use some extra optimizations to produce smaller and faster code which will run correctly ONLY on Brainfuck interpreters that use 8 bit cells.
+
+#CUSTOM <value>
+Instructs the compiler to leave <value> empty cells after the last declared variable.
+
+#DIM <variable> ... <variable>
+ex: #DIM age
+ex2: #DIM age sex height weight
+Instructs the compiler to reserve space for a variable named <variable>. You can use this instruction with many variables at once as in example 2.
+
+#ECHO
+ex: #ECHO
+Instructs the compiler to make compiled code that will echo any read characters by putting a "." after every "," in the Brainfuck code.
+
+#ENDBLOCK
+ex: #ENDBLOCK
+Closes a block of code opened with the #BLOCK instruction. See the #BLOCK instruction for more information.
+
+#LINEBREAKS <number>
+ex: #LINEBEAKS 70
+Instructs the compiler to put a newline every <number> characters in the compiled Brainfuck code. If you do not use this instruction at all, the compiler won't put any linebreaks in the output code. The newline that will be used is OS specific and is not affected by the current linemode (see #LINEMODE)
+
+#LINEMODE <mode>
+ex: #LINEMODE MAC
+Changes the character that will be printed when the LINE command is used. The possible modes are: DOS, LINUX, MAC. The default is LINUX.
+
+#TABLE <table> <size>
+ex: #TABLE ages 40
+Instructs the compiler to reserve space for a table named <table> with the <size> specified. If the last #TABLE instruction is not followed by one or more #DIM instructions then this table can be used as if it was of infinite size.
+
+
+E. FBF commands
+----------------
+
+ADD <variable/value> <variable/value> <variable>
+ex: ADD a 5 b
+ex2: ADD a a a
+ex3: ADD a '0' a
+Adds the first two arguments and stores the result into the third.
+
+ASCII2BYTE <variable/value> <variable/value> <variable/value> <variable>
+ex: ASCII2BYTE a b c x
+ex2: ASCII2BYTE '2' '1' '0' myvariable
+Reads the first three variables as they were ASCII digits (starting with the most significant one) and converts them to a byte value. If you type the first example it is like doing this:
+x=(a-48)*100+(b-48)*10+c-48
+
+BELL
+Will produce a beep from the pc speaker. It will not work on all systems and Brainfuck interpreters though.
+
+BRAINFUCK <code>
+ex: BRAINFUCK >>>>>>>>>>[+]<<<<<<<<<<
+Embeds some hand-written Brainfuck <code> to the compiled code. Use it with extreme care and make sure to return the pointer to its initial place which is the first cell. (unless you know what you are doing).
+
+BYTE2ASCII <variable/value> <variable> <variable> <variable>
+ex: BYTE2ASCII x a b c
+ex2: BYTE2ASCII 210 x y z
+Exactly the opposite of ASCII2BYTE. It converts a byte to three ASCII values. (the most significant goes first.)
+
+CLEARSTACK <table>
+ex: CLEARSTACK mystack
+Sets the internal pointer of a table to 0. If you use the table as a stack it will act like it has been emptied. The actual data of the table are not changed.
+
+COMP <variable/value> <variable/value> <variable>
+ex: COMP age1 age2 result
+Compares the first two arguments. If the first one is bigger than the second it stores 0 to the result. If they are equal it stores 1. If the second is bigger then it stores 2 to the result.
+
+COPY <variable> <variable>
+ex: COPY mem mem2
+Copies the first variable to the second.
+
+COPYSIZE <table> <variable>
+ex: COPYSIZE mystack totalitems
+Copies the value of the internal pointer of the <table> to the <variable>. If you use the table as a stack this <variable> will be set to the current size of the stack.
+
+DEC <variable> <value>
+ex: DEC asc 48
+Decreases <variable> by <value>.
+
+DIV <variable/value> <variable/value> <variable>
+ex: DIV a 9 b
+ex2: DIV a b c
+ex3: DIV a '0' a
+Divides the first argument by the second and stores the result into the third. If the second argument is zero the program will fall into an infinite loop trying to add infinity to the result.
+
+END
+Closes the respective code structure that was opened with IFEQ, IFNOTEQ or UNEQ.
+
+IFEQ <variable> <variable/value>
+ex: IFEQ password 1988
+Starts a code structure that will be executed only if <variable> equals to <variable/value>.
+
+IFNOTEQ <variable> <variable/value>
+ex: IFNOTEQ password 1988
+Starts a code structure that will be executed only if <variable> does not equal to <variable/value>.
+
+INC <variable> <value>
+ex: INC counter 1
+Increases <variable> by <value>.
+
+LINE
+Prints a LF character if the current LINEMODE is LINUX, a CR if MAC or a CRLF if DOS. See #LINEMODE instruction for more info.
+
+MOD <variable/value> <variable/value> <variable>
+ex: MOD a 9 b
+ex2: MOD a b c
+ex3: MOD a '0' a
+Divides the first argument by the second and stores the modulo into the third. If the second argument is zero the program will fall into an infinite loop.
+
+MOVEFROM <variable/table/value>
+ex: MOVEFROM myvariable
+ex2: MOVEFROM 1023
+The compiler assumes that you are currently at position the position you provide and moves you to position 0. Addresing works like with the MOVETO command.
+
+MOVETO <variable/table/value>
+ex: MOVETO myvariable
+ex2: MOVETO 1023
+The compiler assumes that you are currently at position 0 and moves you either to a variable or a cell on the Brainfuck array. You can either provide a variable or table name or a pointer to the Brainfuck array.
+
+MSG <text>
+ex: MSG Hello there! How are you?
+Print the text following the command. You do not have to enclose the text between any symbols. Just look at the example. Trailing spaces are always trimmed. To print a space use the SPACE command.
+
+MSGCLEAR <value>
+ex: MSGCLEAR 5
+This command will erase the last <value> characters that were printed to the screen. It will not work on all systems though.
+
+MULTI <variable/value> <variable/value> <variable>
+ex: MULTI a a b
+ex2: MULTI a b c
+ex3: MULTI a 2 a
+Multiplies the first two arguments and stores the result into the third.
+
+POP <table> <variable>
+ex: POP mystack char
+Pops a value from <table> and stores it into <variable>. The FBF compiler does not check for stack underflows.
+
+PRINT <variable> ... <variable>
+ex: PRINT out
+Prints the character with the ASCII value in the <variable>. As with the READ command it depends on your Brainfuck interpreter what will actually happen. You can use this command with many variables to print them one after the other.
+
+PUSH <table> <variable/value>
+ex: PUSH mystack lastchar
+Pushes a variable or a value into <table>. The FBF compiler does not check for stack overflows.
+
+READ <variable>
+ex: READ char
+Reads a character from the keyboard and stores its ASCII value in <variable>. Actually, it depends on your Brainfuck interpreter what will actually happen. READ does whatever the "," command does. You can use this command with many variables to read them one after the other.
+
+REM
+ex: REM joaighn;odfjhoiuet9p4554';l';l  bgflkj gk
+ex2: -- leave a space after the two "-"!
+ex3: // the same goes for this.
+Use this command that simply ignores anything after it to embed remarks in your source code. The "--" and "//" forms are also valid and have exactly the same effect.
+
+RTABLE <table> <index> <variable>
+ex: RTABLE ages current cur_age
+Reads a value from the <table> with a specific <index> and stores it into <variable>. The index can be either a variable or a value.
+
+SET <variable> <value>
+ex: SET a 5
+Sets the <variable> to this <value>.
+
+SPACE
+Prints a space. (ASCII code: 32)
+
+SUB <variable/value> <variable/value> <variable>
+ex: SUB a 9 b
+ex2: SUB a b c
+ex3: SUB a '0' a
+Subtracts the second argument from the first and stores the result into the third.
+
+TAB
+Prints a Tab character. (ASCII code: 9)
+
+UNEQ <variable> <variable/value>
+ex: UNEQ countdown 0
+Starts a code structure that will be executed until <variable> equals <variable/value>.
+
+WTABLE <table> <index> <variable/value>
+ex: WTABLE ages current_person 18
+Writes this <variable/value> to a cell with a specific <index> in this <table>. The index can be either a variable or a value.
+
+
+F. Tutorial
+------------
+
+
+F.1. Hello World!
+------------------
+
+Welcome to FuckBrainfuck tutorial! I hope by reading these pages you will fully understand the FBF language. The language is quite simple as it has very few symbols, it is not case sensitive, and its syntax is very simple: First goes the command, then the arguments and you will always use a space character to separate these things. No brackets or any other symbols, only words. In fact there are two symbols but we will talk about them later.
+
+So the hello world program in FBF is this:
+
+MSG Hello World!
+
+MSG is a very useful command that prints everything that follows it. It must be always followed by a string. The string should not be enclosed between any symbols, so all symbols are accepted within it (even " or ').
+
+
+F.2. Basic I/O
+---------------
+
+The most basic input and output can be done with the READ, PRINT, MSG, LINE, SPACE, TAB, BEEP and MSGCLEAR commands. Let's see an example:
+
+#DIM A b
+BEEP
+MSG Give me two characters and I will reverse them.
+LINE
+READ a B
+PRINT b a
+
+This program beeps, reads two characters and then prints them in reverse order.
+
+The #DIM instruction tells the compiler to reserve space for some variables. All variables in FBF are (normally) of the byte type so they can hold values 0-255. The name "DIM" doesn't mean anything for FBF, this name was selected just to be more familiar to Basic programmers (in QBasic it meant "DIMension" because it was used to declare tables too. But that happens only in QBasic). The name of a variable can be ANY word! It can also be a number but I do not suggest to do this because it might create problems with some commands if you are not an expert on FBF. So following the usual variable naming conventions of other languages is a good idea.
+
+The READ command a series of characters from the keyboard (the stdin) and stores them into the variables that you provided as arguments.
+
+The PRINT command prints a series of variables to the screen (the stdout).
+
+The basics of the MSG command are known from the previous chapter but there are more to learn. The compiler first trims a command and then parses it. So any trailing spaces in the MSG command will not be printed. But if you leave any extra spaces between the MSG command and the first character of the string, these spaces WILL be printed! So a command like:
+
+MSG  Hello World!
+
+will print " Hello World!" (notice the space character before the "Hello").
+If you want to print trailing space characters you should use the SPACE command (after the MSG) without any arguments which will print one space character.
+
+The LINE command normally prints a LF but this can be changed with the #LINEMODE instruction which will be explained in chapter 7.
+
+The TAB command simply prints a horizontal tab character (ASCII code: 9).
+
+The BEEP command will produce a sound from the internal speaker of the PC. This command may not work with some Brainfuck interpreters.
+
+The MSGCLEAR command accepts only one value and will work only with some interpreters too. It will clear the last X printed characters.
+For example:
+
+MSG Print a character:
+SPACE
+READ character
+MSGCLEAR 19
+
+This code snippet will first ask the user to type a character and then after receiving some input it will clear the phrase "Print a character: ". As you can see this phrase has 19 characters and that's why we used this value with MSGCLEAR. But if you use a brainfuck interpreter that echos the characters typed by the user, then you have one more character to delete so we should use 20 instead of 19.
+
+Remember that almost all Brainfuck implementations print ASCII characters. So to print the value of a variable as a decimal you will have to convert it to 3 ASCII characters (because the biggest possible value is 255). This can be done automatically by using the BYTE2ASCII command which, along with ASCII2BYTE, will be analyzed in chapter 7.
+
+There is also one more instruction that controls an aspect of the I/O: the #ECHO instruction. It will be explained in chapter 7.
+
+
+F.3. Basic arithmetic
+----------------------
+
+Arithmetic operations in FBF must be broken down to the four basic arithmetic operations: Addition (ADD), subtraction (SUB), multiplication (MULTI), division (DIV) and modulo (MOD). These five commands take three arguments and work like this:
+
+To add A and B and store the result to C:	ADD A B C
+To subtract B from A and store the result to C:	SUB A B C
+To multiply A and B and store the result to C:	MULTI A B C
+To devide A by B and store the result to C:	DIV A B C
+To devide A by B and store the modulo to C:	MOD A B C
+
+A and B can be either values or variable while C must be a variable. This means that you can multiply two variables or a variable with a value (or even two values, although the latter is normally unnecessary).
+
+If you want to increase or decrease a variable by a value then you don't have to use the ADD or the SUB command. Use the INC or the DEC command which are much faster.
+
+To increase A by 5:	INC A 5		instead of:	ADD A 5 A
+To decrease A by 13:    DEC A 13	instead of:	SUB A 13 A
+
+You should also remember that if you decrease A variable bellow 0 or increase is over 255 it will wrap. (assuming that you use a Brainfuck interpreter with 8 bit cells)
+
+Finally if you want to copy the value of a variable to another you don't have to use ADD or SUB. Just use:
+
+COPY var1 var2
+
+where var1 is the source variable and var2 the destination variable.
+
+So here is an example of how to use all these. Let's say that you want to make a program that reads a number with three digits and then prints the sum of these three digits. We will use the "--" command to add remarks to the program. (do not forget to leave a space after the "--" command when you use it)
+
+The program will look like this:
+
+#DIM digit1 digit2 digit3
+#DIM result
+MSG Give me three digits.
+LINE
+READ digit1 digit2 digit3
+-- Now the digitX variables contain the ASCII values of the three digits so we have to subtract 48 from them so that they turn into numeric values. (48 is the ASCII value of "0")
+DEC digit1 48
+DEC digit2 48
+DEC digit3 48
+-- Now we will add them.
+add digit1 digit2 result
+add result digit3 result
+-- Now the result contains a value between 0 and 9+9+9=27. We will need two digits to hold the ASCII characters of this value.
+-- The first thing we have to do is to break down the result to it's two digits. By dividing the result with 10 we will get the first digit.
+DIV result 10 digit1
+-- The second digit is the modulo of the same division.
+MOD result 10 digit2
+-- Now in order to turn these two values into ASCII characters we will have to increase them by 48.
+INC digit1 48
+INC digit2 48
+-- So we can finally print them!!!
+PRINT digit1 digit2
+
+
+F.4. Basic code structures
+---------------------------
+
+FBF supports 3 different code structures. You can use these structures nested in other structures too.
+
+The If Equal structure starts with the IFEQ command and like all structures ends with the END command.
+The IFEQ command accepts two arguments. The first one is a variable. The second one is a variable or a value. When an IFEQ command is encountered the first variable is compared against the second variable or value and the code between this IFEQ command and the respecting END command will be only executed if the two arguments are equal.
+
+The If Not Equal structure starts with the IFNOTEQ Command and is the same with the If Equal structure except that the code is executed if the two arguments an not equal.
+
+Finally there is one loop structure: the Until Equal structure. It starts with the UNEQ command and works like the If Not Equal structure except that when the END command is encountered the program execution will jump to the UNEQ command again.
+
+For more more complex comparisons you should use the COMP command which will be analyzed in chapter 7.
+
+So here is an example. The following program reads lower case characters from the stdin and prints the next character in the English alphabet. It quits when it reads a ".".
+
+#DIM char
+READ char
+UNEQ char '.'
+	IFNOTEQ char 'z'
+		INC char 1
+	END
+	IFEQ char 'z'
+		SET char 'a'
+	END
+	PRINT char
+	READ char
+END
+
+In this program we used a command that was not mentioned before: the SET command. This command accepts two arguments: a variable and a value. It puts the value in the variable.
+
+We also used a different way of passing values to commands. If you want to pass the ASCII value of a character then you don't have to do this conversion yourself. Just put this character inside single quotes and the compiler will do it automatically for you. Just remember that this does not apply to the space character which you will have to pass as a value (that is 32). Finally the compiler recognises the FALSE and TRUE keywords as the values 0 and 1 respectively (these keywords, like everything in FBF, are not case sensitive.
+
+
+F.5. Tables
+------------
+
+FBF supports tables. The maximum number of cells for a table is normally 256 (it, again, depends on the cell size of the Brainfuck interpreter). Tables can be normaly manipulated with two commands: the RTABLE and the WTABLE.
+
+The RTABLE command is used to copy a value from a cell of a table to a variable. It accepts three arguments. The first one is the name of the table, the second one is the index of the cell (either as a value or as the name of a variable that contains the index) and the third one is the name of the variable where the contents of the cell will be copied.
+
+The WTABLE command is used to (Surprise!!!) copy a value or a variable to a cell of a table. It accepts three arguments. The first two are exactly the same with those of the RTABLE command. The third argument is either a value or a variable and it is what will be copied the the cell of the table.
+
+Tables are declared with the #TABLE instruction which accepts two arguments: the name of the table and the number of its cells.
+
+Tables can be indexed with numbers starting from zero. A table of size 3 has these cells: 0, 1, 2.
+
+Here is a program that reads characters until a "." is read and then prints them in reverse order:
+
+#DIM temp total
+-- We want a table with as many cells as possible.
+#TABLE tabladoros 256
+-- We read a character.
+READ temp
+-- Untill we read a dot.....
+UNEQ temp '.'
+	-- We store this character to the current position, which, initially, is 0.
+	WTABLE tabladoros total temp
+	-- We increase the current position.
+	INC total 1
+	-- And we read another character before repeating the process.
+	READ temp
+END
+-- We decrease total by 1 because the last incrementation was unnecessary.
+DEC total 1
+-- Now we will print each of these characters in reverse order. We stop when total=255 because that's what happens after the first (total=0) character is printed.
+UNEQ total 255
+	RTABLE tabladoros total temp
+	PRINT temp
+	DEC total 1
+END
+
+FBF can also handle tables like stacks. Each table has an internal pointer that is easily utilized as a stack pointer as it will always point to the cell that will be occopied by the next value that is pushed into the table. With the POP and PUSH commands you can increase and decrease this pointer while popping or pushing values from or to the table. For example the following code will print 65. (also, notice that using lower case letters for the commands is OK)
+
+#dim a b
+-- notice that it is allowed to name a table like a command. In this case we name a table like the command TAB. If this confuses you just don't do it.
+#table tab 5
+push tab '5'
+push tab '6'
+-- we will now pop the top value which is 6.
+pop tab a
+-- and now we will pop the second value which is 5
+pop tab b
+print a b
+
+When using tables as stack you should remember there is no under/overflow detection! For example if you use a table with 5 cells as a stack and try to pop while the internal pointer is 0 this will cause the pointer to wrap around to 255 and then a read from the cell 255 of the table will be executed. If there are any other variables or tables after this table that read will probably destroy them and it is also possible to make the whole program useless. A way to avoid destructive overflows and underflows (but there will still be under/overflows) is to use tables of size 256 as stacks. This will ensure that if the internal pointer will never point outside the table. You may at any time zero the internal pointer of a table using the CLEARSTACK command followed by the name of the table. Finally you may copy the size of the stack to another variable with the COPYSIZE command. The COPYSIZE command accepts two arguments. The first is the tables name while the second is a variable where the value of the stack pointer will be copied.
+
+
+F.6. Blocks
+------------
+
+Brainfuck does not support subroutines, functions etc. I could think of a way to implement subroutines and goto-like commands in FBF but it would produce much slower code while putting some more restrictions. So I implemented an imitation of subroutines called blocks.
+
+When you declare a code block the compiler will store the commands of this block in it's memory. When you call a block the compiler recalls the commands that this block contains and processes them as if they were normally there. That means that blocks are more like a copy-paste rather than a true subroutine.
+
+Of course there are more powerful than a copy-paste and one of the reasons for this is the ghost variables. A ghost variable is a variable that the block uses internally. So any reference to a ghost variable will be replaced with a reference to a real variable when the block is called.
+
+Blocks are declared using the #BLOCK instruction. The first argument of the instruction is the name of the block. The rest of the arguments are the names of the ghost variables. To close a block use the #ENDBLOCK instruction.
+
+Block are called like normal commands with their name followed by arguments/variables which will replace the ghost variables inside the block.
+
+An example to make things clearer:
+
+#BLOCK print_number ghostnumber
+	INC ghostnumber '0'
+	PRINT ghostnumber
+	DEC ghostnumber '0'
+#ENDBLOCK
+#DIM result
+ADD 1 3 result
+print_number result
+
+This program adds 1 and 3 and stores the result into variable "result". Then it calls the "print_number" block. This means that the three lines of code inside of the block are processed while replacing any reference to the "ghostnumber" ghost variable with references to the "result" variable. That means that the "result" variable will be increased by the ASCII value of '0' (which is 48) so that the value 4 becomes 52 which is the ASCII value of the character '4'. Then the variable "result" is printed and, finally, is decreased back to it's initial value.
+
+You should remember that in FBF there are no local variables. If a block needs a normal variable (not a ghost one) then just use one of the global (the normal) variables of your program.
+
+
+F.7. Advanced FBF programming
+----------------------------------------
+
+You are now, hopefully, ready to see some of the advanced commands and instructions of the FBF language.
+
+++++++++++++++++++++++++++++++++++++++
+
+In chapter 2 we saw how to read and write data. We saw the LINE command which prints a newline character. As you may already know, different systems use different newline characters. For example Linux and other Unix-like OS use LF as a newline character. The ASCII code of LF is 10. Mac systems use CR as a newline character (ASCII 13). Finally windows use both these two character in reverse order as a newline sequence (CR LF). FBF gives you a way to tell the compiler what newline character (or sequence) to use. This is done with the #LINEMODE instruction. This instructions accepts one argument which can have one of these values: LINUX, DOS, MAC. The default linemode is LINUX.
+
+++++++++++++++++++++++++++++++++++++++
+
+In the same chapter ASCII2BYTE and BYTE2ASCII were mentioned. These two commands simplify the conversion of ASCII characters into values and vice versa.
+The ASCII2BYTE command accepts four arguments: the first three are three values or variables in the range [48,57] (these are ASCII values of numerical characters) and the fourth is a variable that will hold the result of the conversion.
+The BYTE2ASCII command accepts four arguments as well: the first one is a variable or value and the next three are three variables that will hold the result of the conversion.
+
+Look at the following example:
+
+#DIM a b c a2 b2 c2 value value2 result a3 b3 c3
+
+MSG Give me three digits.
+LINE
+-- Now we will read three digits and store them into a,b and c.
+READ a b c
+
+MSG Give me three more digits.
+LINE
+-- Now we will read three more digits and store them into a2,b2 and c2.
+READ a2 b2 c2
+
+-- Now we will convert what we read into values that can be used in calculations. Do not forget that we read ASCII characters and not numerical values.
+
+ASCII2BYTE a b c value
+ASCII2BYTE a2 b2 c2 value2
+
+-- Let's add the two values.
+ADD value value2 result
+
+-- Great! But in order to show the result to the user we have to convert it into three different ASCII characters.
+
+BYTE2ASCII result a3 b3 c3
+
+-- Now we can finally print it.
+
+MSG The result is:
+LINE
+PRINT a3 b3 c3
+
+Note that we do not check for overflows so if the result is more than 255 it will wrap around.
+
+++++++++++++++++++++++++++++++++++++++
+
+In chapter 2 the #ECHO instruction was also mentioned. This instruction is used to turn on the echoing of read characters. If you turn on the echo then after every "," in the Brainfuck code a "." will be placed. By default the echo is turned off. You can turn it on with this instructions. This command is only useful if your Brainfuck interpreter does not echo the users input.
+
+++++++++++++++++++++++++++++++++++++++
+
+You may have noticed that the generated Brainfuck code does not contain any line breaks. To make the compiler break the compiled code into lines with a certain width then you will have to use the #LINEBREAKS instruction. It accepts a value as an argument which is the length of the lines (excluding the newline character). So to have a more good looking program you should start it with this line:
+
+#LINEBREAKS 80
+
+Of course you may replace 80 with whatever you want.
+
+++++++++++++++++++++++++++++++++++++++
+
+In chapter 4 the COMP command was mentioned. This is one of the most useful commands of the FBF language and is used to compare things. The COMP command accepts 3 arguments. The first two can either be values or variables and are those that will be compared. The third is a variable that will hold the result of the comparison. The result can be either 0, 1 or 2.
+
+An easy way to remember how to interpret the resulting number is the following:
+The COMP command points to the biggest variable or value. If it wants to point to the first variable/value of it's arguments (the left one) it will output the leftmost number out of the three possible which is 0. If it want's to point to the second argument (the right one) it will ouput the rightmost of the three possible numbers which is 2. If it doesn't know which one to point to, which means that they are equal, then it will output the middle number which is 1.
+
+So in order to check if a digit typed by the user is bigger that 5 you could use something like this:
+
+#DIM digit temp
+MSG Give me a digit.
+LINE
+READ digit
+COMP digit '5' temp
+IFEQ temp 0
+	MSG Good!!!
+END
+
+++++++++++++++++++++++++++++++++++++++
+
+If you want to generate code that will be used with a Brainfuck compiler that supports byte sized cells then consider including the #BYTECELLS instruction in your source code file. It will instruct the compiler to use some additional optimizations that will produce faster and smaller compiled Brainfuck code that will ONLY work correctly on Brainfuck interpreters with byte cells.
+
+++++++++++++++++++++++++++++++++++++++
+
+A very very useful command for advanced tasks is the BRAINFUCK command. Anything that follows this command will be optimized and embedded in the compiled code. This enables you to write some parts of your FBF program in pure Brainfuck making it faster and smaller. You can also embed remarks in the compiled code with this command. Before using this command you must remember some things:
+
+1. Initially you will be at position 0 and you must return to this position before the end of your Brainfuck code. (unless you really know what you are doing)
+2. The first 8 cells (0 to 7), which are used internally by the FBF commands, are empty and should be empty when your Brainfuck code ends.
+
+Two other useful commands that come handy when using the BRAINFUCK command are the MOVETO and RETURNFROM. They both accept only one argument which can be a variable name, a table name or a pointer to the Brainfuck array (starting from 0). When you use the MOVETO command the compiler will assume that you are currently at position 0 on the Brainfuck array and will move you to the position you provide as an argument. When you use the RETURNFROM command the compiler will assume that you are at the position you provide as an argument and will move you back to position 0. Remember that returning to 0 before executing the basic FBF commands is crucial for the correct execution of your program (I cannot think of any reason not to return to 0 before executing a multiplication for example but you still have the choice of not returning).
+
+A useful instruction that can be used with the BRAINFUCK command is the #CUSTOM instruction. The FBF compiler during the compilation has got a counter that increases when variables or tables are declared. The counter shows where is the last occupied place of the memory (the Brainfuck array). The #CUSTOM instruction let's you advance this counter as much as you want without declaring a variable.
+
+The #DIM and the #CUSTOM instruction can be used to create new variable types. For example if you want to create a 32-bit variable you can first declare it with the #DIM instruction and then use the #CUSTOM instruction to leave three more empty bytes after this variable like this:
+
+#DIM myvariable
+#CUSTOM 3
+
+Thes you could use the #BLOCK instruction and create blocks of code to handle this variable like this:
+
+#BLOCK increasebyone inc_my_var
+	MOVETO inc_my_var
+	BRAINFUCK "here you will place the Brainfuck code that will increase your variable by one"
+	RETURNFROM inc_my_var
+#ENDBLOCK
+
+
+G. Change log
+--------------
+
+FBF Compiler v1.0.0:	Officially, it is the initial version.
+FBF Compiler v1.1.0:	Added ASCII2BYTE
+			Added BYTE2ASCII
+			Minor changes to the messages that the compiler prints to stderr.
+			Changed #ECHO syntax. (in most cases backwards compatible with v1.0)
+			Changed PRINT syntax and functionality. (backwards compatible to v1.0)
+			Changed READ syntax and functionality. (backwards compatible to v1.0)
+			Changed #DIM/DIM syntax and functionality. (backwards compatible to v1.0)
+			Spelling mistakes corrected.
+FBF Compiler v1.1.1:	Fixed a bug. (the SET command could not accept the 'A' value format)
+FBF Compiler v1.2.0:	Added #BLOCK and #ENDBLOCK instructions.
+			Added the TELE command.
+			Changed the structure of the source code of the compiler.
+			Changed the license.
+			Added the "false" and "true" keywords.
+FBF Compiler v1.2.1:	Fixed a bug in the #ECHO instruction. For some reason it was not implemented.
+FBF Compiler v1.2.2:	Fixed a bug in the recognition of the TRUE and FALSE keywords.
+			Improved ADD and SUBS.
+			Added the #LINEMODE instruction.
+			Minor changes in the source code.
+FBF Compiler v1.3.0:	Changed the name of the SUBS command into SUB. (backwards compatible to v1.0)
+			TELE command changed into a #TELE instruction. (backwards compatible to v1.2)
+			Ghost variables are now discarded after the end of a block. (fixed a bug)
+			The compiler now prints detailed error messages.
+			Fixed a bug in COMP.
+FBF Compiler v1.3.1:	Improved RTABLE and WTABLE.
+			Fixed a serious bug at code structures that use values in the 'a' form.
+FBF Compiler v1.4.0:	Removed the #TELE instruction. Blocks are called using just their name.
+			Blocks can be called inside other blocks.
+FBF Compiler v1.5.0:	Added the #BYTECELLS instruction and a new optimization.
+			Declaring an already declared variable now raises an error.
+			Minor changes in the source code.
+FBF Compiler v1.6.0:	DIM and TABLE can only be called with the preceding #.
+			SUBS is no longer recognized. You can only use the SUB command.
+			Added the #CUSTOM instruction.
+			Added the MOVETO and RETURNFROM commands.
+			Optimized the implementation of tables. Now tables use about the half memory.
+			The compiler now prints the memory map of the resulting program.
+			Other minor changes in the source code.
+			Added the POP and PUSH commands.
+FBF Compiler v1.7.0:	Added the MSGCLEAR command.
+			Added the BEEP command.
+			Added the CLEARSTACK command.
+FBF Compiler v1.7.1:	Fixed a terrible mistake. The SET command was a catastrophe!
+
+
+H. License
+-----------
+
+The FuckBrainfuck compiler and this documentation file are licensed under the GNU/GPL version 3. You should have received a copy of this license along with the compiler (FBF LICENSE.txt). If not then you can find one at http://www.gnu.org/licenses/
+
+
+I. Contact information
+-----------------------
+
+My website is: http://inshame.blogspot.com
+My email is: X@gmail.com (replace X with "inshame")
+
+Fell free to contact me.
+
+Tritonio
