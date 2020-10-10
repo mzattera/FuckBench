@@ -109,12 +109,11 @@ public final class FileUtil {
 	/**
 	 * Replaces the extension for a file.
 	 * 
-	 * @param ext
-	 *            New extension.
+	 * @param ext New extension.
 	 * 
 	 * @return Original file name, but with its extension changed.
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static String replaceExtension(File f, String ext) throws IOException {
 		return replaceExtension(f.getCanonicalPath(), ext);
@@ -123,10 +122,8 @@ public final class FileUtil {
 	/**
 	 * Replaces the extension for a file.
 	 * 
-	 * @param fileName
-	 *            Original file name.
-	 * @param ext
-	 *            New extension.
+	 * @param fileName Original file name.
+	 * @param ext      New extension.
 	 * 
 	 * @return Original file name, but with its extension changed.
 	 */
@@ -148,12 +145,11 @@ public final class FileUtil {
 
 	/**
 	 * Removes the extension for a file.
-	 * 	
-	 * @param ext
-	 *            New extension.
+	 * 
+	 * @param ext New extension.
 	 * 
 	 * @return Original file name, but with its extension removed.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static String removeExtension(File f) throws IOException {
 		return removeExtension(f.getCanonicalPath());
@@ -162,10 +158,8 @@ public final class FileUtil {
 	/**
 	 * Removes the extension for a file.
 	 * 
-	 * @param fileName
-	 *            Original file name.
-	 * @param ext
-	 *            New extension.
+	 * @param fileName Original file name.
+	 * @param ext      New extension.
 	 * 
 	 * @return Original file name, but with its extension removed.
 	 */
