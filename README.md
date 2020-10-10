@@ -44,7 +44,11 @@ If you skip the below configuration, BF compilation will stop after genereating 
   
 Optional - the below steps are required if you want to compile C code generated above into a Windows executable.
 
-  5. Edit `<root>\bin\config.bat` and set FB_ESOTOPE to `esotope-bfc` file inside Esotope folder. 
+  5. Edit `<root>\bin\FB_cc.bat` an adapt it to your C compiler.
+    This batch file receives the name of a .c file to compile (e.g. `f.c`) and it is assumed
+	to call any intalled C compiler to do the job.
+	It is up to you to modify this batch file to properly invoce any C compiler you are using.
+	If you are not using any C compler, just leave this file blank.
 
 ### Specifications for the BrainFuck environment
 
@@ -91,6 +95,6 @@ To compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-## Compiling 6502 emulator
+### Compiling 6502 emulator
 
 ....

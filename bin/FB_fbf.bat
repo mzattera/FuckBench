@@ -7,8 +7,6 @@
 @rem Configuration
 @set "FB_BIN=%~dp0%"
 @if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
-@set "FB_HOME=%FB_BIN%..\"
-
 @call "%FB_BIN%FB_config.bat"
 
 @if exist %1.bf del /F /Q %1.bf
