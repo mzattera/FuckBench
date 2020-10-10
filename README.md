@@ -2,10 +2,10 @@
 
 ## What is it?
 
-FuckBench (*FB*) is a set of batch files and tools to comiple from several languages into (BrainFuck)[https://en.wikipedia.org/wiki/Brainfuck] (*BF*). 
+FuckBench (*FB*) is a set of batch files and tools to comiple from several languages into [BrainFuck](https://en.wikipedia.org/wiki/Brainfuck) (*BF*). 
 
 In addition to creating BF code, FB creates higly optimized C files using the
-(Esotope)[https://github.com/lifthrasiir/esotope-bfc] BF to C compiler.
+[Esotope](https://github.com/lifthrasiir/esotope-bfc) BF to C compiler.
 If a C compiler is configured, a Windows executable is also created.
 
 Currently, it supports comipiling the following languages to BF:
