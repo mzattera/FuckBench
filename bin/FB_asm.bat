@@ -1,10 +1,8 @@
-@echo off
+@rem Compiles 6502 assembler file %1.s then merges it with 6502bf emulator, finally the resulting code is compiled into an executable.
 
-rem Compiles 6502 assembler file %1.s then merges it with 6502bf emulator, finally the resulting code is compiled into an executable.
-
-rem In the process it creates
-rem     %1.bf with merged BrainFuck code (6502 emu + 6502 code to run).
-rem     %1.c with merged BrainFuck code (6502 emu + 6502 code to run).
+@rem In the process it creates
+@rem     %1.bf with merged BrainFuck code (6502 emu + 6502 code to run).
+@rem     %1.c with merged BrainFuck code (6502 emu + 6502 code to run).
 
 @rem Configuration
 @set "FB_BIN=%~dp0%"
