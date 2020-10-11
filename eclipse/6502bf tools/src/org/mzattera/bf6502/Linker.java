@@ -94,6 +94,7 @@ public class Linker {
 		// TODO Add parameters error checking
 		// TODO check that pos stays within 6502 memory
 
+		System.out.println(Linker.class.getName() + " linking BF code to 6502bf emulator.");
 		System.out.println("Input File Name (6502 Code)              : " + new File(inputFileName).getCanonicalPath());
 		System.out
 				.println("Input File Name (6502 Emu.)              : " + new File(emuCodeFileName).getCanonicalPath());
@@ -173,7 +174,8 @@ public class Linker {
 	private static void printUsage() {
 		System.out.println();
 		System.out.println();
-		System.out.println("Usage: Linker <code> <out> [-i <emu>] [-a <addr>] [-l <ldaddr>] [-s <skip>]");
+		System.out.println("Usage: java -jar " + Linker.class.getSimpleName()
+				+ ".jar <code> <out> [-i <emu>] [-a <addr>] [-l <ldaddr>] [-s <skip>]");
 		System.out.println();
 		System.out.println("    <code>  : Name of binary file with 6502 code.");
 		System.out.println("    <out>   : Name of output BF file.");

@@ -1,24 +1,35 @@
-@rem This compiles %1.bf into %1.exe
+@echo off
 
-@rem In the process it creates:
-@rem     %1.c with C code.
+rem This compiles %1.bf into %1.exe
 
-@rem Configuration
-@set "FB_BIN=%~dp0%"
-@if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
-@call "%FB_BIN%FB_config.bat"
+rem In the process it creates:
+rem     %1.c with C code.
 
-@if exist %1.c del /F /Q %1.c
+rem Configuration
+set "FB_BIN=%~dp0%"
+if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
+call "%FB_BIN%FB_config.bat"
 
-@if defined FB_PYTHON (
+if exist %1.c del /F /Q %1.c
+if exist %1.exe del /F /Q %1.exe
+
+if defined FB_PYTHON goto toc
+goto end
+
+:toc
 	rem compiles %1.bf into C code %1.c
-	echo "%FB_PYTHON%" "%FB_ESOTOPE%\esotope-bfc" %1.bf %1.c
-	"%FB_PYTHON%" "%FB_ESOTOPE%\esotope-bfc" %1.bf > %1.c
-
 	echo.
-	echo Tweaking generated .c code
-	java -jar "%FB_BIN%TweakCCode.jar" -i %1.c -o %1.c 
+	echo on
+	
+	"%FB_PYTHON%" "%FB_ESOTOPE%\esotope-bfc" %1.bf > %1.c
+	@java -jar "%FB_BIN%CheckFile.jar" %1.c
+	@if errorlevel 0 (
+		echo.
+		java -jar "%FB_BIN%TweakCCode.jar" -i %1.c -o %1.c 
 		
-	rem compiles %1.c into executable		
-	if errorlevel 0 (call "%FB_BIN%FB_cc.bat" %1)
-)
+		rem compiles %1.c into executable		
+		if errorlevel 0 (call "%FB_BIN%FB_ccompiler.bat" %1)
+	)
+
+:end
+	@exit /B

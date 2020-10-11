@@ -51,7 +51,7 @@ If you skip the below configuration, BF compilation will stop after genereating 
   
 Optional - the below steps are required if you want to compile C code generated above into a Windows executable.
 
-  8. Edit `<root>\bin\FB_cc.bat` an adapt it to your C compiler.
+  8. Edit `<root>\bin\FB_ccompiler.bat` an adapt it to your C compiler.
     This batch file receives the name of a .c file (*without* extension) to compile and it is assumed
 	to call any intalled C compiler to do the job.
 	It is up to you to modify this batch file to properly invoke any C compiler you are using.
@@ -131,26 +131,33 @@ to compile C code into a 6502 executable that is then linked to the 6502bf BF em
 You can invoke:
 
 ```
-FB_c f
+FB_cl f
 ```
 
 to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f_c.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_c` will enable maximum optimization.
+Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_cl` will enable maximum optimization.
 Please notices that cc65 somehow [differs](https://www.cc65.org/doc/cc65-4.html) from ANSI C.
 
 ## The 6502bf emulator
 
  * DEC mode
  * SYSCALLS
- 
+ * ...
+  
 ### Changing 6502 emulator
 
  * Add new SYSCALLS
  * Carful in changing mem[] position -> Linker
+ * ...
  
 ### Compiling 6502 emulator
 
-....
+ * ...
+
+## Making the build
+
+ * Build script
+ * Needs Esotope and C compiler to run regression tests

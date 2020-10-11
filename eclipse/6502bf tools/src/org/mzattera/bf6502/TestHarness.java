@@ -59,7 +59,8 @@ public class TestHarness {
 			boolean error = false;
 			for (File f : WORKING_FOLDER.listFiles(new FileFilter() {
 
-				// TODO add 6502 functional test to this folder (and maybe remove other except those that check SYSCALL
+				// TODO add 6502 functional test to this folder (and maybe remove other except
+				// those that check SYSCALL
 				@Override
 				public boolean accept(File arg0) {
 					return arg0.getName().toLowerCase().endsWith(".s");
@@ -96,8 +97,7 @@ public class TestHarness {
 	/**
 	 * Tests a single asm file.
 	 * 
-	 * @param f
-	 *            File to test.
+	 * @param f File to test.
 	 * @return true if test was OK, false otherwise.
 	 */
 	private static boolean test(File f) throws Exception {
@@ -139,7 +139,7 @@ public class TestHarness {
 	private static void printUsage() {
 		System.out.println();
 		System.out.println();
-		System.out.println("Usage: TestHarness [-x]");
+		System.out.println("Usage: java -jar " + TestHarness.class.getSimpleName() + ".jar [-x]");
 		System.out.println();
 		System.out.println("    -x If provided, does NOT recompile the emulator before running the tests.");
 		System.out.println();
@@ -157,13 +157,11 @@ public class TestHarness {
 	/**
 	 * Executes a command and return its exit code.
 	 * 
-	 * @param workingFolder
-	 *            Working folder where the command is executed, leave it null to use
-	 *            default folder.
-	 * @param binFolder
-	 *            Folder where the command is, leave it null to use default folder.
-	 * @param cmd
-	 *            Command to execute.
+	 * @param workingFolder Working folder where the command is executed, leave it
+	 *                      null to use default folder.
+	 * @param binFolder     Folder where the command is, leave it null to use
+	 *                      default folder.
+	 * @param cmd           Command to execute.
 	 * @params params Command parameters.
 	 * 
 	 * @return Command exit code.

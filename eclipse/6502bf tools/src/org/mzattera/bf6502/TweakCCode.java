@@ -55,6 +55,7 @@ public class TweakCCode {
 
 		// TODO Add parameters error checking
 
+		System.out.println(TweakCCode.class.getName() + " tweaking generated code.");
 		System.out.println("Input File Name : " + new File(inputFileName).getCanonicalPath());
 		System.out.println("Output File Name: " + new File(outputFileName).getCanonicalPath());
 
@@ -75,7 +76,7 @@ public class TweakCCode {
 	private static void printUsage() {
 		System.out.println();
 		System.out.println();
-		System.out.println("Usage: TweakCCode [-i <in>] [-o <out>] [-s <size>]");
+		System.out.println("Usage: java -jar " + TweakCCode.class.getSimpleName() + ".jar [-i <in>] [-o <out>] [-s <size>]");
 		System.out.println();
 		System.out.println("    <in>   : Input .c file name (defaults to \"" + CODE_NAME + "\").");
 		System.out.println(
