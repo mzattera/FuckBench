@@ -19,7 +19,7 @@ public class CheckFile {
 	public static void main(String[] args) {
 		try {
 			if (args.length != 1) {
-				throw new IllegalArgumentException("Unrecognized parameter: " + args[0]);
+				throw new IllegalArgumentException("Too few parameters.");
 			}
 
 			File f = new File(args[0]);
