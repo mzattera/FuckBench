@@ -1,5 +1,5 @@
 /**
- * Checks that given file exists and its lenght is not null.
+ * Checks that given file exists and its length is not null.
  * 
  * This is used to verify a specific compilation stet
  */
@@ -19,11 +19,11 @@ public class CheckFile {
 	public static void main(String[] args) {
 		try {
 			if (args.length != 1) {
-				throw new IllegalArgumentException("Too few parameters.");
+				throw new IllegalArgumentException("Wrong number of parameters.");
 			}
 
 			File f = new File(args[0]);
-			if (f.exists() && f.length() > 0)
+			if (isOK(f))
 				System.exit(0);
 			else
 				System.exit(-1);
@@ -33,6 +33,13 @@ public class CheckFile {
 			printUsage();
 			System.exit(-1);
 		}
+	}
+	
+	/**
+	 * @return true if f exists and is not empty.
+	 */
+	public static boolean isOK(File f) {
+		return (f.exists() && f.length() > 0);		
 	}
 
 	private static void printUsage() {

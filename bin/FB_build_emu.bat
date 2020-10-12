@@ -18,5 +18,5 @@ if errorlevel 0 (
 	echo Emulator built successfully.	
 ) else (
 	if exist "%FB_HOME%\6502bf.bf" del /F /Q "%FB_HOME%\6502bf.bf"
-	echo Build feiled!
+	echo Build failed!
 )

@@ -23,6 +23,7 @@ public class Linker {
 	// then remove from emulator code the check for those opcode not found in the
 	// code.
 
+	// Name of emulator source file (without extension)
 	public final static String CODE_NAME = "6502bf";
 
 	// Cells on the BF tape to skip before finding 6502 memory
