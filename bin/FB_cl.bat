@@ -21,7 +21,7 @@ if exist %1_c.exe del /F /Q %1_c.exe
 rem compiles %1.c into 6502 code
 echo on
 
-"%FB_CC65%\bin\cl65" -t none -C "%FB_CLIB%\6502bf.cfg" -o %1.out -r -O --cpu 6502 %2 %3 %4 %5 %7 %8 %9 %1.c "%FB_CLIB%\6502bf.lib"
+"%FB_CC65%\bin\cl65" -t none -C "%FB_CLIB%\6502bf.cfg" -o %1.out -Oir --cpu 6502 %2 %3 %4 %5 %7 %8 %9 %1.c "%FB_CLIB%\6502bf.lib"
 @if exist %1.o del /F /Q %1.o
 
 @if exist %1.out (
