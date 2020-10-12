@@ -59,7 +59,9 @@ Optional - the below steps are required if you want to compile C code generated 
 
 ### Specifications for the BrainFuck environment
 
-To successfully run, BF code created by FB the emulator requires an interpreter or compile withbelow specifications:
+To successfully run, BF code created by FB requires a BF interpreter or compiler with below specifications;
+please notice the section above explains how to use Esotope and any Windows C compiler to create Windows 
+executables out of your BF generated code.
 
  * Unsigned wrapping 16 bit cells (0-65565).
 	
@@ -68,14 +70,14 @@ To successfully run, BF code created by FB the emulator requires an interpreter 
    and will move ony to cells on its right.
 	  
 * The Windows executables created with Esotope + C compiler, when encountering a BF `,` comand will read 
-  a string from console until user presses enter. The string is returned with a terminating $0A char.
+  a string from console until user presses enter. The string is returned with a terminating $0A (LF) char.
 
   For example, when the generated BF code contains a `,` execution stops waiting for user input.
   Users enters "A1!" followed by "enter" key. BF will receive the characters with decimal ASCII code:
-  65, 49, 33, 10 in this order.
+  $41, $31, $21, $0A in this order.
 	  
-  Notice that the cc65 libraries provided with FB reads input either a $00 or $A0 character is returned;
-  if $00 ir read, it is replaced by $0A before being returned.
+  Notice that the cc65 libraries provided with FB read input until either a $00 (nul) or $0A (LF) character is returned;
+  if $00 is read, it is replaced by $0A before being returned.
   
 	  
 ### Compiling BrainFuck code
