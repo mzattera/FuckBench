@@ -29,7 +29,7 @@
 		sta		ptr3+1
 		
 		jsr     popax   ; get fd and discard it.
-						; TODO add check? If fd==1 then it's stdin
+						; TODO add check? If fd==1 then it is stdin
 
 		ldy     #0		; zp index
 
@@ -43,7 +43,7 @@ L1:
 L2:
 		EMU_GETC		; Read char in accumulator
 		bne		L3
-		lda		#$A0	; replace $00 with $A0
+		lda		#$0A	; replace $00 (nul) with $0A (CR)
 
 L3:
         sta     (ptr1),y
@@ -54,7 +54,7 @@ L3:
         inc     ptr1+1
 
 L4: 
-		cmp		#$A0
+		cmp		#$0A
 		bne		L1	; exit on newline
 				
 L5:		

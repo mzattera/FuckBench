@@ -67,16 +67,16 @@ To successfully run, BF code created by FB the emulator requires an interpreter 
    At the beginning of execution the tape head is assumed to be in the leftmost cell
    and will move ony to cells on its right.
 	  
-* The compiler used for testing on an input ("," comand) will read a string from console until
-  user presses enter. The string is returned with a terminating $0D char.
+* The Windows executables created with Esotope + C compiler, when encountering a BF `,` comand will read 
+  a string from console until user presses enter. The string is returned with a terminating $0A char.
 
-  For example, when the code contains a "," execution stops waiting for user input.
-  Users enters "A1!" followed by "enter" key.
-  BrainFuck will receive the characters with decimal ASCII code: 65, 49, 33, 10 in this sequence.
+  For example, when the generated BF code contains a `,` execution stops waiting for user input.
+  Users enters "A1!" followed by "enter" key. BF will receive the characters with decimal ASCII code:
+  65, 49, 33, 10 in this order.
 	  
-  Notice this has implications in using the C libraries. The code in read.s reads input
-  until a $00 or $A0 character is returned; if $00 ir read, it is replaced by $A0 before returning
-  from C call.
+  Notice that the cc65 libraries provided with FB reads input either a $00 or $A0 character is returned;
+  if $00 ir read, it is replaced by $0A before being returned.
+  
 	  
 ### Compiling BrainFuck code
 
