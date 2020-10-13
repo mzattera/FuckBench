@@ -1,1 +1,0 @@
-npp_6502_general.xml has been downloaded from https://github.com/vblank182/6502-npp-syntax
