@@ -156,9 +156,24 @@ Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.htm
  
 ### Compiling 6502 emulator
 
- * ...
+Run `<root>\bin\FB_build_emu.bat` to rebuild the 6502bf emulator (`6502bf.bf`).
 
-## Making the build
+## Making a new release
 
- * Build script
- * Needs Esotope and C compiler to run regression tests
+`<root>\bin\FB_run_tests.bat` runs a battery of tests for FB; in the proces, it also rebuilds FB assets.
+Because of this, it can be used as preparation for a new release. 
+It can also used to run regression tests, enabling only some checks, as explained below.
+
+  1. It will rebuild 6502bf emulator.
+     This can be skipped with `-e` option from command line.
+  2. It will rebuild and execute 6502 functional tests, in order to verify the emulator runs correctly.
+     This can be skipped with `-f` option from command line.
+  3. It will rebuild cc65 libraries.
+     This can be skipped with `-l` option from command line.
+  4. For each sub folder in `<root>\test`, it will compile files contained therein, execute them
+     and compare their output with corresponding `.ref` file, issuing an error when they do not match.
+     This can be skipped with `-t` option from command line.
+
+If all of the above tests ran successfully, FB will be re-built and it is ready for a release.
+
+*Please notice that Python and C compiler must be configured to run regression tests.*
