@@ -7,6 +7,7 @@
 
 -- VERSION 1.0
 -- -----------
+-- THis is the first fully working version of the emulator. Kept here for historical reasons.
 -- In this version execute_opcode naively check IR against all possible opcodes.
 
 

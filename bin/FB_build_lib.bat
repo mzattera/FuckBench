@@ -12,7 +12,8 @@ set "FB_LIB=%FB_HOME%\cc65"
 
 cd "%FB_LIB%"
 if exist *.o del /F /Q *.o
-if exist *.lib del /F /Q *.lib
+if exist 6502bf.lib del /F /Q 6502bf.lib
+if exist zeropage.inc del /F /Q zeropage.inc
 
 copy /Y "%FB_CC65%\lib\none.lib" 6502bf.lib
 copy /Y "%FB_CC65%\asminc\zeropage.inc" .
