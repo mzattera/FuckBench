@@ -27,7 +27,7 @@ echo on
 @if exist %1.out (
 	rem merges 6502bf.bf and %1.out into %1_c.bf
 	echo.
-	java -jar "%FB_BIN%Linker.jar" %1.out %1_c.bf -i "%FB_HOME%\6502bf.bf" %2 %3 %4 %5 %6 %7 %8 %9
+	java -jar "%FB_BIN%Linker.jar" %1.out %1_c.bf -i "%FB_HOME%\6502bf.bf"
 
 	rem compiles %1_c.bf into C code %1_c.c
 	if errorlevel 0 (

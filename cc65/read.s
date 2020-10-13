@@ -43,7 +43,7 @@ L1:
 L2:
 		EMU_GETC		; Read char in accumulator
 		bne		L3
-		lda		#$0A	; replace $00 (nul) with $0A (CR)
+		lda		#$0A	; replace $00 (nul) with $0A (LF)
 
 L3:
         sta     (ptr1),y
@@ -55,7 +55,7 @@ L3:
 
 L4: 
 		cmp		#$0A
-		bne		L1	; exit on newline
+		bne		L1	; exit on newline (LF)
 				
 L5:		
 		;  compute and returns # of bytes read

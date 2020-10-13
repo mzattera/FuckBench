@@ -1,7 +1,7 @@
 This folder contains a set of tests, also used for regression tests at each release.
 
-Each different source file is kept in a separate folder, to avoid confusion between
-original (that is test written by developers) and files generaqted during compilation process
+Each different source file type is kept in a separate folder, to avoid confusion between
+original (that is test written by developers) and files generated during compilation process
 (e.g. when testing a .fbf file, we also generate a .bf file that we do not want to be tested).
 
 `ca65` folder includes a complete functional test for the 6502bf emulator.

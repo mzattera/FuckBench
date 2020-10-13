@@ -1,9 +1,13 @@
-Cleanup pipeline
-
-Fix bin\README.txt
-
-
 Code for building and testing single examples or entire release
+
+Downgrade to Java 8? Update README.md accordingly
+
+Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
+
+put cc65 ZIP in redistr?
+
+Diagram to show compilation process for several languages.
+
 
 
 
@@ -20,6 +24,8 @@ Code to time execution of programs
 
 
 SHR & SHL (?)
+
+BRK loop detection
 
 Usage of P in addressing mode, maybe we can replace using a tmp variable and just increment P
 
