@@ -154,22 +154,7 @@ public class TestRunner {
 //			ok &= runTests(new File(fbTest, "bf"), ".bf", "FB_bf.bat");
 //			ok &= runTests(new File(fbTest, "fbf"), ".fbf", "FB_fbf.bat");
 //			ok &= runTests(new File(fbTest, "6502asm"), ".s", "FB_asm.bat");
-			
-			// Must delete generated *_c.c files first
-			File cFolder = new File(fbTest, "c");
-			for (File f : cFolder.listFiles(new FileFilter() {
-
-				// TODO add 6502 functional test to this folder (and maybe remove other except
-				// those that check SYSCALL
-				@Override
-				public boolean accept(File arg0) {
-					return arg0.getName().toLowerCase().endsWith("_c.c");
-				}
-
-			})) {
-				f.delete();
-			}
-			ok &= runTests(cFolder, ".c", "FB_cl.bat");
+			ok &= runTests(new File(fbTest, "c"), ".c", "FB_cl.bat");
 		}
 
 		return ok;
@@ -188,14 +173,12 @@ public class TestRunner {
 		boolean ok = true;
 
 		for (File f : folder.listFiles(new FileFilter() {
-
-			// TODO add 6502 functional test to this folder (and maybe remove other except
-			// those that check SYSCALL
 			@Override
 			public boolean accept(File arg0) {
-				return arg0.getName().toLowerCase().endsWith(ext);
+				return arg0.getName().toLowerCase().endsWith(ext) &&
+				// Special case for auto-generated .c files
+				!arg0.getName().toLowerCase().endsWith("_c.c");
 			}
-
 		})) {
 			try {
 				System.out.print(f.getName() + ":\t");

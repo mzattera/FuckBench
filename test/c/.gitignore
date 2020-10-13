@@ -1,3 +1,4 @@
 *.bf
 *_c.c
 *.exe
+*.result

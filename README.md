@@ -136,7 +136,7 @@ You can invoke:
 FB_cl f
 ```
 
-to compile `f.c` source file into `f_c.bf` BrainFuck code and corresponding executable Windows file `f.exe`.
+to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 

@@ -31,10 +31,8 @@ echo on
 	java -jar "%FB_BIN%Linker.jar" %1.out %1_c.bf -i "%FB_HOME%\6502bf.bf"
 	del /F /Q %1.out
 
-	rem compiles %1_c.bf into C code %1_c.c
 	if errorlevel 0 (
 		call "%FB_BIN%FB_bf.bat" %1_c
-		if exist %1_c.c del /F /Q %1_c.c
-		if exist %1_c.exe ren %1_c.exe %1.exe
+		if exist %1_c.exe move %1_c.exe %1.exe
 	)	
 )
