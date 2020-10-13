@@ -4,7 +4,7 @@
 
 ; Useful macros
 .include        "..\..\cc65\6502bf.inc"
-fsfggf
+
 ; ---------------------------------------------------------------------------
 ; A little light 6502 housekeeping
 

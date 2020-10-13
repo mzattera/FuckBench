@@ -4,13 +4,13 @@
 
 FuckBench (*FB*) is a set of Windows batch files and tools to compile from several languages into [BrainFuck](https://en.wikipedia.org/wiki/Brainfuck) (*BF*).
 
-Optionally, in addition to creating BF code, FB compiled generated BF code into 
+Optionally, in addition to creating BF code, FB can compile generated BF code into 
 higly optimized C files using the [Esotope](https://github.com/lifthrasiir/esotope-bfc) BF to C compiler.
-If a C compiler is configured, a Windows executable is also created.
+If a C compiler is available, a Windows executable is also created.
 
 Currently, FB supports compiling the following languages to BF:
- * ANSI C (no float support)
- * 6502 Assembler
+ * ANSI C (with some [limitations](https://www.cc65.org/doc/cc65-4.html))
+ * 6502 Assembly
  * [FuckBrainFuck](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck)
  
 ## How does it work?
@@ -136,7 +136,7 @@ You can invoke:
 FB_cl f
 ```
 
-to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f_c.exe`.
+to compile `f.c` source file into `f_c.bf` BrainFuck code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 

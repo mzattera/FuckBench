@@ -1,6 +1,6 @@
 @echo off
 
-rem This compiles %1.c into %1_c.exe
+rem This compiles %1.c into %1.exe
 
 rem In the process it creates:
 rem     %1_c.bf with BrainFuck code.
@@ -17,6 +17,7 @@ if exist %1.out del /F /Q %1.out
 if exist %1_c.bf del /F /Q %1_c.bf
 if exist %1_c.c del /F /Q %1_c.c
 if exist %1_c.exe del /F /Q %1_c.exe
+if exist %1.exe del /F /Q %1.exe
 
 rem compiles %1.c into 6502 code
 echo on
@@ -28,11 +29,12 @@ echo on
 	rem merges 6502bf.bf and %1.out into %1_c.bf
 	echo.
 	java -jar "%FB_BIN%Linker.jar" %1.out %1_c.bf -i "%FB_HOME%\6502bf.bf"
+	del /F /Q %1.out
 
 	rem compiles %1_c.bf into C code %1_c.c
 	if errorlevel 0 (
 		call "%FB_BIN%FB_bf.bat" %1_c
-	)
-	
-	del /F /Q %1.out
+		if exist %1_c.c del /F /Q %1_c.c
+		if exist %1_c.exe ren %1_c.exe %1.exe
+	)	
 )
