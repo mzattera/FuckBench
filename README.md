@@ -140,7 +140,7 @@ to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_cl` will enable maximum optimization.
+Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_cl` will enable some optimization (`-Oir`).
 Please notices that cc65 somehow [differs](https://www.cc65.org/doc/cc65-4.html) from ANSI C.
 
 ## The 6502bf emulator
