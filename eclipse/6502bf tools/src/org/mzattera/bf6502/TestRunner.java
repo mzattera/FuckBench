@@ -7,11 +7,9 @@
  */
 package org.mzattera.bf6502;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -151,9 +149,9 @@ public class TestRunner {
 		if (runTests) {
 			// Run tests in each of test subfolders
 			System.out.println("Running tests in " + fbTest.getCanonicalPath() + "...");
-//			ok &= runTests(new File(fbTest, "bf"), ".bf", "FB_bf.bat");
-//			ok &= runTests(new File(fbTest, "fbf"), ".fbf", "FB_fbf.bat");
-//			ok &= runTests(new File(fbTest, "6502asm"), ".s", "FB_asm.bat");
+			ok &= runTests(new File(fbTest, "bf"), ".bf", "FB_bf.bat");
+			ok &= runTests(new File(fbTest, "fbf"), ".fbf", "FB_fbf.bat");
+			ok &= runTests(new File(fbTest, "6502asm"), ".s", "FB_asm.bat");
 			ok &= runTests(new File(fbTest, "c"), ".c", "FB_cl.bat");
 		}
 
@@ -327,12 +325,12 @@ public class TestRunner {
 			Process p = pb.start();
 
 			// Capture and print output (output from batch file is otherwise lost try
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					System.out.println(line);
-				}
-			}
+//			try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+//				String line = null;
+//				while ((line = br.readLine()) != null) {
+//					System.out.println(line);
+//				}
+//			}
 
 			return p.waitFor();
 		}
