@@ -8,6 +8,7 @@ put cc65 ZIP in redistr?
 
 Diagram to show compilation process for several languages.
 
+flag for test runner for verbose mode (show compilation output)
 
 
 
@@ -29,22 +30,24 @@ BRK loop detection
 
 Usage of P in addressing mode, maybe we can replace using a tmp variable and just increment P
 
-Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
-
-Check FBF code for accessing tables, maybe it's not super efficient?
-
 IF...THEN...ELSE (remove set exception 0)
-
-Separate emu compile batch that automatically switches on or off checks for loops or have 2 version of compiler one w. check disabled and batch files can choose which to use.
 
 
 
 Improved macros for read() & write().
 
-Code to test macros.
+Code to test all macros.
 
-Code to test read() (?) e write() e interrupt from C.
+Code to test read() (?) e write() e interrupt from C & ASM?.
+
+
+
+Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
+
+Check FBF code for accessing tables, maybe it's not super efficient?
 
 
 
 Example for ASM & C (chess? adventure? hunt the wumpus? something recursive?)
+
+Separate emu compile batch that automatically switches on or off checks for loops or have 2 version of compiler one w. check disabled and batch files can choose which to use.
