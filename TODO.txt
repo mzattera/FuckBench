@@ -1,4 +1,13 @@
 
+Improved macros for read() & write().
+
+Code to test all macros (write ?)
+Code to test libraries from C | interrupt >> OK | write >> hello.c OK
+Code to test interrupt from ASM >> OK 
+JSR/JMp/BRA test for loop check
+Code to test unrecognized SYSCALL code
+Code to test BCD mode
+
 Downgrade to Java 8? Update README.md accordingly
 
 Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
@@ -16,20 +25,7 @@ SHR (?)
 
 IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this)
 
-
-
-Improved macros for read() & write().
-
 Macro to print a null terminate string (not inlined)
-
-
-Code to test all macros (write ?)
-Code to test libraries from C | interrupt >> OK | write >> hello.c OK
-Code to test interrupt from ASM >> OK 
-JSR/JMp/BRA test for loop check
-Code to test unrecognized SYSCALL code
-Code to test BCD mode
-
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 

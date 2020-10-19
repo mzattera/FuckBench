@@ -1,13 +1,12 @@
-
-
-*LOOP* detected
-
-P:      $336D   13165
-IR:     $004C   76
-A:      $00F0   240
-X:      $000E   14
-Y:      $00FF   255
-SP:     $00FF   255
-Status: NV-BDIZC
-        11110001
-
+
+
+*LOOP* detected
+
+P:	$336D	13165
+IR:	$004C	76
+A:	$00F0	240
+X:	$000E	14
+Y:	$00FF	255
+SP:	$00FF	255
+Status:	NV-BDIZC
+	11110001
