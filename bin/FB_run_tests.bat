@@ -7,6 +7,5 @@ rem Configuration
 set "FB_BIN=%~dp0%"
 if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
 call "%FB_BIN%FB_config.bat"
-set "FB_HOME=%FB_BIN%.."
 
 java -jar "%FB_BIN%TestRunner.jar" "%FB_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9

@@ -146,6 +146,7 @@ Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.htm
 
  * DEC mode
  * SYSCALLS
+ * Loop detection (for debug JMP/JSR/BRK/brances)
  * ...
   
 ### Changing 6502 emulator
@@ -173,6 +174,7 @@ It can also used to run regression tests, enabling only some checks, as explaine
   4. For each sub folder in `<root>\test`, it will compile files contained therein, execute them
      and compare their output with corresponding `.ref` file, issuing an error when they do not match.
      This can be skipped with `-t` option from command line.
+  5. Providing the `-v` option, will print verbose output to console.
 
 If all of the above tests ran successfully, FB will be re-built and it is ready for a release.
 

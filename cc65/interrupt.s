@@ -12,25 +12,24 @@
 .CODE
 
 ; ---------------------------------------------------------------------------
-; Maskable interrupt (IRQ) service routine
+; Interrupt vectors
 
 _irq_int:  
-		   TSX                    ; Transfer stack pointer to X
-           LDA $100,X             ; Load status register contents
-           AND #$10               ; Isolate B status bit
-           BNE break              ; If B = 1, BRK detected
+	TSX                    	; Transfer stack pointer to X
+	INX						; Increment X so it points to the status register value saved on the stack
+	LDA $100,X             	; Load status register contents
+	AND #$10               	; Isolate B status bit
+	BNE _break              ; If B = 1, BRK detected
 
-; ---------------------------------------------------------------------------
-; IRQ detected, return
-; One should never jump here within the emulator
+	; IRQ detected, one should never jump here within the emulator
 
-irq:   		EMU_PRINTLNS "*IRQ* detected!"
-			JMP stop
+	EMU_PRINTLNS "*IRQ* detected."
+	JMP _stop
 
-; ---------------------------------------------------------------------------
-; BRK detected, stop
-
-break:     	EMU_PRINTLNS "BRK detected."
+_break:  
+	; BRK detected, stop
+	EMU_PRINTLNS "BRK detected."
 			
-stop:		EMU_DUMP
-			EMU_QUIT             
+_stop:
+	EMU_DUMP
+	EMU_QUIT             

@@ -1,0 +1,10 @@
+BRK detected.
+
+P:	$0298	664
+IR:	$0042	66
+A:	$0010	16
+X:	$00FB	251
+Y:	$0000	0
+SP:	$00FA	250
+Status:	NV-BDIZC
+	00110101

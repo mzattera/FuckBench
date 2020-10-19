@@ -1,45 +1,34 @@
-Code for building and testing single examples or entire release
 
 Downgrade to Java 8? Update README.md accordingly
 
 Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
 
-put cc65 ZIP in redistr?
-
 Diagram to show compilation process for several languages.
 
-flag for test runner for verbose mode (show compilation output)
+
+
+b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file
+how to setup Eclipse so you can develop a whole java project (using correct java version and lang classes).
 
 
 
->>>> CHECK IN <<<<<<<
+SHR (?)
 
-
-
-Code to test unknown opcodes.
-
-
-
-Code to time execution of programs
-
-
-
-SHR & SHL (?)
-
-BRK loop detection
-
-Usage of P in addressing mode, maybe we can replace using a tmp variable and just increment P
-
-IF...THEN...ELSE (remove set exception 0)
+IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this)
 
 
 
 Improved macros for read() & write().
 
-Code to test all macros.
+Macro to print a null terminate string (not inlined)
 
-Code to test read() (?) e write() e interrupt from C & ASM?.
 
+Code to test all macros (write ?)
+Code to test libraries from C | interrupt >> OK | write >> hello.c OK
+Code to test interrupt from ASM >> OK 
+JSR/JMp/BRA test for loop check
+Code to test unrecognized SYSCALL code
+Code to test BCD mode
 
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
@@ -51,3 +40,13 @@ Check FBF code for accessing tables, maybe it's not super efficient?
 Example for ASM & C (chess? adventure? hunt the wumpus? something recursive?)
 
 Separate emu compile batch that automatically switches on or off checks for loops or have 2 version of compiler one w. check disabled and batch files can choose which to use.
+
+
+FB_java.bat uses a workaround that fixes issues with cc65 and spaces in path; maybe we can use same approach in FB_cl?
+If this is possible, we can then use the cc65 redistributed with b2fj instead of having to install it
+have FB_Java.bat to use loop instead compiling files one by one, maybe linker can use *.o; if so, update b2fJ as well.
+
+implemnet BCD mode?
+
+Can we move b2fJ to Java 15 removing dependency on 1.8?
+

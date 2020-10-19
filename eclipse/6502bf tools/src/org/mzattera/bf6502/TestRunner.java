@@ -1,15 +1,13 @@
 /**
- * This runs the test suite.
- * Under the test folder, each *.a file will be compiled and executed and its output (stored as *.result file) is compared with content
- * of corresponding *.ref file. The test is considered passed if the two match. A test report is generated afterwards.
- * 
- * ** NOTICE IT MUST BE RUN FROM VISULA STUDIO CONSOLE< NOT FORM ECLIPSE *********
+ * This will rebuild assets and run all available tests.
  */
 package org.mzattera.bf6502;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -49,16 +47,20 @@ public class TestRunner {
 	// Should we run tests in test folder?
 	private boolean runTests = true;
 
-	public TestRunner(File fbHome2, boolean compileEmu2, boolean compileLib2, boolean runFuncTest2, boolean runTests2) {
+	// Should we print output?
+	private boolean verbose = false;
+
+	public TestRunner(File fbHome2, boolean compileEmu2, boolean compileLib2, boolean runFuncTest2, boolean runTests2, boolean verbose2) {
 		fbHome = fbHome2;
 		fbBin = new File(fbHome, "bin");
 		fbTest = new File(fbHome, "test");
-		fb6502Test = new File(fbTest, "cc65");
+		fb6502Test = new File(fbHome, "\\test\\ca65");
 		fbLib = new File(fbHome, "cc65");
 		compileEmu = compileEmu2;
 		compileLib = compileLib2;
 		runFuncTest = runFuncTest2;
 		runTests = runTests2;
+		verbose = verbose2;
 	}
 
 	/**
@@ -78,6 +80,9 @@ public class TestRunner {
 			// Should we run tests in test folder?
 			boolean runTests = true;
 
+			// Should we print output?
+			boolean verbose = false;
+
 			if (args.length < 1) {
 				throw new IllegalArgumentException("Too few parameters.");
 			}
@@ -90,11 +95,13 @@ public class TestRunner {
 					runFuncTest = false;
 				else if (args[i].equals("-t"))
 					runTests = false;
+				else if (args[i].equals("-v"))
+					verbose = true;
 				else
 					throw new IllegalArgumentException("Unrecognized parameter: " + args[i]);
 			}
 
-			TestRunner instance = new TestRunner(new File(args[0]), compileEmu, compileLib, runFuncTest, runTests);
+			TestRunner instance = new TestRunner(new File(args[0]), compileEmu, compileLib, runFuncTest, runTests, verbose);
 			if (instance.execute()) {
 				System.out.println("Success.");
 			} else {
@@ -124,10 +131,11 @@ public class TestRunner {
 		if (runFuncTest) {
 			// Build and run 6502 functional test
 			File ft = new File(fb6502Test, "6502_functional_test.exe");
-			System.out.println("Rebuilding " + ft.getCanonicalPath() + " and running 6502 funtional test...");
+			System.out.println("Rebuilding " + ft.getCanonicalPath() + " funtional test...");
 			executeCmd("FB_build_6502test.bat", "6502_functional_test");
 			if (!CheckFile.isOK(ft))
 				throw new Exception("6502 functional test did not build properly.");
+			System.out.println("\tRunning 6502 funtional test...");
 			if (!test(ft)) {
 				throw new Exception("6502 functional test did not execute properly.");
 			}
@@ -320,19 +328,20 @@ public class TestRunner {
 		if (output != null) {
 			// Redirect output to file
 			pb.redirectOutput(Redirect.to(output));
-			return pb.start().waitFor();
-		} else {
+		} else if (verbose) {
 			Process p = pb.start();
 
 			// Capture and print output (output from batch file is otherwise lost try
-//			try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-//				String line = null;
-//				while ((line = br.readLine()) != null) {
-//					System.out.println(line);
-//				}
-//			}
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
+			}
 
 			return p.waitFor();
 		}
+
+		return pb.start().waitFor();
 	}
 }

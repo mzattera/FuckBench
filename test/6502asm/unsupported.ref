@@ -1,0 +1,13 @@
+Hitting an unsupported opcode
+
+*ERROR* Unrecognized opcode:	2
+
+
+P:	$022E	558
+IR:	$0002	2
+A:	$0002	2
+X:	$00FF	255
+Y:	$0000	0
+SP:	$00FF	255
+Status:	NV-BDIZC
+	00110000

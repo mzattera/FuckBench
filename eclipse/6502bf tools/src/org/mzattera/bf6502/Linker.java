@@ -26,13 +26,13 @@ public class Linker {
 	// Name of emulator source file (without extension)
 	public final static String CODE_NAME = "6502bf";
 
-	// Cells on the BF tape to skip before finding 6502 memory
+	// Cells on the BF tape to skip before finding 6502 memory (start of mem[] array on tape)
 	public final static int SKIP = 118;
 
 	// Start address of 6502 program
 	public final static int START_ADDRESS = 0x0200;
 
-	// Address where to load binary inside 6502
+	// Address where to load binary inside 6502 memory
 	public final static int LOAD_ADDRESS = 0x0200;
 
 	public static final int RESET_VECTOR = 0xfffc;

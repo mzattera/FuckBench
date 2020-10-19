@@ -6,8 +6,6 @@ rem Configuration
 set "FB_BIN=%~dp0%"
 if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
 call "%FB_BIN%FB_config.bat"
-set "FB_HOME=%FB_BIN%.."
-set "FB_FT=%FB_HOME%\test\ca65"
 
 cd %FB_FT%
 if exist %1.bin del /F /Q %1.bin

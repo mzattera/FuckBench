@@ -336,64 +336,65 @@ set CONST_FF00 65280
   line
 #endblock
 
--- ------------------
--- LOAD OPERAND
--- ------------------
+-- --------------------
+-- LOAD OPERAND ADDRESS
+-- --------------------
 
 -- Local variables
 #dim _addrv_0 _addrv_1
 
--- Below blocks load the operand_addr variable, based on corresponding 6502 indexing mode
+-- Below blocks set the operand_addr variable, based on corresponding 6502 indexing mode.
+-- P (program counter) is also incremented accordingly.
 
 #block addr_immediate
+  inc P 1
   copy P operand_addr
-  inc operand_addr 1
+  inc P 1
 #endblock
 
 #block addr_absolute
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 _addrv_1
-  inc _addrv_0 1
-  rtable mem _addrv_0 operand_addr
+  inc P 1
+  rtable mem P _addrv_1
+  inc P 1
+  rtable mem P operand_addr
   SHL_8 operand_addr operand_addr
   add operand_addr _addrv_1 operand_addr
+  inc P 1
 #endblock
 
 #block addr_zero_page
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 operand_addr
+  inc P 1
+  rtable mem P operand_addr
+  inc P 1
 #endblock
 
 -- Pass X or Y to be used as index
 #block addr_absolute_indexed _lai_XY
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 _addrv_1
-  inc _addrv_0 1
-  rtable mem _addrv_0 operand_addr
+  inc P 1
+  rtable mem P _addrv_1
+  inc P 1
+  rtable mem P operand_addr
   SHL_8 operand_addr operand_addr
   add operand_addr _addrv_1 operand_addr
   add operand_addr _lai_XY operand_addr
+  inc P 1
 #endblock
 
 -- Pass X or Y to be used as index
 #block addr_zero_page_indexed _lzpi_XY
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 operand_addr
+  inc P 1
+  rtable mem P operand_addr
   add operand_addr _lzpi_XY operand_addr
   mod operand_addr 256 operand_addr
+  inc P 1
 #endblock
 
 #block addr_indexed_indirect_X
   -- In indexed indirect addressing (referred to as (Indirect, X)),
   -- the second byte of the instruction is added to the contents of the X index register,
   -- discarding the carry.
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 _addrv_0
+  inc P 1
+  rtable mem P _addrv_0
   add _addrv_0 X _addrv_0
   mod _addrv_0 256 _addrv_0
   
@@ -409,14 +410,15 @@ set CONST_FF00 65280
   rtable mem _addrv_0 operand_addr
   SHL_8 operand_addr operand_addr
   add operand_addr _addrv_1 operand_addr
+
+  inc P 1
 #endblock
 
 #block addr_indirect_indexed_Y
   -- In indirect indexed addressing (referred to as (Indirect), Y), the second byte
   -- of the instruction points to a memory location in page zero.
-  copy P _addrv_0
-  inc _addrv_0 1
-  rtable mem _addrv_0 _addrv_0
+  inc P 1
+  rtable mem P _addrv_0
   
   -- The contents of this memory location
   -- is added to the contents of the Y index register, the result being the low order eight bits of the
@@ -431,7 +433,10 @@ set CONST_FF00 65280
   SHL_8 operand_addr operand_addr
   add operand_addr _addrv_1 operand_addr
   add operand_addr Y operand_addr
+
+  inc P 1
 #endblock
+
 
 -- ------------------
 -- STATUS & STACK
@@ -468,42 +473,37 @@ set CONST_FF00 65280
 #block set_flags
   copy status _stsv_1
   set C_flag 0
-  mod _stsv_1 2 _stsv_0
+  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
   ifnoteq _stsv_0 0
     set C_flag 1
   end
-  div _stsv_1 2 _stsv_1
   
   set Z_flag 0
-  mod _stsv_1 2 _stsv_0
+  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
   ifnoteq _stsv_0 0
     set Z_flag 1
   end
-  div _stsv_1 2 _stsv_1
   
   set I_flag 0
-  mod _stsv_1 2 _stsv_0
+  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
   ifnoteq _stsv_0 0
     set I_flag 1
   end
-  div _stsv_1 2 _stsv_1
   
   set D_flag 0
   mod _stsv_1 2 _stsv_0
   ifnoteq _stsv_0 0
     set D_flag 1
   end
-  div _stsv_1 2 _stsv_1
   
   -- Bit 5 and B flag are ignored
-  div _stsv_1 4 _stsv_1
+  div _stsv_1 8 _stsv_1
   
   set V_flag 0
-  mod _stsv_1 2 _stsv_0
+  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
   ifnoteq _stsv_0 0
     set V_flag 1
   end
-  div _stsv_1 2 _stsv_1
   
   set N_flag 0
   mod _stsv_1 2 _stsv_0
@@ -579,7 +579,16 @@ set CONST_FF00 65280
 
 -- Read instruction pointed by the program counter into IR
 #block read_opcode
+  
+--   msg P: 
+--   out16 P
+
   rtable mem P IR
+
+--   space
+--   msg IR: 
+--   out_ln16 IR
+  
 #endblock
 
 -- If a critical error happened, handle it
@@ -691,49 +700,41 @@ set CONST_FF00 65280
 #block LDA_imm
   addr_immediate
   execute_LD A
-  inc P 2
 #endblock
 
 #block LDA_zp
   addr_zero_page
   execute_LD A
-  inc P 2
 #endblock
 
 #block LDA_zp_x
   addr_zero_page_indexed X
   execute_LD A
-  inc P 2
 #endblock
 
 #block LDA_abs
   addr_absolute
   execute_LD A
-  inc P 3
 #endblock
 
 #block LDA_abs_x
   addr_absolute_indexed X
   execute_LD A
-  inc P 3
 #endblock
 
 #block LDA_abs_y
   addr_absolute_indexed Y
   execute_LD A
-  inc P 3
 #endblock
 
 #block LDA_(ind_x)
   addr_indexed_indirect_X
   execute_LD A
-  inc P 2
 #endblock
 
 #block LDA_(ind)_y
   addr_indirect_indexed_Y
   execute_LD A
-  inc P 2
 #endblock
 
 #block execute_LD _el_reg
@@ -773,31 +774,26 @@ set CONST_FF00 65280
 #block LDX_imm
   addr_immediate
   execute_LD X
-  inc P 2
 #endblock
 
 #block LDX_zp
   addr_zero_page
   execute_LD X
-  inc P 2
 #endblock
 
 #block LDX_zp_y
   addr_zero_page_indexed Y
   execute_LD X
-  inc P 2
 #endblock
 
 #block LDX_abs
   addr_absolute
   execute_LD X
-  inc P 3
 #endblock
 
 #block LDX_abs_y
   addr_absolute_indexed Y
   execute_LD X
-  inc P 3
 #endblock
 
 -- LDY (LoaD Y register)
@@ -831,31 +827,26 @@ set CONST_FF00 65280
 #block LDY_imm
   addr_immediate
   execute_LD Y
-  inc P 2
 #endblock
 
 #block LDY_zp
   addr_zero_page
   execute_LD Y
-  inc P 2
 #endblock
 
 #block LDY_zp_x
   addr_zero_page_indexed X
   execute_LD Y
-  inc P 2
 #endblock
 
 #block LDY_abs
   addr_absolute
   execute_LD Y
-  inc P 3
 #endblock
 
 #block LDY_abs_x
   addr_absolute_indexed X
   execute_LD Y
-  inc P 3
 #endblock
 
 -- STA (STore Accumulator)
@@ -897,43 +888,36 @@ set CONST_FF00 65280
 #block STA_zp
   addr_zero_page
   execute_ST A
-  inc P 2
 #endblock
 
 #block STA_zp_x
   addr_zero_page_indexed X
   execute_ST A
-  inc P 2
 #endblock
 
 #block STA_abs
   addr_absolute
   execute_ST A
-  inc P 3
 #endblock
 
 #block STA_abs_x
   addr_absolute_indexed X
   execute_ST A
-  inc P 3
 #endblock
 
 #block STA_abs_y
   addr_absolute_indexed Y
   execute_ST A
-  inc P 3
 #endblock
 
 #block STA_(ind_x)
   addr_indexed_indirect_X
   execute_ST A
-  inc P 2
 #endblock
 
 #block STA_(ind)_y
   addr_indirect_indexed_Y
   execute_ST A
-  inc P 2
 #endblock
 
 #block execute_ST _es_reg
@@ -963,19 +947,16 @@ set CONST_FF00 65280
 #block STX_zp
   addr_zero_page
   execute_ST X
-  inc P 2
 #endblock
 
 #block STX_zp_y
   addr_zero_page_indexed Y
   execute_ST X
-  inc P 2
 #endblock
 
 #block STX_abs
   addr_absolute
   execute_ST X
-  inc P 3
 #endblock
 
 
@@ -1001,19 +982,16 @@ set CONST_FF00 65280
 #block STY_zp
   addr_zero_page
   execute_ST Y
-  inc P 2
 #endblock
 
 #block STY_zp_x
   addr_zero_page_indexed X
   execute_ST Y
-  inc P 2
 #endblock
 
 #block STY_abs
   addr_absolute
   execute_ST Y
-  inc P 3
 #endblock
 
 -- ADC (ADd with Carry)
@@ -1058,49 +1036,41 @@ set CONST_FF00 65280
 #block ADC_imm
   addr_immediate
   execute_ADC
-  inc P 2
 #endblock
 
 #block ADC_zp
   addr_zero_page
   execute_ADC
-  inc P 2
 #endblock
 
 #block ADC_zp_x
   addr_zero_page_indexed X
   execute_ADC
-  inc P 2
 #endblock
 
 #block ADC_abs
   addr_absolute
   execute_ADC
-  inc P 3
 #endblock
 
 #block ADC_abs_x
   addr_absolute_indexed X
   execute_ADC
-  inc P 3
 #endblock
 
 #block ADC_abs_y
   addr_absolute_indexed Y
   execute_ADC
-  inc P 3
 #endblock
 
 #block ADC_(ind_x)
   addr_indexed_indirect_X
   execute_ADC
-  inc P 2
 #endblock
 
 #block ADC_(ind)_y
   addr_indirect_indexed_Y
   execute_ADC
-  inc P 2
 #endblock
 
 #block execute_ADC
@@ -1199,49 +1169,41 @@ set CONST_FF00 65280
 #block SBC_imm
   addr_immediate
   execute_SBC
-  inc P 2
 #endblock
 
 #block SBC_zp
   addr_zero_page
   execute_SBC
-  inc P 2
 #endblock
 
 #block SBC_zp_x
   addr_zero_page_indexed X
   execute_SBC
-  inc P 2
 #endblock
 
 #block SBC_abs
   addr_absolute
   execute_SBC
-  inc P 3
 #endblock
 
 #block SBC_abs_x
   addr_absolute_indexed X
   execute_SBC
-  inc P 3
 #endblock
 
 #block SBC_abs_y
   addr_absolute_indexed Y
   execute_SBC
-  inc P 3
 #endblock
 
 #block SBC_(ind_x)
   addr_indexed_indirect_X
   execute_SBC
-  inc P 2
 #endblock
 
 #block SBC_(ind)_y
   addr_indirect_indexed_Y
   execute_SBC
-  inc P 2
 #endblock
 
 #block execute_SBC
@@ -1292,25 +1254,21 @@ set CONST_FF00 65280
 #block INC_zp
   addr_zero_page
   execute_INC
-  inc P 2
 #endblock
 
 #block INC_zp_x
   addr_zero_page_indexed X
   execute_INC
-  inc P 2
 #endblock
 
 #block INC_abs
   addr_absolute
   execute_INC
-  inc P 3
 #endblock
 
 #block INC_abs_x
   addr_absolute_indexed X
   execute_INC
-  inc P 3
 #endblock
 
 #block INX_implied
@@ -1373,25 +1331,21 @@ set CONST_FF00 65280
 #block DEC_zp
   addr_zero_page
   execute_DEC
-  inc P 2
 #endblock
 
 #block DEC_zp_x
   addr_zero_page_indexed X
   execute_DEC
-  inc P 2
 #endblock
 
 #block DEC_abs
   addr_absolute
   execute_DEC
-  inc P 3
 #endblock
 
 #block DEC_abs_x
   addr_absolute_indexed X
   execute_DEC
-  inc P 3
 #endblock
 
 #block DEX_implied
@@ -1460,49 +1414,41 @@ set CONST_FF00 65280
 #block AND_imm
   addr_immediate
   execute_AND
-  inc P 2
 #endblock
 
 #block AND_zp
   addr_zero_page
   execute_AND
-  inc P 2
 #endblock
 
 #block AND_zp_x
   addr_zero_page_indexed X
   execute_AND
-  inc P 2
 #endblock
 
 #block AND_abs
   addr_absolute
   execute_AND
-  inc P 3
 #endblock
 
 #block AND_abs_x
   addr_absolute_indexed X
   execute_AND
-  inc P 3
 #endblock
 
 #block AND_abs_y
   addr_absolute_indexed Y
   execute_AND
-  inc P 3
 #endblock
 
 #block AND_(ind_x)
   addr_indexed_indirect_X
   execute_AND
-  inc P 2
 #endblock
 
 #block AND_(ind)_y
   addr_indirect_indexed_Y
   execute_AND
-  inc P 2
 #endblock
 
 #block execute_AND
@@ -1555,49 +1501,41 @@ set CONST_FF00 65280
 #block ORA_imm
   addr_immediate
   execute_ORA
-  inc P 2
 #endblock
 
 #block ORA_zp
   addr_zero_page
   execute_ORA
-  inc P 2
 #endblock
 
 #block ORA_zp_x
   addr_zero_page_indexed X
   execute_ORA
-  inc P 2
 #endblock
 
 #block ORA_abs
   addr_absolute
   execute_ORA
-  inc P 3
 #endblock
 
 #block ORA_abs_x
   addr_absolute_indexed X
   execute_ORA
-  inc P 3
 #endblock
 
 #block ORA_abs_y
   addr_absolute_indexed Y
   execute_ORA
-  inc P 3
 #endblock
 
 #block ORA_(ind_x)
   addr_indexed_indirect_X
   execute_ORA
-  inc P 2
 #endblock
 
 #block ORA_(ind)_y
   addr_indirect_indexed_Y
   execute_ORA
-  inc P 2
 #endblock
 
 #block execute_ORA
@@ -1650,49 +1588,41 @@ set CONST_FF00 65280
 #block EOR_imm
   addr_immediate
   execute_EOR
-  inc P 2
 #endblock
 
 #block EOR_zp
   addr_zero_page
   execute_EOR
-  inc P 2
 #endblock
 
 #block EOR_zp_x
   addr_zero_page_indexed X
   execute_EOR
-  inc P 2
 #endblock
 
 #block EOR_abs
   addr_absolute
   execute_EOR
-  inc P 3
 #endblock
 
 #block EOR_abs_x
   addr_absolute_indexed X
   execute_EOR
-  inc P 3
 #endblock
 
 #block EOR_abs_y
   addr_absolute_indexed Y
   execute_EOR
-  inc P 3
 #endblock
 
 #block EOR_(ind_x)
   addr_indexed_indirect_X
   execute_EOR
-  inc P 2
 #endblock
 
 #block EOR_(ind)_y
   addr_indirect_indexed_Y
   execute_EOR
-  inc P 2
 #endblock
 
 #block execute_EOR
@@ -1863,8 +1793,9 @@ set CONST_FF00 65280
   -- Infinite loop check
   copy P tmp4
   dec tmp4 2
-  
-  addr_immediate
+
+  copy P operand_addr
+  inc operand_addr 1
   rtable mem operand_addr tmp0
   comp tmp0 127 tmp1
   ifeq tmp1 0
@@ -1921,49 +1852,41 @@ set CONST_FF00 65280
 #block CMP_imm
   addr_immediate
   execute_CMP A
-  inc P 2
 #endblock
 
 #block CMP_zp
   addr_zero_page
   execute_CMP A
-  inc P 2
 #endblock
 
 #block CMP_zp_x
   addr_zero_page_indexed X
   execute_CMP A
-  inc P 2
 #endblock
 
 #block CMP_abs
   addr_absolute
   execute_CMP A
-  inc P 3
 #endblock
 
 #block CMP_abs_x
   addr_absolute_indexed X
   execute_CMP A
-  inc P 3
 #endblock
 
 #block CMP_abs_y
   addr_absolute_indexed Y
   execute_CMP A
-  inc P 3
 #endblock
 
 #block CMP_(ind_x)
   addr_indexed_indirect_X
   execute_CMP A
-  inc P 2
 #endblock
 
 #block CMP_(ind)_y
   addr_indirect_indexed_Y
   execute_CMP A
-  inc P 2
 #endblock
 
 #block execute_CMP _ec_reg
@@ -2007,19 +1930,16 @@ set CONST_FF00 65280
 #block CPX_imm
   addr_immediate
   execute_CMP X
-  inc P 2
 #endblock
 
 #block CPX_zp
   addr_zero_page
   execute_CMP X
-  inc P 2
 #endblock
 
 #block CPX_abs
   addr_absolute
   execute_CMP X
-  inc P 3
 #endblock
 
 -- CPY (ComPare Y register)
@@ -2044,19 +1964,16 @@ set CONST_FF00 65280
 #block CPY_imm
   addr_immediate
   execute_CMP Y
-  inc P 2
 #endblock
 
 #block CPY_zp
   addr_zero_page
   execute_CMP Y
-  inc P 2
 #endblock
 
 #block CPY_abs
   addr_absolute
   execute_CMP Y
-  inc P 3
 #endblock
 
 -- BIT (test BITs)
@@ -2077,13 +1994,11 @@ set CONST_FF00 65280
 #block BIT_zp
   addr_zero_page
   execute_BIT
-  inc P 2
 #endblock
 
 #block BIT_abs
   addr_absolute
   execute_BIT
-  inc P 3
 #endblock
 
 #block execute_BIT
@@ -2132,6 +2047,7 @@ set CONST_FF00 65280
     ASL_abs_x
   end
 #endblock
+
 #block ASL_accum
   execute_ASL A
   inc P 1
@@ -2142,7 +2058,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ASL tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ASL_zp_x
@@ -2150,7 +2065,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ASL tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ASL_abs
@@ -2158,7 +2072,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ASL tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block ASL_abs_x
@@ -2166,7 +2079,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ASL tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block execute_ASL _asl_v
@@ -2220,7 +2132,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_LSR tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block LSR_zp_x
@@ -2228,7 +2139,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_LSR tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block LSR_abs
@@ -2236,7 +2146,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_LSR tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block LSR_abs_x
@@ -2244,7 +2153,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_LSR tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block execute_LSR _lsr_v
@@ -2292,7 +2200,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROL tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ROL_zp_x
@@ -2300,7 +2207,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROL tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ROL_abs
@@ -2308,7 +2214,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROL tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block ROL_abs_x
@@ -2316,7 +2221,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROL tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block execute_ROL _rol_v
@@ -2371,7 +2275,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROR tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ROR_zp_x
@@ -2379,7 +2282,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROR tmp0
   wtable mem operand_addr tmp0
-  inc P 2
 #endblock
 
 #block ROR_abs
@@ -2387,7 +2289,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROR tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block ROR_abs_x
@@ -2395,7 +2296,6 @@ set CONST_FF00 65280
   rtable mem operand_addr tmp0
   execute_ROR tmp0
   wtable mem operand_addr tmp0
-  inc P 3
 #endblock
 
 #block execute_ROR _ror_v
@@ -2553,7 +2453,7 @@ set CONST_FF00 65280
   copy P tmp4
   
   addr_absolute
-  inc P 2
+  dec P 1
   divmod P CONST_256 tmp0 tmp1
   push_stack tmp0
   push_stack tmp1
@@ -2710,18 +2610,26 @@ set CONST_FF00 65280
 #endblock
 
 #block BRK_implied
-  inc P 2
-  divmod P CONST_256 tmp0 tmp1
-  push_stack tmp0
-  push_stack tmp1
-  set_status
-  push_stack status
-  set I_flag 1
-  rtable mem 65535 P
-  SHL_8 P P
-  rtable mem 65534 tmp0
-  add P tmp0 P
-  set exception 0
+	-- Infinite loop check
+	copy P tmp4
+
+	inc P 2
+	divmod P CONST_256 tmp0 tmp1
+	push_stack tmp0
+	push_stack tmp1
+	set_status
+	push_stack status
+	set I_flag 1
+	rtable mem 65535 P 
+	SHL_8 P P
+	rtable mem 65534 tmp0
+	add P tmp0 P 
+	set exception 0
+		
+	-- Infinite loop check
+	ifeq P tmp4
+		set exception 4
+	end
 #endblock
 
 -- The below block uses the illegal opcode $42 to get access to BrainFuck functionalities from assembler.
@@ -2746,12 +2654,14 @@ set CONST_FF00 65280
     inc P 1
     set exception 0
   end
+  
   -- 16 print the character coresponding to the ASCII value in the accumulator
   ifeq tmp0 16
     print A
     inc P 1
     set exception 0
   end
+  
   -- 17 reads a character into the accumulator; updates Z flag!!!
   ifeq tmp0 17
     read A
@@ -2759,6 +2669,7 @@ set CONST_FF00 65280
     inc P 1
     set exception 0
   end
+  
   -- 18 prints null terminated string following opcode
   ifeq tmp0 18
     inc P 1
@@ -2771,16 +2682,17 @@ set CONST_FF00 65280
     inc P 1
     set exception 0
   end
-  -- 19 prints hex byte value (absolute adderssing)
+  
+  -- 19 prints hex byte value (absolute addressing)
   -- The word following the SYSCALL opcode  used as a pointer to a memory cell whose content will be printed.
   ifeq tmp0 19
     addr_absolute
     rtable mem operand_addr tmp0
     out16 tmp0
-    inc P 3
     set exception 0
   end
-  -- 20 prints hex word value (absolute adderssing)
+  
+  -- 20 prints hex word value (absolute addressing)
   -- The word following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
   ifeq tmp0 20
     addr_absolute
@@ -2790,20 +2702,20 @@ set CONST_FF00 65280
     SHL_8 tmp1 tmp1
     add tmp1 tmp0 tmp0
     out16 tmp0
-    inc P 3
     set exception 0
   end
-  -- 21 prints hex byte value (zeropage adderssing)
-  -- The byte following the SYSCALL opcode is used as a pointer to a memory cell whose content will be printed.
+  
+  -- 21 prints hex byte value (zeropage addressing)
+  -- The byte following the SYSCALL opcode is used as a pointer to a zeropage memory cell whose content will be printed.
   ifeq tmp0 21
     addr_zero_page
     rtable mem operand_addr tmp0
     out16 tmp0
-    inc P 2
     set exception 0
   end
-  -- 22 prints hex word value (zeropage adderssing)
-  -- The byte following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
+  
+  -- 22 prints hex word value (zeropage addressing)
+  -- The byte following the SYSCALL opcode is used as a pointer to a word in zeropage (LO byte, HI byte) whose content will be printed.
   ifeq tmp0 22
     addr_zero_page
     rtable mem operand_addr tmp0
@@ -2812,15 +2724,91 @@ set CONST_FF00 65280
     SHL_8 tmp1 tmp1
     add tmp1 tmp0 tmp0
     out16 tmp0
-    inc P 2
     set exception 0
   end
-  
-  -- TODO implement printing string given its pointer (no string inlining)
   
   -- 32 quit emulator
   ifeq tmp0 32
     set running FALSE
+    set exception 0
+  end
+  
+  -- 40 Writes a string as required by cc65 libraries.
+  -- The first byte following the SYSCALL opcode points to a zeropage location where a pointer to a memory buffer (LO byte, HI byte) is stored.
+  -- The buffer contains a string.
+  -- A & X must contain the number of characted in the buffer (LO & HI bytes respectively). THESE MUST NOT BE CHANGED.
+  -- This prints buffer contents.
+  ifeq tmp0 40
+  
+	-- the pointer goes in tmp0
+    addr_zero_page
+    rtable mem operand_addr tmp0
+    inc operand_addr 1
+    rtable mem operand_addr tmp1
+    SHL_8 tmp1 tmp1
+    add tmp1 tmp0 tmp0
+	
+	-- the address of last char+1 goes in tmp1
+	copy X tmp1
+    SHL_8 tmp1 tmp1
+	add tmp1 A tmp1
+	add tmp1 tmp0 tmp1
+	
+	uneq tmp0 tmp1
+		rtable mem tmp0 tmp2
+		print tmp2
+		inc tmp0 1
+	end
+
+    set exception 0
+  end
+  
+  -- 41 Reads a string as required by cc65 libraries.
+  -- The first byte following the SYSCALL opcode points to a zeropage location where a pointer to a memory buffer (LO byte, HI byte) is stored.
+  -- The buffer will store a string being read.
+  -- A & X must contain the maximum number of characted in the buffer (LO & HI bytes respectively).
+  -- This reads characters from input until desired count is reached or LF ($0A) is entered. Notice that $00 if found, will be replaced with $0A.
+  -- Actual number of characters read is returned in A & X (LO & HI bytes respectively).
+  ifeq tmp0 41
+  
+	-- the pointer goes in tmp0
+    addr_zero_page
+    rtable mem operand_addr tmp0
+    inc operand_addr 1
+    rtable mem operand_addr tmp1
+    SHL_8 tmp1 tmp1
+    add tmp1 tmp0 tmp0
+	
+	-- max chars goes in tmp1
+	copy X tmp1
+    SHL_8 tmp1 tmp1
+	add tmp1 A tmp1
+
+	-- # chars read
+	set tmp2 0
+	-- exit flag
+	set tmp3 false
+
+	uneq tmp3 true
+		read tmp4
+		ifeq tmp4 0
+			set tmp4 10
+		end
+		
+		wtable mem tmp0 tmp4
+		inc tmp0 1
+		
+		inc tmp2 1
+		ifeq tmp2 tmp1
+			set tmp3 true
+		end
+		ifeq tmp4 10
+			set tmp3 true
+		end
+	end
+
+	divmod tmp2 CONST_256 X A
+	
     set exception 0
   end
 #endblock

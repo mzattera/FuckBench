@@ -1,0 +1,109 @@
+<!--
+  ============================================================================
+  Buildfile for building b2fJ standard class libraries & jtools (TinyVM tools)
+  
+  use "clean" task to cleanup afterwards, if desired.
+  ============================================================================
+-->
+<project name="b2fJ libraries" default="build" basedir=".">
+
+  <!-- Setting up the global properties for the build -->
+  <property environment="env"/>
+  <property name="b2fJ.root" value="${basedir}/../.."/>
+  <property name="distr" value="${b2fJ.root}/distr"/>
+  <property name="3rdparty.libs" value="${distr}/redistr/lib" />
+  <property name="lib" value="${distr}/lib"/>
+  <property name="src" value="${distr}/src"/>
+  <property name="javasrc" value="${src}/java"/>
+  <property name="jvmsrc" value="${src}/javavm"/>
+  <property name="build.tmp" value="${distr}/build"/>
+
+  <target name="build" depends ="jtools.jar,classes.jar"/>
+
+  <!-- cleans up all generated suff, as preparation for the build -->
+  <target name="prepare">
+    <!-- delete generated files -->
+    <delete file="${javasrc}/tools/js/tinyvm/SpecialClassConstants.java"/>
+    <delete file="${javasrc}/tools/js/tinyvm/SpecialSignatureConstants.java"/>
+    <delete file="${jvmsrc}/specialclasses.h"/>
+    <delete file="${jvmsrc}/specialsignatures.h"/>
+    <delete file="${jvmsrc}/version.h"/>
+    <delete file="${lib}/classes.jar"/>
+    <delete file="${lib}/jtools.jar"/>
+    <!-- delete compiled and generated artifacts -->
+    <delete>
+      <fileset dir="${src}">
+        <include name="**/*.o"/>
+        <include name="**/*.class"/>
+        <include name="**/*.prg"/>
+      </fileset>
+    </delete>
+    <!-- initializes (temp) build folder -->
+    <delete dir="${build.tmp}"/>
+    <mkdir dir="${build.tmp}" />
+  </target>
+
+  <!-- creates classes.jar -->
+  <target name="classes.jar" depends ="prepare">
+    <mkdir dir="${build.tmp}/classes"/>
+    <javac 
+		includeantruntime="false" 
+		srcdir="${javasrc}/classes" 
+		destdir="${build.tmp}/classes" 
+		fork="yes" 
+		optimize="on" 
+		debug="on" 
+		release="8"
+	/>
+    <jar destfile="${lib}/classes.jar" basedir="${build.tmp}/classes" update="false"/>
+  </target>
+
+  <!-- creates jtools.jar -->
+  <target name="jtools.jar" depends ="prepare">
+    <mkdir dir="${build.tmp}/tools"/>
+    <!-- generate constants first -->
+    <javac 
+		includeantruntime="false" 
+		srcdir="${javasrc}/tools" 
+		destdir="${build.tmp}/tools" 
+		fork="yes" 
+		optimize="on" 
+		debug="on" 
+		release="8"
+		includes="**/GenerateConstants.java"
+	>
+    </javac>
+    <java classpath="${build.tmp}/tools" classname="js.tinyvm.GenerateConstants">
+      <sysproperty key="tinyvm.home" value="${src}"/>
+    </java>
+    <!-- generate tools -->
+    <javac 
+		includeantruntime="false" 
+		srcdir="${javasrc}/tools" 
+		destdir="${build.tmp}/tools" 
+		fork="yes" 
+		optimize="on" 
+		debug="on" 
+		release="8"
+	>
+      <classpath location="${3rdparty.libs}/commons-cli-1.0.jar"/>
+      <classpath location="${3rdparty.libs}/bcel-5.1.jar"/>
+    </javac>
+    <jar destfile="${lib}/jtools.jar" basedir="${build.tmp}/tools" update="false">
+    </jar>
+  </target>
+
+  <!-- cleans the mess afterwards (meant to be called from outside) -->
+  <target name="clean" description="clean up all generated files">
+    <!-- delete compiled and generated artifacts -->
+    <delete>
+      <fileset dir="${src}">
+        <include name="**/*.o"/>
+        <include name="**/*.class"/>
+        <include name="**/*.prg"/>
+      </fileset>
+    </delete>
+    <!-- delete (temp) build folder -->
+    <delete dir="${build.tmp}"/>
+  </target>
+</project>

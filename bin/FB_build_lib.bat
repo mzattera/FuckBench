@@ -7,10 +7,8 @@ rem Configuration
 set "FB_BIN=%~dp0%"
 if not "%FB_BIN:~-1%"=="\" set "FB_BIN=%FB_BIN%\"
 call "%FB_BIN%FB_config.bat"
-set "FB_HOME=%FB_BIN%.."
-set "FB_LIB=%FB_HOME%\cc65"
 
-cd "%FB_LIB%"
+cd "%FB_CLIB%"
 if exist *.o del /F /Q *.o
 if exist 6502bf.lib del /F /Q 6502bf.lib
 if exist zeropage.inc del /F /Q zeropage.inc
