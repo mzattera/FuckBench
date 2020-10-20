@@ -1,23 +1,23 @@
 
-Improved macros for read() & write().
-
-Code to test all macros (write ?)
+Code to test all macros (read ?)
 Code to test libraries from C | interrupt >> OK | write >> hello.c OK
 Code to test interrupt from ASM >> OK 
 JSR/JMp/BRA test for loop check
 Code to test unrecognized SYSCALL code
 Code to test BCD mode
 
+
+First working FB_java.bat
+
+b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file
+how to setup Eclipse so you can develop a whole java project (using correct java version and lang classes).
+
+
 Downgrade to Java 8? Update README.md accordingly
 
 Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
 
 Diagram to show compilation process for several languages.
-
-
-
-b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file
-how to setup Eclipse so you can develop a whole java project (using correct java version and lang classes).
 
 
 
@@ -29,11 +29,13 @@ Macro to print a null terminate string (not inlined)
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
+is mod X 255 faster than AND X 255? -> check siumilar stuff.
+
 Check FBF code for accessing tables, maybe it's not super efficient?
 
 
 
-Example for ASM & C (chess? adventure? hunt the wumpus? something recursive?)
+Example for ASM & C & Java (chess? adventure? hunt the wumpus? something recursive?)
 
 Separate emu compile batch that automatically switches on or off checks for loops or have 2 version of compiler one w. check disabled and batch files can choose which to use.
 

@@ -73,23 +73,13 @@
 .endmacro
 
 ; 40 Writes a string as required by cc65 libraries.
-; The first byte following the SYSCALL opcode points to a zeropage location where a pointer to a memory buffer (LO byte, HI byte) is stored.
-; The buffer contains a string.
-; A & X must contain the number of characted in the buffer (LO & HI bytes respectively). THESE MUST NOT BE CHANGED.
-; This prints buffer contents.
-.macro EMU_CC65_WRITE ptr   
-	.byte $42, $28, ptr
+.macro EMU_CC65_WRITE
+	.byte $42, $28
 .endmacro
 
-  
 ; 41 Reads a string as required by cc65 libraries.
-; The first byte following the SYSCALL opcode points to a zeropage location where a pointer to a memory buffer (LO byte, HI byte) is stored.
-; The buffer will store a string being read.
-; A & X must contain the maximum number of characted in the buffer (LO & HI bytes respectively).
-; This reads characters from input until desired count is reached or LF ($0A) is entered. Notice that $00 if found, will be replaced with $0A.
-; Actual number of characters read is returned in A & X (LO & HI bytes respectively).
-.macro EMU_CC65_READ ptr   
-	.byte $42, $29, ptr
+.macro EMU_CC65_READ
+	.byte $42, $29
 .endmacro
 
 
