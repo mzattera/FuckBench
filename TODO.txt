@@ -1,3 +1,6 @@
+remove symon
+
+Macro to print a null terminate string (not inlined)
 
 Code to test all macros (read ?)
 Code to test libraries from C | interrupt >> OK | write >> hello.c OK
@@ -17,15 +20,11 @@ Downgrade to Java 8? Update README.md accordingly
 
 Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
 
-Diagram to show compilation process for several languages.
-
 
 
 SHR (?)
 
 IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this)
-
-Macro to print a null terminate string (not inlined)
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
@@ -33,6 +32,9 @@ is mod X 255 faster than AND X 255? -> check siumilar stuff.
 
 Check FBF code for accessing tables, maybe it's not super efficient?
 
+
+
+Diagram to show compilation process for several languages.
 
 
 Example for ASM & C & Java (chess? adventure? hunt the wumpus? something recursive?)

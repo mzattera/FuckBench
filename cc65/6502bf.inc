@@ -8,33 +8,35 @@
 
 .P02
 
-; Prints a dump of 6502 registers
+; 0 prints a dump of 6502 registers.
 .macro EMU_DUMP   
 	.byte $42, $00
 .endmacro
-
-; Quit emulator
+  
+; 32 quit emulator.
 .macro EMU_QUIT 
 	.byte $42, $20
 .endmacro
 
-; Prints character which ASCII code is in the accumulator
+; 16 prints the character coresponding to the ASCII value in the accumulator.
 .macro EMU_PUTC  
 	.byte $42, $10
 .endmacro
 
-; Reads a character and stores its ASCII code in the accumulator 
-; Z flag set if ASCII $00 is read, reset otherwise
+; 17 reads a character into the accumulator and updates Z flag accordingly.
+; Z flag set if ASCII $00 is read, reset otherwise.
 .macro EMU_GETC  
 	.byte $42, $11
 .endmacro
 
-; Prints given string
+; 18 prints string.
+; The macro adds an additional $00 (NUL) char at the end of the string, so it must not be null terminated necessarily.
 .macro EMU_PRINTS str   
 	.byte $42, $12, str, $00
 .endmacro
 
-; Prints given string and goes new line
+; 18 prints string and goes newline.
+; The macro adds an additional $00 (NUL) char at the end of the string, so it must not be null terminated necessarily.
 .macro EMU_PRINTLNS str   
 	.byte $42, $12, str, $0a, $0d, $00
 .endmacro

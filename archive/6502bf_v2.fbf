@@ -1,0 +1,3264 @@
+-- This is a 6502 emulator written in FuckBrainFuck (http://inshame.blogspot.com/search/label/My%20Progs%3A%20FuckBrainfuck)
+-- It can therefore be compiled to BrainFuck code.
+
+-- Copyright 2020 by Massimiliano "Maxi" Zattera
+
+-- In order to work, this code assumes 16 bit unsigned cells with wrapping.
+
+-- Version 2.0
+-- -----------
+-- In this version, execute_opcode checks most frequently used opcodes first. It also checks regularly whether (exception == 1), 
+-- meaning the opcode to exectue has not yet been found, in order to stop once the opcode has been executed, 
+-- without checking all remaining opcodes. The optimal order of the opcodes being checked and the positioning of the (exception == 1) 
+-- test are based on some Montecarlo simulation using opcode frequencies obtained from a tweaked C64 emulator.
+
+#linebreaks 72
+#linemode DOS
+
+-- -----------------------------------------------------------------------------------
+-- SOME CONSTANTS
+-- -----------------------------------------------------------------------------------
+
+-- Used to pass fixed values to block calls (which require variables)
+
+#dim CONST_1
+set CONST_1 1
+
+#dim CONST_2
+set CONST_2 2
+
+#dim CONST_64
+set CONST_64 64
+
+#dim CONST_128
+set CONST_128 128
+
+#dim CONST_255
+set CONST_255 255
+
+#dim CONST_256
+set CONST_256 256
+
+#dim CONST_4096
+set CONST_4096 4096
+
+#dim CONST_FF00
+set CONST_FF00 65280
+
+-- -----------------------------------------------------------------------------------
+-- CODE BLOCKS
+-- -----------------------------------------------------------------------------------
+
+-- Clears tape cells starting from _ct_start, it will clear as many cells as contained in _ct_start.
+-- For example, if _ct_start=3 this will clear _ct_start and the next 2 cells on the right.
+-- _ct_start must be greater than 0.
+#block _clean_tape _ct_start
+	moveto _ct_start
+	-- unfortunately, we need to leave a 1 in first cell as a marker, this means the code for the first cell is special
+	brainfuck -[        if there is at least 2 cells to clear enter the main body
+	brainfuck   >[-]<   clears next cell
+	brainfuck   [->+<]  copies current into next
+	brainfuck   +>-     increase first cell making it 1 then move to next cell notice the next is decremented twice because the check is done immediately		         
+	brainfuck   [
+	brainfuck     >[-]<  clears next cell
+	brainfuck     [->+<] copies current
+	brainfuck     >-     next is decremented by one
+	brainfuck   ] 
+	brainfuck   -[+<-]   go back to the cell with 1 
+	brainfuck ]
+	returnfrom _ct_start
+#endblock
+
+-- -----------------------------------------------------------------------------------
+-- MATH FUNCTIONS
+-- -----------------------------------------------------------------------------------
+
+-- Work area for math functions.
+-- These MUST be consecutive cell for the algorithm to work
+#dim _mf_c0 _mf_c1 _mf_c2 _mf_c3
+#custom 2
+
+-- Original code: https://esolangs.org/wiki/Brainfuck_algorithms#Divmod_algorithm
+#block divmod _d_n _d_d _d_result _d_mod
+	-- >n d
+	-- # >0 d-n%d n%d n/d
+	set _mf_c0 6
+	_clean_tape _mf_c0
+	copy _d_n _mf_c0
+	copy _d_d _mf_c1
+	moveto _mf_c0
+	brainfuck [->[->+>>]>[<<+>>[-<+>]>+>>]<<<<<]
+	brainfuck >[>>>]>[[-<+>]>+>>]<<<<<
+	returnfrom _mf_c0
+	copy _mf_c3 _d_result
+	copy _mf_c2 _d_mod
+#endblock
+
+-- ------------------
+-- BITWISE FUNCTIONS
+-- ------------------
+
+-- Implementation of bitwise operations.
+-- Original code: https://codegolf.stackexchange.com/questions/9178/bitwise-operators-in-brainfuck
+
+-- Work area for the bitwise algorithms.
+-- These MUST be consecutive cell for the algorithm to work
+#dim _bw_c0 _bw_c1 _bw_c2 _bw_c3 _bw_c4 _bw_c5
+#custom 53
+
+-- Resets the working area for the bitwise algorithms.
+#block _clean_bw_wa
+-- TODO	For each function calculate separately the working area needed and clear only that one. Use libraries\lib.fbf
+	set _bw_c0 59 
+	_clean_tape _bw_c0
+#endblock
+	
+#block NOT _not_a _not_res
+	-- Assumes A is in cell 0, stores NOT A in cell 1, pointer starts and ends in cell 0.
+	_clean_bw_wa
+	copy _not_a _bw_c0
+	moveto _bw_c0
+	brainfuck +[>-<-]
+	returnfrom _bw_c0
+	copy _bw_c1 _not_res
+#endblock
+
+#block ROL _rol_a _rol_res
+	-- Assumes A is in cell 0, stores A ROL 1 in cell 1, pointer starts and ends in cell 0.
+	_clean_bw_wa
+	copy _rol_a _bw_c0
+	moveto _bw_c0
+	brainfuck [>++[>>]<[>+>]<<-]
+	returnfrom _bw_c0
+	copy _bw_c1 _rol_res
+#endblock
+
+#block OR _or_a _or_b _or_res
+	-- Assumes A and B are in cells 1 and 2, stores A OR B in cell 2, pointer starts in cell 0 and ends in cell 5.
+	_clean_bw_wa
+	copy _or_a _bw_c1
+	copy _or_b _bw_c2
+	moveto _bw_c0
+	brainfuck -[[>>>>>>[>>>]++[-<<<]<<<-]>]>>>[<]>[[>[>+<-]>[<<<<<<+>>>>>>[-]]>]+[<[<<<++>>>-]<<]>>]
+	returnfrom _bw_c5
+	copy _bw_c2 _or_res
+#endblock
+
+#block AND _and_a _and_b _and_res
+	-- Assumes A and B are in cells 1 and 2, stores A AND B in cell 4, pointer starts in cell 0 and ends in cell 5.
+	_clean_bw_wa
+	copy _and_a _bw_c1
+	copy _and_b _bw_c2
+	moveto _bw_c0
+	brainfuck -[[>>>>>>[>>>]++[-<<<]<<<-]>]>>>[<]>[[>[>[<<<<+>>>>-]<-]>+>]<[<[<<<++>>>-]<<]]
+	returnfrom _bw_c5
+	copy _bw_c4 _and_res
+#endblock
+
+#block XOR _xor_a _xor_b _xor_res
+	-- Assumes A and B are in cells 1 and 2, stores A XOR B in cell 2, pointer starts in cell 0 and ends in cell 5.
+	_clean_bw_wa
+	copy _xor_a _bw_c1
+	copy _xor_b _bw_c2
+	moveto _bw_c0
+	brainfuck -[[>>>>>>[>>>]++[-<<<]<<<-]>]>>>[<]>[[>[>-<-]>[<<<<<<+>>>>>>[-]]>]+[<[<<<++>>>-]<<]>>]
+	returnfrom _bw_c5
+	copy _bw_c2 _xor_res
+#endblock
+
+-- ------------------
+-- OUTPUT
+-- ------------------
+
+-- Local variables for output blocks
+#dim _outv_0 _outv_1 _outv_2 _outv_3 _outv_4
+#custom 7
+
+-- Print value of cell x as number for ANY sized cell (ie 8bit, 16bit, etc)
+-- Original algorithm from: https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_for_ANY_sized_cell_.28ie_8bit.2C_16bit.2C_etc.29
+-- Notice this uses _outv_N as working area, it expects 5 of them to be available and contogue.
+#block out _o_v
+	set _outv_0 12
+	_clean_tape _outv_0
+	copy _o_v _outv_0
+	moveto _outv_0
+	brainfuck [>>+>+<<<-]>>>[<<<+>>>-]<<+>[<->[>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]
+	brainfuck ++++++++[<++++++>-]>[<<+>>-]>[<<+>>-]<<]>]<[->>++++++++[<++++++>-]]<[.[-]<]<
+	returnfrom _outv_0
+#endblock
+
+-- Prints value of a cell (16 bit) as decimal number, then goes newline
+#block out_ln _ol_v
+  out _ol_v
+  line
+#endblock
+
+-- Prints value of a cell (16 bit) as hex number
+#block out16 _o16_v
+	msg $
+	copy _o16_v _outv_0
+	set _outv_1 4
+	uneq _outv_1 0
+		divmod _outv_0 CONST_4096 _outv_2 _outv_0
+		multi _outv_0 16 _outv_0
+		inc _outv_2 '0'
+		comp _outv_2 '9' _outv_3
+		ifeq _outv_3 0
+			inc _outv_2 7
+		end
+		print _outv_2
+		dec _outv_1 1
+	end
+#endblock
+
+-- Prints value of a cell (16 bit) as number, then goes newline
+#block out_ln16 _ol16_v
+  out16 _ol16_v
+  line
+#endblock
+
+-- Prints value of a cell (8 bit) as binary number
+#block out_byte_2 _ob2_v
+	copy _ob2_v _outv_0
+	set _outv_1 8
+
+	uneq _outv_1 0
+		comp _outv_0 127 _outv_2
+		ifeq _outv_2 0
+			msg 1
+		end
+		ifnoteq _outv_2 0
+			msg 0
+		end
+		multi _outv_0 2 _outv_0
+		mod _outv_0 256 _outv_0
+		dec _outv_1 1
+	end
+#endblock
+
+-- Prints value of a cell (8 bit) as binary number
+#block out_ln_byte_2 _olb2_v
+	out_byte_2 _olb2_v
+	line
+#endblock
+
+-- Dumps 6502 registers
+#block dump
+	line
+	msg P:
+	tab
+	out16 P
+	tab
+	out_ln P
+
+	msg IR:
+	tab
+	out16 IR
+	tab
+	out_ln IR
+
+	msg A:
+	tab
+	out16 A
+	tab
+	out_ln A
+
+	msg X:
+	tab
+	out16 X
+	tab
+	out_ln X
+
+	msg Y:
+	tab
+	out16 Y
+	tab
+	out_ln Y
+	
+	msg SP:
+	tab
+	out16 S
+	tab
+	out_ln S
+
+	msg Status:
+	tab
+	msg NV-BDIZC
+	line
+	tab
+	set_status B_flag
+	out_byte_2 status
+	line
+#endblock
+
+-- ------------------
+-- LOAD OPERAND
+-- ------------------
+
+-- Local variables
+#dim _addrv_0 _addrv_1
+
+-- Below blocks load the operand_addr variable, based on corresponding 6502 indexing mode
+
+#block addr_immediate
+	copy P operand_addr
+	inc operand_addr 1
+#endblock
+
+#block addr_absolute
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 _addrv_1
+	inc _addrv_0 1
+	rtable mem _addrv_0 operand_addr
+	multi operand_addr 256 operand_addr
+	add operand_addr _addrv_1 operand_addr
+#endblock
+
+#block addr_zero_page
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 operand_addr
+#endblock
+
+-- Pass X or Y to be used as index
+#block addr_absolute_indexed _lai_XY
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 _addrv_1
+	inc _addrv_0 1
+	rtable mem _addrv_0 operand_addr
+	multi operand_addr 256 operand_addr
+	add operand_addr _addrv_1 operand_addr
+	add operand_addr _lai_XY operand_addr
+#endblock
+
+-- Pass X or Y to be used as index
+#block addr_zero_page_indexed _lzpi_XY
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 operand_addr
+	add operand_addr _lzpi_XY operand_addr
+	mod operand_addr 256 operand_addr
+#endblock
+
+#block addr_indexed_indirect_X
+	-- In indexed indirect addressing (referred to as (Indirect, X)),
+	-- the second byte of the instruction is added to the contents of the X index register,
+	-- discarding the carry.
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 _addrv_0
+	add _addrv_0 X _addrv_0
+	mod _addrv_0 256 _addrv_0
+
+	-- The result of this addition points to a memory location on page zero 
+	-- whose contents is the low order eight bits of the effective address.
+	rtable mem _addrv_0 _addrv_1
+	
+	-- The next memory location in page zero contains the high order eight bits
+	-- of the effective address. Both memory locations specifying the high and low order bytes of the
+	-- effective address must be in page zero.
+	inc _addrv_0 1
+	mod _addrv_0 256 _addrv_0
+	rtable mem _addrv_0 operand_addr
+	multi operand_addr 256 operand_addr
+	add operand_addr _addrv_1 operand_addr
+#endblock
+
+#block addr_indirect_indexed_Y
+	-- In indirect indexed addressing (referred to as (Indirect), Y), the second byte
+	-- of the instruction points to a memory location in page zero. 
+	copy P _addrv_0
+	inc _addrv_0 1
+	rtable mem _addrv_0 _addrv_0
+	
+	-- The contents of this memory location
+	-- is added to the contents of the Y index register, the result being the low order eight bits of the
+	-- effective address. 
+	rtable mem _addrv_0 _addrv_1
+	
+	-- The carry from this addition is added to the contents of the next page zero
+	-- memory location, the result being the high order eight bits of the effective address.
+	inc _addrv_0 1
+	mod _addrv_0 256 _addrv_0	
+	rtable mem _addrv_0 operand_addr
+	multi operand_addr 256 operand_addr
+	add operand_addr _addrv_1 operand_addr
+	add operand_addr Y operand_addr
+#endblock
+
+-- ------------------
+-- STATUS & STACK
+-- ------------------
+
+-- Local vaiables
+#dim _stsv_0 _stsv_1
+
+-- Set "status" register, based on content of single status flags.
+-- This is used to push the status register into the stack.
+#block set_status 
+  copy N_flag status
+  multi status 2 status
+  add V_flag status status
+  multi status 2 status
+  -- bit 5 is always 1
+  add 1 status status
+  multi status 2 status
+  -- B flag does not really exist in the CPU, it is pushed as 1 by BRK & PHP or 0 by IRQ / NMI
+  -- Always pushes B flag as 1, since we do not have hardware interrups
+  add 1 status status
+  multi status 2 status
+  add D_flag status status
+  multi status 2 status
+  add I_flag status status
+  multi status 2 status
+  add Z_flag status status
+  multi status 2 status
+  add C_flag status status
+#endblock
+
+-- Set flags based on content of "status" register.
+-- This is used to pop the status register from the stack.
+#block set_flags
+	copy status _stsv_1
+	set C_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set C_flag 1
+	end
+	div _stsv_1 2 _stsv_1
+	
+	set Z_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set Z_flag 1
+	end
+	div _stsv_1 2 _stsv_1
+	
+	set I_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set I_flag 1
+	end
+	div _stsv_1 2 _stsv_1
+	
+	set D_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set D_flag 1
+	end
+	div _stsv_1 2 _stsv_1
+	
+	-- Bit 5 and B flag are ignored
+	div _stsv_1 4 _stsv_1
+	
+	set V_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set V_flag 1
+	end
+	div _stsv_1 2 _stsv_1
+	
+	set N_flag 0
+	mod _stsv_1 2 _stsv_0
+	ifnoteq _stsv_0 0
+		set N_flag 1
+	end
+#endblock
+
+-- Sets N flag if the argument is negative
+#block update_N _un_v
+	set N_flag 0
+	comp _un_v 127 _stsv_0
+	ifeq _stsv_0 0
+		set N_flag 1
+	end
+#endblock
+
+-- Sets Z flag if the argument is zero
+#block update_Z _uz_v
+	set Z_flag 0
+	ifeq _uz_v 0
+		set Z_flag 1
+	end
+#endblock
+
+-- Push a byte into the stack
+#block push_stack _ph_b
+	add 256 S _stsv_0
+	wtable mem _stsv_0 _ph_b
+	dec S 1
+	mod S 256 S
+#endblock
+
+-- Pops a byte from the stack
+#block pop_stack _pl_b
+	inc S 1
+	mod S 256 S
+	add 256 S _stsv_0
+	rtable mem _stsv_0 _pl_b
+#endblock	
+  
+-- ------------------
+-- EMULATE 6502 CODE
+-- ------------------
+
+-- Local variables.
+#dim tmp0 tmp1 tmp2 tmp3 tmp4
+
+-- Resets CPU
+#block reset
+	-- Loads memory, including various jump vectors
+	load_memory
+
+	-- In reality, the stack pointer could be anywhere on the stack after reset.
+	-- This seems closer to actual behavior.
+	set S 253
+	
+	-- Loads P with reset vector
+	set P 0
+	rtable mem 65533 P
+	multi P 256 P
+	rtable mem 65532 tmp0
+	add P tmp0 P
+	
+	-- Clears flags
+	set status 0
+	set_flags
+	
+	set A 0
+	set X 0
+	set Y 0
+#endblock
+
+-- Read instruction pointed by the program counter into IR
+#block read_opcode
+	rtable mem P IR
+#endblock
+
+-- If a critical error happened, handle it
+#block handle_exceptions
+  ifnoteq exception 0
+	line
+	
+	ifeq exception 1
+		line
+		msg *ERROR* Unrecognized opcode:
+		tab
+		out_ln IR
+	end
+	ifeq exception 2 
+		line
+		msg *ERROR* BCD mode not implemented.
+	end
+	ifeq exception 3 
+		line
+		msg *ERROR* Unrecognized SYSCALL opcode:
+		tab
+		rtable mem P tmp0
+		out_ln tmp0
+	end
+	ifeq exception 4 
+		line
+		msg *LOOP* detected
+	end
+
+	set running FALSE
+  end
+#endblock
+
+-- This block is responsible for executing the instruction contained in IR
+#block execute_opcode  
+  ifeq IR 208
+    set exception 0
+    ifeq Z_Flag 0
+      execute_BRA
+    end
+    inc P 2
+  end
+  ifeq IR 173
+    addr_absolute
+    execute_LD A
+    inc P 3
+  end
+  ifeq IR 41
+    addr_immediate
+    execute_AND
+    inc P 2
+  end
+  ifeq exception 1
+    ifeq IR 16
+      set exception 0
+      ifeq N_Flag 0
+        execute_BRA
+      end
+      inc P 2
+    end
+    ifeq IR 168
+      copy A Y
+      update_N Y
+      update_Z Y
+      inc P 1
+      set exception 0
+    end
+    ifeq IR 240
+      set exception 0
+      ifeq Z_Flag 1
+        execute_BRA
+      end
+      inc P 2
+    end
+    ifeq IR 165
+      addr_zero_page
+      execute_LD A
+      inc P 2
+    end
+    ifeq exception 1
+      ifeq IR 197
+        addr_zero_page
+        execute_CMP A
+        inc P 2
+      end
+      ifeq IR 48
+        set exception 0
+        ifeq N_Flag 1
+          execute_BRA
+        end
+        inc P 2
+      end
+      ifeq IR 32
+        -- Infinite loop check
+        copy P tmp4
+        
+        addr_absolute
+        inc P 2
+        divmod P CONST_256 tmp0 tmp1
+        push_stack tmp0
+        push_stack tmp1
+        copy operand_addr P
+        set exception 0
+        
+        -- Infinite loop check
+        ifeq P tmp4
+          set exception 4
+        end
+      end
+      ifeq IR 96
+        pop_stack tmp0
+        pop_stack P
+        multi P 256 P
+        add P tmp0 P
+        inc P 1
+        set exception 0
+      end
+      ifeq exception 1
+        ifeq IR 202
+          decrement X
+          inc P 1
+        end
+        ifeq IR 189
+          addr_absolute_indexed X
+          execute_LD A
+          inc P 3
+        end
+        ifeq IR 44
+          addr_absolute
+          execute_BIT
+          inc P 3
+        end
+        ifeq IR 205
+          addr_absolute
+          execute_CMP A
+          inc P 3
+        end
+        ifeq IR 201
+          addr_immediate
+          execute_CMP A
+          inc P 2
+        end
+        ifeq IR 133
+          addr_zero_page
+          execute_ST A
+          inc P 2
+        end
+        ifeq exception 1
+          ifeq IR 141
+            addr_absolute
+            execute_ST A
+            inc P 3
+          end
+          ifeq IR 166
+            addr_zero_page
+            execute_LD X
+            inc P 2
+          end
+          ifeq IR 185
+            addr_absolute_indexed Y
+            execute_LD A
+            inc P 3
+          end
+          ifeq IR 198
+            addr_zero_page
+            execute_DEC
+            inc P 2
+          end
+          ifeq IR 169
+            addr_immediate
+            execute_LD A
+            inc P 2
+          end
+          ifeq IR 230
+            addr_zero_page
+            execute_INC
+            inc P 2
+          end
+          ifeq exception 1
+            ifeq IR 24
+              set C_flag 0
+              inc P 1
+              set exception 0
+            end
+            ifeq IR 170
+              copy A X
+              update_N X
+              update_Z X
+              inc P 1
+              set exception 0
+            end
+            ifeq IR 152
+              copy Y A
+              update_N A
+              update_Z A
+              inc P 1
+              set exception 0
+            end
+            ifeq IR 138
+              copy X A
+              update_N A
+              update_Z A
+              inc P 1
+              set exception 0
+            end
+            ifeq IR 136
+              decrement Y
+              inc P 1
+            end
+            ifeq IR 108
+              -- Infinite loop check
+              copy P tmp4
+              
+              addr_absolute
+              -- Jump address low in tmp0
+              rtable mem operand_addr tmp0
+              -- Increment operand_addr to point to jump address hi
+              -- Notice that this must be done without carry
+              AND operand_addr CONST_FF00 tmp1
+              inc operand_addr 1
+              AND operand_addr CONST_255 operand_addr
+              add operand_addr tmp1 operand_addr
+              -- Jump address hi in tmp1
+              rtable mem operand_addr tmp1
+              -- Change PC
+              copy tmp1 P
+              multi P 256 P
+              add tmp0 P P
+              set exception 0
+              
+              -- Infinite loop check
+              ifeq P tmp4
+                set exception 4
+              end
+            end
+            ifeq exception 1
+              ifeq IR 145
+                addr_indirect_indexed_Y
+                execute_ST A
+                inc P 2
+              end
+              ifeq IR 74
+                execute_LSR A
+                inc P 1
+              end
+              ifeq IR 9
+                addr_immediate
+                execute_ORA
+                inc P 2
+              end
+              ifeq IR 144
+                set exception 0
+                ifeq C_Flag 0
+                  execute_BRA
+                end
+                inc P 2
+              end
+              ifeq IR 153
+                addr_absolute_indexed Y
+                execute_ST A
+                inc P 3
+              end
+              ifeq exception 1
+                ifeq IR 200
+                  increment Y
+                  inc P 1
+                end
+                ifeq IR 181
+                  addr_zero_page_indexed X
+                  execute_LD A
+                  inc P 2
+                end
+                ifeq IR 72
+                  push_stack A
+                  inc P 1
+                  set exception 0
+                end
+                ifeq IR 104
+                  pop_stack A
+                  update_N A
+                  update_Z A
+                  inc P 1
+                  set exception 0
+                end
+                ifeq IR 10
+                  execute_ASL A
+                  inc P 1
+                end
+                ifeq exception 1
+                  ifeq IR 76
+                    -- Infinite loop check
+                    copy P tmp4
+                    
+                    addr_absolute
+                    copy operand_addr P
+                    set exception 0
+                    
+                    -- Infinite loop check
+                    ifeq P tmp4
+                      set exception 4
+                    end
+                  end
+                  ifeq IR 162
+                    addr_immediate
+                    execute_LD X
+                    inc P 2
+                  end
+                  ifeq IR 157
+                    addr_absolute_indexed X
+                    execute_ST A
+                    inc P 3
+                  end
+                  ifeq IR 177
+                    addr_indirect_indexed_Y
+                    execute_LD A
+                    inc P 2
+                  end
+                  ifeq IR 160
+                    addr_immediate
+                    execute_LD Y
+                    inc P 2
+                  end
+                  ifeq exception 1
+                    ifeq IR 88
+                      set I_flag 0
+                      inc P 1
+                      set exception 0
+                    end
+                    ifeq IR 176
+                      set exception 0
+                      ifeq C_Flag 1
+                        execute_BRA
+                      end
+                      inc P 2
+                    end
+                    ifeq IR 102
+                      addr_zero_page
+                      rtable mem operand_addr tmp0
+                      execute_ROR tmp0
+                      wtable mem operand_addr tmp0
+                      inc P 2
+                    end
+                    ifeq IR 70
+                      addr_zero_page
+                      rtable mem operand_addr tmp0
+                      execute_LSR tmp0
+                      wtable mem operand_addr tmp0
+                      inc P 2
+                    end
+                    ifeq IR 80
+                      set exception 0
+                      ifeq V_Flag 0
+                        execute_BRA
+                      end
+                      inc P 2
+                    end
+                    ifeq IR 105
+                      addr_immediate
+                      execute_ADC
+                      inc P 2
+                    end
+                    ifeq exception 1
+                      ifeq IR 174
+                        addr_absolute
+                        execute_LD X
+                        inc P 3
+                      end
+                      ifeq IR 192
+                        addr_immediate
+                        execute_CMP Y
+                        inc P 2
+                      end
+                      ifeq IR 164
+                        addr_zero_page
+                        execute_LD Y
+                        inc P 2
+                      end
+                      ifeq IR 232
+                        increment X
+                        inc P 1
+                      end
+                      ifeq IR 221
+                        addr_absolute_indexed X
+                        execute_CMP A
+                        inc P 3
+                      end
+                      ifeq exception 1
+                        ifeq IR 120
+                          set I_flag 1
+                          inc P 1
+                          set exception 0
+                        end
+                        ifeq IR 149
+                          addr_zero_page_indexed X
+                          execute_ST A
+                          inc P 2
+                        end
+                        ifeq IR 228
+                          addr_zero_page
+                          execute_CMP X
+                          inc P 2
+                        end
+                        ifeq IR 56
+                          set C_flag 1
+                          inc P 1
+                          set exception 0
+                        end
+                        ifeq IR 42
+                          execute_ROL A
+                          inc P 1
+                        end
+                        ifeq exception 1
+                          ifeq IR 233
+                            addr_immediate
+                            execute_SBC
+                            inc P 2
+                          end
+                          ifeq IR 132
+                            addr_zero_page
+                            execute_ST Y
+                            inc P 2
+                          end
+                          ifeq IR 224
+                            addr_immediate
+                            execute_CMP X
+                            inc P 2
+                          end
+                          ifeq IR 134
+                            addr_zero_page
+                            execute_ST X
+                            inc P 2
+                          end
+                          ifeq IR 5
+                            addr_zero_page
+                            execute_ORA
+                            inc P 2
+                          end
+                          ifeq exception 1
+                            ifeq IR 73
+                              addr_immediate
+                              execute_EOR
+                              inc P 2
+                            end
+                            ifeq IR 109
+                              addr_absolute
+                              execute_ADC
+                              inc P 3
+                            end
+                            ifeq IR 206
+                              addr_absolute
+                              execute_DEC
+                              inc P 3
+                            end
+                            ifeq IR 172
+                              addr_absolute
+                              execute_LD Y
+                              inc P 3
+                            end
+                            ifeq IR 184
+                              set V_flag 0
+                              inc P 1
+                              set exception 0
+                            end
+                            ifeq IR 125
+                              addr_absolute_indexed X
+                              execute_ADC
+                              inc P 3
+                            end
+                            ifeq exception 1
+                              ifeq IR 64
+                                pop_stack status
+                                set_flags
+                                pop_stack tmp0
+                                pop_stack P
+                                multi P 256 P
+                                add P tmp0 P
+                                set exception 0
+                              end
+                              ifeq IR 101
+                                addr_zero_page
+                                execute_ADC
+                                inc P 2
+                              end
+                              ifeq IR 186
+                                copy S X
+                                update_N S
+                                update_Z S
+                                inc P 1
+                                set exception 0
+                              end
+                              ifeq IR 29
+                                addr_absolute_indexed X
+                                execute_ORA
+                                inc P 3
+                              end
+                              ifeq IR 180
+                                addr_zero_page_indexed X
+                                execute_LD Y
+                                inc P 2
+                              end
+                              ifeq exception 1
+                                ifeq IR 222
+                                  addr_absolute_indexed X
+                                  execute_DEC
+                                  inc P 3
+                                end
+                                ifeq IR 81
+                                  addr_indirect_indexed_Y
+                                  execute_EOR
+                                  inc P 2
+                                end
+                                ifeq IR 237
+                                  addr_absolute
+                                  execute_SBC
+                                  inc P 3
+                                end
+                                ifeq IR 78
+                                  addr_absolute
+                                  rtable mem operand_addr tmp0
+                                  execute_LSR tmp0
+                                  wtable mem operand_addr tmp0
+                                  inc P 3
+                                end
+                                ifeq exception 1
+                                  ifeq IR 188
+                                    addr_absolute_indexed X
+                                    execute_LD Y
+                                    inc P 3
+                                  end
+                                  ifeq IR 38
+                                    addr_zero_page
+                                    rtable mem operand_addr tmp0
+                                    execute_ROL tmp0
+                                    wtable mem operand_addr tmp0
+                                    inc P 2
+                                  end
+                                  ifeq IR 217
+                                    addr_absolute_indexed Y
+                                    execute_CMP A
+                                    inc P 3
+                                  end
+                                  ifeq IR 238
+                                    addr_absolute
+                                    execute_INC
+                                    inc P 3
+                                  end
+                                  ifeq exception 1
+                                    ifeq IR 13
+                                      addr_absolute
+                                      execute_ORA
+                                      inc P 3
+                                    end
+                                    ifeq IR 213
+                                      addr_zero_page_indexed X
+                                      execute_CMP A
+                                      inc P 2
+                                    end
+                                    ifeq IR 214
+                                      addr_zero_page_indexed X
+                                      execute_DEC
+                                      inc P 2
+                                    end
+                                    ifeq IR 57
+                                      addr_absolute_indexed Y
+                                      execute_AND
+                                      inc P 3
+                                    end
+                                    ifeq exception 1
+                                      ifeq IR 234
+                                        inc P 1
+                                        set exception 0
+                                      end
+                                      ifeq IR 216
+                                        set D_flag 0
+                                        inc P 1
+                                        set exception 0
+                                      end
+                                      ifeq IR 140
+                                        addr_absolute
+                                        execute_ST Y
+                                        inc P 3
+                                      end
+                                      ifeq IR 245
+                                        addr_zero_page_indexed X
+                                        execute_SBC
+                                        inc P 2
+                                      end
+                                      ifeq exception 1
+                                        ifeq IR 142
+                                          addr_absolute
+                                          execute_ST X
+                                          inc P 3
+                                        end
+                                        ifeq IR 45
+                                          addr_absolute
+                                          execute_AND
+                                          inc P 3
+                                        end
+                                        ifeq IR 229
+                                          addr_zero_page
+                                          execute_SBC
+                                          inc P 2
+                                        end
+                                        ifeq exception 1
+                                          ifeq IR 254
+                                            addr_absolute_indexed X
+                                            execute_INC
+                                            inc P 3
+                                          end
+                                          ifeq IR 6
+                                            addr_zero_page
+                                            rtable mem operand_addr tmp0
+                                            execute_ASL tmp0
+                                            wtable mem operand_addr tmp0
+                                            inc P 2
+                                          end
+                                          ifeq IR 117
+                                            addr_zero_page_indexed X
+                                            execute_ADC
+                                            inc P 2
+                                          end
+                                          ifeq exception 1
+                                            ifeq IR 190
+                                              addr_absolute_indexed Y
+                                              execute_LD X
+                                              inc P 3
+                                            end
+                                            ifeq IR 49
+                                              addr_indirect_indexed_Y
+                                              execute_AND
+                                              inc P 2
+                                            end
+                                            ifeq exception 1
+                                              ifeq IR 106
+                                                execute_ROR A
+                                                inc P 1
+                                              end
+                                              ifeq IR 253
+                                                addr_absolute_indexed X
+                                                execute_SBC
+                                                inc P 3
+                                              end
+                                              ifeq exception 1
+                                                ifeq IR 89
+                                                  addr_absolute_indexed Y
+                                                  execute_EOR
+                                                  inc P 3
+                                                end
+                                                ifeq IR 77
+                                                  addr_absolute
+                                                  execute_EOR
+                                                  inc P 3
+                                                end
+                                                ifeq exception 1
+                                                  ifeq IR 121
+                                                    addr_absolute_indexed Y
+                                                    execute_ADC
+                                                    inc P 3
+                                                  end
+                                                  ifeq exception 1
+                                                    ifeq IR 37
+                                                      addr_zero_page
+                                                      execute_AND
+                                                      inc P 2
+                                                    end
+                                                    ifeq IR 69
+                                                      addr_zero_page
+                                                      execute_EOR
+                                                      inc P 2
+                                                    end
+                                                    ifeq exception 1
+                                                      ifeq IR 241
+                                                        addr_indirect_indexed_Y
+                                                        execute_SBC
+                                                        inc P 2
+                                                      end
+                                                      ifeq IR 209
+                                                        addr_indirect_indexed_Y
+                                                        execute_CMP A
+                                                        inc P 2
+                                                      end
+                                                      ifeq exception 1
+                                                        ifeq IR 196
+                                                          addr_zero_page
+                                                          execute_CMP Y
+                                                          inc P 2
+                                                        end
+                                                        ifeq IR 61
+                                                          addr_absolute_indexed X
+                                                          execute_AND
+                                                          inc P 3
+                                                        end
+                                                        ifeq exception 1
+                                                          ifeq IR 112
+                                                            set exception 0
+                                                            ifeq V_Flag 1
+                                                              execute_BRA
+                                                            end
+                                                            inc P 2
+                                                          end
+                                                          ifeq exception 1
+                                                            ifeq IR 246
+                                                              addr_zero_page_indexed X
+                                                              execute_INC
+                                                              inc P 2
+                                                            end
+                                                            ifeq IR 154
+                                                              copy X S
+                                                              inc P 1
+                                                              set exception 0
+                                                            end
+                                                            ifeq exception 1
+                                                              ifeq IR 248
+                                                                set D_flag 1
+                                                                inc P 1
+                                                                set exception 0
+                                                              end
+                                                              ifeq exception 1
+                                                                ifeq IR 236
+                                                                  addr_absolute
+                                                                  execute_CMP X
+                                                                  inc P 3
+                                                                end
+                                                                ifeq exception 1
+                                                                  ifeq IR 94
+                                                                    addr_absolute_indexed X
+                                                                    rtable mem operand_addr tmp0
+                                                                    execute_LSR tmp0
+                                                                    wtable mem operand_addr tmp0
+                                                                    inc P 3
+                                                                  end
+                                                                  ifeq exception 1
+                                                                    ifeq IR 113
+                                                                      addr_indirect_indexed_Y
+                                                                      execute_ADC
+                                                                      inc P 2
+                                                                    end
+                                                                    ifeq exception 1
+                                                                      ifeq IR 8
+                                                                        set_status
+                                                                        push_stack status
+                                                                        inc P 1
+                                                                        set exception 0
+                                                                      end
+                                                                      ifeq exception 1
+                                                                        ifeq IR 40
+                                                                          pop_stack status
+                                                                          set_flags
+                                                                          inc P 1
+                                                                          set exception 0
+                                                                        end
+                                                                        ifeq exception 1
+                                                                          ifeq IR 66
+                                                                            -- Set exception to "unrecognized SYSCALL" in case we don't find a valid call code
+                                                                            set exception 3
+                                                                            
+                                                                            inc P 1
+                                                                            rtable mem P tmp0
+                                                                            
+                                                                            -- 0 prints a dump
+                                                                            ifeq tmp0 0
+                                                                              dump
+                                                                              inc P 1
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 16 print the character coresponding to the ASCII value in the accumulator
+                                                                            ifeq tmp0 16
+                                                                              print A
+                                                                              inc P 1
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 17 reads a character into the accumulator; updates Z flag!!!
+                                                                            ifeq tmp0 17
+                                                                              read A
+                                                                              update_Z A
+                                                                              inc P 1
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 18 prints null terminated string following opcode
+                                                                            ifeq tmp0 18
+                                                                              inc P 1
+                                                                              rtable mem P tmp0
+                                                                              uneq tmp0 0
+                                                                                print tmp0
+                                                                                inc P 1
+                                                                                rtable mem P tmp0
+                                                                              end
+                                                                              inc P 1
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 19 prints hex byte value (absolute adderssing)
+                                                                            -- The word following the SYSCALL opcode  used as a pointer to a memory cell whose content will be printed.
+                                                                            ifeq tmp0 19
+                                                                              addr_absolute
+                                                                              rtable mem operand_addr tmp0
+                                                                              out16 tmp0
+                                                                              inc P 3
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 20 prints hex word value (absolute adderssing)
+                                                                            -- The word following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
+                                                                            ifeq tmp0 20
+                                                                              addr_absolute
+                                                                              rtable mem operand_addr tmp0
+                                                                              inc operand_addr 1
+                                                                              rtable mem operand_addr tmp1
+                                                                              multi tmp1 256 tmp1
+                                                                              add tmp1 tmp0 tmp0
+                                                                              out16 tmp0
+                                                                              inc P 3
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 21 prints hex byte value (zeropage adderssing)
+                                                                            -- The byte following the SYSCALL opcode is used as a pointer to a memory cell whose content will be printed.
+                                                                            ifeq tmp0 21
+                                                                              addr_zero_page
+                                                                              rtable mem operand_addr tmp0
+                                                                              out16 tmp0
+                                                                              inc P 2
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 22 prints hex word value (zeropage adderssing)
+                                                                            -- The byte following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
+                                                                            ifeq tmp0 22
+                                                                              addr_zero_page
+                                                                              rtable mem operand_addr tmp0
+                                                                              inc operand_addr 1
+                                                                              rtable mem operand_addr tmp1
+                                                                              multi tmp1 256 tmp1
+                                                                              add tmp1 tmp0 tmp0
+                                                                              out16 tmp0
+                                                                              inc P 2
+                                                                              set exception 0
+                                                                            end
+                                                                            -- 23 prints a string (absolute adderssing)
+                                                                            -- The word following the SYSCALL opcode is used as a pointer to a 0-terminated string which will be will be printed.
+                                                                            ifeq tmp0 23
+                                                                              addr_absolute
+                                                                              rtable mem operand_addr tmp0
+                                                                              uneq tmp0 0
+                                                                                print tmp0
+                                                                                inc operand_addr 1
+                                                                                rtable mem operand_addr tmp0
+                                                                              end
+                                                                              inc P 3
+                                                                              set exception 0
+                                                                            end
+                                                                            
+                                                                            -- TODO implement printing string given its pointer (no string inlining)
+                                                                            
+                                                                            -- 32 quit emulator
+                                                                            ifeq tmp0 32
+                                                                              set running FALSE
+                                                                              set exception 0
+                                                                            end
+                                                                          end
+                                                                          ifeq IR 0
+                                                                            inc P 2
+                                                                            divmod P CONST_256 tmp0 tmp1
+                                                                            push_stack tmp0
+                                                                            push_stack tmp1
+                                                                            set_status
+                                                                            push_stack status
+                                                                            set I_flag 1
+                                                                            rtable mem 65535 P
+                                                                            multi P 256 P
+                                                                            rtable mem 65534 tmp0
+                                                                            add P tmp0 P
+                                                                            set exception 0
+                                                                          end
+                                                                          ifeq IR 1
+                                                                            addr_indexed_indirect_X
+                                                                            execute_ORA
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 14
+                                                                            addr_absolute
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ASL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 17
+                                                                            addr_indirect_indexed_Y
+                                                                            execute_ORA
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 21
+                                                                            addr_zero_page_indexed X
+                                                                            execute_ORA
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 22
+                                                                            addr_zero_page_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ASL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 25
+                                                                            addr_absolute_indexed Y
+                                                                            execute_ORA
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 30
+                                                                            addr_absolute_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ASL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 33
+                                                                            addr_indexed_indirect_X
+                                                                            execute_AND
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 36
+                                                                            addr_zero_page
+                                                                            execute_BIT
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 46
+                                                                            addr_absolute
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 53
+                                                                            addr_zero_page_indexed X
+                                                                            execute_AND
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 54
+                                                                            addr_zero_page_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 62
+                                                                            addr_absolute_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROL tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 65
+                                                                            addr_indexed_indirect_X
+                                                                            execute_EOR
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 85
+                                                                            addr_zero_page_indexed X
+                                                                            execute_EOR
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 86
+                                                                            addr_zero_page_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_LSR tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 93
+                                                                            addr_absolute_indexed X
+                                                                            execute_EOR
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 97
+                                                                            addr_indexed_indirect_X
+                                                                            execute_ADC
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 110
+                                                                            addr_absolute
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROR tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 118
+                                                                            addr_zero_page_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROR tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 126
+                                                                            addr_absolute_indexed X
+                                                                            rtable mem operand_addr tmp0
+                                                                            execute_ROR tmp0
+                                                                            wtable mem operand_addr tmp0
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 129
+                                                                            addr_indexed_indirect_X
+                                                                            execute_ST A
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 148
+                                                                            addr_zero_page_indexed X
+                                                                            execute_ST Y
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 150
+                                                                            addr_zero_page_indexed Y
+                                                                            execute_ST X
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 161
+                                                                            addr_indexed_indirect_X
+                                                                            execute_LD A
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 182
+                                                                            addr_zero_page_indexed Y
+                                                                            execute_LD X
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 193
+                                                                            addr_indexed_indirect_X
+                                                                            execute_CMP A
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 204
+                                                                            addr_absolute
+                                                                            execute_CMP Y
+                                                                            inc P 3
+                                                                          end
+                                                                          ifeq IR 225
+                                                                            addr_indexed_indirect_X
+                                                                            execute_SBC
+                                                                            inc P 2
+                                                                          end
+                                                                          ifeq IR 249
+                                                                            addr_absolute_indexed Y
+                                                                            execute_SBC
+                                                                            inc P 3
+                                                                          end
+                                                                        end
+                                                                      end
+                                                                    end
+                                                                  end
+                                                                end
+                                                              end
+                                                            end
+                                                          end
+                                                        end
+                                                      end
+                                                    end
+                                                  end
+                                                end
+                                              end
+                                            end
+                                          end
+                                        end
+                                      end
+                                    end
+                                  end
+                                end
+                              end
+                            end
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+#endblock
+
+-- LDA (LoaD Accumulator)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     LDA #$44      $A9  2   2
+-- Zero Page     LDA $44       $A5  2   3
+-- Zero Page,X   LDA $44,X     $B5  2   4
+-- Absolute      LDA $4400     $AD  3   4
+-- Absolute,X    LDA $4400,X   $BD  3   4+
+-- Absolute,Y    LDA $4400,Y   $B9  3   4+
+-- Indirect,X    LDA ($44,X)   $A1  2   6
+-- Indirect,Y    LDA ($44),Y   $B1  2   5+
+
+#block check_LDA
+ ifeq IR 169
+   addr_immediate
+   execute_LD A
+   inc P 2
+ end
+ ifeq IR 165
+   addr_zero_page
+   execute_LD A
+   inc P 2
+ end
+ ifeq IR 181
+   addr_zero_page_indexed X
+   execute_LD A
+   inc P 2
+ end
+ ifeq IR 173
+   addr_absolute
+   execute_LD A
+   inc P 3
+ end
+ ifeq IR 189
+   addr_absolute_indexed X
+   execute_LD A
+   inc P 3
+ end
+ ifeq IR 185
+   addr_absolute_indexed Y
+   execute_LD A
+   inc P 3
+ end
+ ifeq IR 161
+   addr_indexed_indirect_X
+   execute_LD A
+   inc P 2
+ end
+ ifeq IR 177
+   addr_indirect_indexed_Y
+   execute_LD A
+   inc P 2
+ end
+#endblock
+
+#block execute_LD _el_reg
+	rtable mem operand_addr _el_reg
+	update_N _el_reg
+	update_Z _el_reg
+	set exception 0
+#endblock
+
+-- LDX (LoaD X register)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     LDX #$44      $A2  2   2
+-- Zero Page     LDX $44       $A6  2   3
+-- Zero Page,Y   LDX $44,Y     $B6  2   4
+-- Absolute      LDX $4400     $AE  3   4
+-- Absolute,Y    LDX $4400,Y   $BE  3   4+
+
+#block check_LDX
+	ifeq IR 162
+		addr_immediate
+		execute_LD X
+		inc P 2
+	end
+	ifeq IR 166
+		addr_zero_page
+		execute_LD X
+		inc P 2
+	end
+	ifeq IR 182
+		addr_zero_page_indexed Y
+		execute_LD X
+		inc P 2
+	end
+	ifeq IR 174
+		addr_absolute
+		execute_LD X
+		inc P 3
+	end
+	ifeq IR 190
+		addr_absolute_indexed Y
+		execute_LD X
+		inc P 3
+	end
+#endblock
+
+-- LDY (LoaD Y register)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     LDY #$44      $A0  2   2
+-- Zero Page     LDY $44       $A4  2   3
+-- Zero Page,X   LDY $44,X     $B4  2   4
+-- Absolute      LDY $4400     $AC  3   4
+-- Absolute,X    LDY $4400,X   $BC  3   4+
+
+#block check_LDY
+	ifeq IR 160
+		addr_immediate
+		execute_LD Y
+		inc P 2
+	end
+	ifeq IR 164
+		addr_zero_page
+		execute_LD Y
+		inc P 2
+	end
+	ifeq IR 180
+		addr_zero_page_indexed X
+		execute_LD Y
+		inc P 2
+	end
+	ifeq IR 172
+		addr_absolute
+		execute_LD Y
+		inc P 3
+	end
+	ifeq IR 188
+		addr_absolute_indexed X
+		execute_LD Y
+		inc P 3
+	end
+#endblock
+
+-- STA (STore Accumulator)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     STA $44       $85  2   3
+-- Zero Page,X   STA $44,X     $95  2   4
+-- Absolute      STA $4400     $8D  3   4
+-- Absolute,X    STA $4400,X   $9D  3   5
+-- Absolute,Y    STA $4400,Y   $99  3   5
+-- Indirect,X    STA ($44,X)   $81  2   6
+-- Indirect,Y    STA ($44),Y   $91  2   6
+
+#block check_STA
+ ifeq IR 133
+   addr_zero_page
+   execute_ST A
+   inc P 2
+ end
+ ifeq IR 149
+   addr_zero_page_indexed X
+   execute_ST A
+   inc P 2
+ end
+ ifeq IR 141
+   addr_absolute
+   execute_ST A
+   inc P 3
+ end
+ ifeq IR 157
+   addr_absolute_indexed X
+   execute_ST A
+   inc P 3
+ end
+ ifeq IR 153
+   addr_absolute_indexed Y
+   execute_ST A
+   inc P 3
+ end
+ ifeq IR 129
+   addr_indexed_indirect_X
+   execute_ST A
+   inc P 2
+ end
+ ifeq IR 145
+   addr_indirect_indexed_Y
+   execute_ST A
+   inc P 2
+ end
+#endblock
+
+#block execute_ST _es_reg
+	wtable mem operand_addr _es_reg
+	set exception 0
+#endblock
+
+-- STX (STore X register)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     STX $44       $86  2   3
+-- Zero Page,Y   STX $44,Y     $96  2   4
+-- Absolute      STX $4400     $8E  3   4
+ 
+#block check_STX
+ ifeq IR 134
+   addr_zero_page
+   execute_ST X
+   inc P 2
+ end
+ ifeq IR 150
+   addr_zero_page_indexed Y
+   execute_ST X
+   inc P 2
+ end
+ ifeq IR 142
+   addr_absolute
+   execute_ST X
+   inc P 3
+ end
+#endblock
+ 
+-- STY (STore Y register)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     STY $44       $84  2   3
+-- Zero Page,X   STY $44,X     $94  2   4
+-- Absolute      STY $4400     $8C  3   4
+ 
+#block check_STY
+ ifeq IR 132
+   addr_zero_page
+   execute_ST Y
+   inc P 2
+ end
+ ifeq IR 148
+   addr_zero_page_indexed X
+   execute_ST Y
+   inc P 2
+ end
+ ifeq IR 140
+   addr_absolute
+   execute_ST Y
+   inc P 3
+ end
+#endblock
+
+-- ADC (ADd with Carry)
+-- Affects Flags: N V Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     ADC #$44      $69  2   2
+-- Zero Page     ADC $44       $65  2   3
+-- Zero Page,X   ADC $44,X     $75  2   4
+-- Absolute      ADC $4400     $6D  3   4
+-- Absolute,X    ADC $4400,X   $7D  3   4+
+-- Absolute,Y    ADC $4400,Y   $79  3   4+
+-- Indirect,X    ADC ($44,X)   $61  2   6
+-- Indirect,Y    ADC ($44),Y   $71  2   5+
+
+#block check_ADC
+ ifeq IR 105
+   addr_immediate
+   execute_ADC
+   inc P 2
+ end
+ ifeq IR 101
+   addr_zero_page
+   execute_ADC
+   inc P 2
+ end
+ ifeq IR 117
+   addr_zero_page_indexed X
+   execute_ADC
+   inc P 2
+ end
+ ifeq IR 109
+   addr_absolute
+   execute_ADC
+   inc P 3
+ end
+ ifeq IR 125
+   addr_absolute_indexed X
+   execute_ADC
+   inc P 3
+ end
+ ifeq IR 121
+   addr_absolute_indexed Y
+   execute_ADC
+   inc P 3
+ end
+ ifeq IR 97
+   addr_indexed_indirect_X
+   execute_ADC
+   inc P 2
+ end
+ ifeq IR 113
+   addr_indirect_indexed_Y
+   execute_ADC
+   inc P 2
+ end
+#endblock
+
+#block execute_ADC
+	ifeq D_flag 0
+		rtable mem operand_addr tmp0
+		ADC tmp0
+		set exception 0		
+	end
+	ifeq D_flag 1
+		-- TODO Implement BCD mode
+		set exception 2
+	end
+#endblock
+
+-- Adds parameter to the accumulator and updates flags accordingly (non BCD).
+#block ADC _adc_op
+	-- sums....tmp1 and tmp2 will store the "sign" of the two operands
+	comp A 127 tmp1
+	comp _adc_op 127 tmp2
+	add A _adc_op A
+	add A C_flag A
+
+	-- Update carry
+	set C_flag 0
+	comp A 255 _adc_op	
+	ifeq _adc_op 0
+		set C_flag 1
+		mod A 256 A
+	end
+
+	-- Updates overflow flag.
+	set V_flag 0
+	comp A 127 _adc_op
+	ifeq tmp1 0
+		ifeq tmp2 0
+			-- both operands are negative
+			ifnoteq _adc_op 0
+				-- result is positive -> overflow
+				set V_flag 1
+			end
+		end
+	end
+	ifnoteq tmp1 0
+		ifnoteq tmp2 0
+			-- both operands are positive
+			ifeq _adc_op 0
+				-- result is negative -> overflow
+				set V_flag 1
+			end
+		end
+	end
+
+	update_N A
+	update_Z A		
+#endblock
+
+-- SBC (SuBtract with Carry)
+-- Affects Flags: N V Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     SBC #$44      $E9  2   2
+-- Zero Page     SBC $44       $E5  2   3
+-- Zero Page,X   SBC $44,X     $F5  2   4
+-- Absolute      SBC $4400     $ED  3   4
+-- Absolute,X    SBC $4400,X   $FD  3   4+
+-- Absolute,Y    SBC $4400,Y   $F9  3   4+
+-- Indirect,X    SBC ($44,X)   $E1  2   6
+-- Indirect,Y    SBC ($44),Y   $F1  2   5+
+
+#block check_SBC
+ ifeq IR 233
+   addr_immediate
+   execute_SBC
+   inc P 2
+ end
+ ifeq IR 229
+   addr_zero_page
+   execute_SBC
+   inc P 2
+ end
+ ifeq IR 245
+   addr_zero_page_indexed X
+   execute_SBC
+   inc P 2
+ end
+ ifeq IR 237
+   addr_absolute
+   execute_SBC
+   inc P 3
+ end
+ ifeq IR 253
+   addr_absolute_indexed X
+   execute_SBC
+   inc P 3
+ end
+ ifeq IR 249
+   addr_absolute_indexed Y
+   execute_SBC
+   inc P 3
+ end
+ ifeq IR 225
+   addr_indexed_indirect_X
+   execute_SBC
+   inc P 2
+ end
+ ifeq IR 241
+   addr_indirect_indexed_Y
+   execute_SBC
+   inc P 2
+ end
+#endblock
+
+#block execute_SBC
+	ifeq D_flag 0
+		rtable mem operand_addr tmp0
+		XOR tmp0 CONST_255 tmp0
+		ADC tmp0
+		set exception 0		
+	end
+	ifeq D_flag 1
+		-- TODO Implement BCD mode
+		set exception 2
+	end
+#endblock
+
+-- INC (INCrement memory)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     INC $44       $E6  2   5
+-- Zero Page,X   INC $44,X     $F6  2   6
+-- Absolute      INC $4400     $EE  3   6
+-- Absolute,X    INC $4400,X   $FE  3   7
+
+-- These instructions are implied mode, have a length of one byte and require two machine cycles.
+-- INX (INcrement X)        $E8
+-- INY (INcrement Y)        $C8
+
+#block check_INC
+ ifeq IR 230
+   addr_zero_page
+   execute_INC
+   inc P 2
+ end
+ ifeq IR 246
+   addr_zero_page_indexed X
+   execute_INC
+   inc P 2
+ end
+ ifeq IR 238
+   addr_absolute
+   execute_INC
+   inc P 3
+ end
+ ifeq IR 254
+   addr_absolute_indexed X
+   execute_INC
+   inc P 3
+ end
+ ifeq IR 232
+   increment X
+   inc P 1
+ end
+ ifeq IR 200
+   increment Y
+   inc P 1
+ end
+#endblock
+
+#block execute_INC
+	rtable mem operand_addr tmp0
+	increment tmp0
+	wtable mem operand_addr tmp0
+#endblock
+
+#block increment _i_op
+	inc _i_op 1
+	AND _i_op CONST_255 _i_op
+	update_N _i_op
+	update_Z _i_op
+	set exception 0
+#endblock
+
+-- DEC (DECrement memory)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     DEC $44       $C6  2   5
+-- Zero Page,X   DEC $44,X     $D6  2   6
+-- Absolute      DEC $4400     $CE  3   6
+-- Absolute,X    DEC $4400,X   $DE  3   7
+
+-- These instructions are implied mode, have a length of one byte and require two machine cycles.
+-- DEX (DEcrement X)        $CA
+-- DEY (DEcrement Y)        $88
+
+#block check_DEC
+ ifeq IR 198 
+   addr_zero_page
+   execute_DEC
+   inc P 2
+ end
+ ifeq IR 214
+   addr_zero_page_indexed X
+   execute_DEC
+   inc P 2
+ end
+ ifeq IR 206
+   addr_absolute
+   execute_DEC
+   inc P 3
+ end
+ ifeq IR 222
+   addr_absolute_indexed X
+   execute_DEC
+   inc P 3
+ end
+ ifeq IR 202
+   decrement X
+   inc P 1
+ end
+ ifeq IR 136
+   decrement Y
+   inc P 1
+ end
+#endblock
+
+#block execute_DEC
+	rtable mem operand_addr tmp0
+	decrement tmp0
+	wtable mem operand_addr tmp0
+#endblock
+
+#block decrement _d_op
+	dec _d_op 1
+	AND _d_op CONST_255 _d_op
+	update_N _d_op
+	update_Z _d_op
+	set exception 0
+#endblock
+
+-- AND (bitwise AND with accumulator)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     AND #$44      $29  2   2
+-- Zero Page     AND $44       $25  2   3
+-- Zero Page,X   AND $44,X     $35  2   4
+-- Absolute      AND $4400     $2D  3   4
+-- Absolute,X    AND $4400,X   $3D  3   4+
+-- Absolute,Y    AND $4400,Y   $39  3   4+
+-- Indirect,X    AND ($44,X)   $21  2   6
+-- Indirect,Y    AND ($44),Y   $31  2   5+
+
+#block check_AND
+ ifeq IR 41
+   addr_immediate
+   execute_AND
+   inc P 2
+ end
+ ifeq IR 37
+   addr_zero_page
+   execute_AND
+   inc P 2
+ end
+ ifeq IR 53
+   addr_zero_page_indexed X
+   execute_AND
+   inc P 2
+ end
+ ifeq IR 45
+   addr_absolute
+   execute_AND
+   inc P 3
+ end
+ ifeq IR 61
+   addr_absolute_indexed X
+   execute_AND
+   inc P 3
+ end
+ ifeq IR 57
+   addr_absolute_indexed Y
+   execute_AND
+   inc P 3
+ end
+ ifeq IR 33
+   addr_indexed_indirect_X
+   execute_AND
+   inc P 2
+ end
+ ifeq IR 49
+   addr_indirect_indexed_Y
+   execute_AND
+   inc P 2
+ end
+#endblock
+
+#block execute_AND
+	rtable mem operand_addr tmp0
+	AND A tmp0 A
+	update_N A
+	update_Z A
+	set exception 0
+#endblock
+
+-- ORA (bitwise OR with Accumulator)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     ORA #$44      $09  2   2
+-- Zero Page     ORA $44       $05  2   3
+-- Zero Page,X   ORA $44,X     $15  2   4
+-- Absolute      ORA $4400     $0D  3   4
+-- Absolute,X    ORA $4400,X   $1D  3   4+
+-- Absolute,Y    ORA $4400,Y   $19  3   4+
+-- Indirect,X    ORA ($44,X)   $01  2   6
+-- Indirect,Y    ORA ($44),Y   $11  2   5+
+
+#block check_ORA
+ ifeq IR 9
+   addr_immediate
+   execute_ORA
+   inc P 2
+ end
+ ifeq IR 5
+   addr_zero_page
+   execute_ORA
+   inc P 2
+ end
+ ifeq IR 21
+   addr_zero_page_indexed X
+   execute_ORA
+   inc P 2
+ end
+ ifeq IR 13
+   addr_absolute
+   execute_ORA
+   inc P 3
+ end
+ ifeq IR 29
+   addr_absolute_indexed X
+   execute_ORA
+   inc P 3
+ end
+ ifeq IR 25
+   addr_absolute_indexed Y
+   execute_ORA
+   inc P 3
+ end
+ ifeq IR 1
+   addr_indexed_indirect_X
+   execute_ORA
+   inc P 2
+ end
+ ifeq IR 17
+   addr_indirect_indexed_Y
+   execute_ORA
+   inc P 2
+ end
+#endblock
+
+#block execute_ORA
+	rtable mem operand_addr tmp0
+	OR A tmp0 A
+	update_N A
+	update_Z A
+	set exception 0
+#endblock
+
+-- EOR (bitwise Exclusive OR)
+-- Affects Flags: N Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     EOR #$44      $49  2   2
+-- Zero Page     EOR $44       $45  2   3
+-- Zero Page,X   EOR $44,X     $55  2   4
+-- Absolute      EOR $4400     $4D  3   4
+-- Absolute,X    EOR $4400,X   $5D  3   4+
+-- Absolute,Y    EOR $4400,Y   $59  3   4+
+-- Indirect,X    EOR ($44,X)   $41  2   6
+-- Indirect,Y    EOR ($44),Y   $51  2   5+
+
+#block check_EOR
+ ifeq IR 73
+   addr_immediate
+   execute_EOR
+   inc P 2
+ end
+ ifeq IR 69
+   addr_zero_page
+   execute_EOR
+   inc P 2
+ end
+ ifeq IR 85
+   addr_zero_page_indexed X
+   execute_EOR
+   inc P 2
+ end
+ ifeq IR 77
+   addr_absolute
+   execute_EOR
+   inc P 3
+ end
+ ifeq IR 93
+   addr_absolute_indexed X
+   execute_EOR
+   inc P 3
+ end
+ ifeq IR 89
+   addr_absolute_indexed Y
+   execute_EOR
+   inc P 3
+ end
+ ifeq IR 65
+   addr_indexed_indirect_X
+   execute_EOR
+   inc P 2
+ end
+ ifeq IR 81
+   addr_indirect_indexed_Y
+   execute_EOR
+   inc P 2
+ end
+#endblock
+
+#block execute_EOR
+	rtable mem operand_addr tmp0
+	XOR A tmp0 A
+	update_N A
+	update_Z A
+	set exception 0
+#endblock
+
+-- JMP (JuMP)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Absolute      JMP $5597     $4C  3   3
+-- Indirect      JMP ($5597)   $6C  3   5
+
+#block check_JMP
+	ifeq IR 76
+		-- Infinite loop check
+		copy P tmp4
+		
+		addr_absolute
+		copy operand_addr P
+		set exception 0
+		
+		-- Infinite loop check 
+		ifeq P tmp4
+			set exception 4
+		end
+	end
+	ifeq IR 108
+		-- Infinite loop check
+		copy P tmp4
+		
+		addr_absolute
+		-- Jump address low in tmp0
+		rtable mem operand_addr tmp0
+		-- Increment operand_addr to point to jump address hi
+		-- Notice that this must be done without carry 
+		AND operand_addr CONST_FF00 tmp1
+		inc operand_addr 1
+		AND operand_addr CONST_255 operand_addr
+		add operand_addr tmp1 operand_addr
+		-- Jump address hi in tmp1
+		rtable mem operand_addr tmp1
+		-- Change PC
+		copy tmp1 P
+		multi P 256 P
+		add tmp0 P P
+		set exception 0
+		
+		-- Infinite loop check 
+		ifeq P tmp4
+			set exception 4
+		end
+	end
+#endblock
+
+-- MNEMONIC                       HEX
+-- BPL (Branch on PLus)           $10
+-- BMI (Branch on MInus)          $30
+-- BVC (Branch on oVerflow Clear) $50
+-- BVS (Branch on oVerflow Set)   $70
+-- BCC (Branch on Carry Clear)    $90
+-- BCS (Branch on Carry Set)      $B0
+-- BNE (Branch on Not Equal)      $D0
+-- BEQ (Branch on EQual)          $F0
+
+#block check_BRA
+	ifeq IR 16
+		set exception 0
+		ifeq N_Flag 0
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 48
+		set exception 0
+		ifeq N_Flag 1
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 80
+		set exception 0
+		ifeq V_Flag 0
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 112
+		set exception 0
+		ifeq V_Flag 1
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 144
+		set exception 0
+		ifeq C_Flag 0
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 176
+		set exception 0
+		ifeq C_Flag 1
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 208
+		set exception 0
+		ifeq Z_Flag 0
+			execute_BRA
+		end
+		inc P 2
+	end
+	ifeq IR 240
+		set exception 0
+		ifeq Z_Flag 1
+			execute_BRA
+		end
+		inc P 2
+	end
+#endblock
+
+#block execute_BRA
+	-- Infinite loop check
+	copy P tmp4
+	dec tmp4 2
+	
+	addr_immediate
+	rtable mem operand_addr tmp0
+	comp tmp0 127 tmp1
+	ifeq tmp1 0
+		-- This is already 2's complement, but we need to extend sign bit
+		OR tmp0 CONST_FF00 tmp0
+	end
+	add P tmp0 P
+	
+	-- Infinite loop check
+	ifeq P tmp4
+		set exception 4
+	end
+#endblock
+
+-- CMP (CoMPare accumulator)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     CMP #$44      $C9  2   2
+-- Zero Page     CMP $44       $C5  2   3
+-- Zero Page,X   CMP $44,X     $D5  2   4
+-- Absolute      CMP $4400     $CD  3   4
+-- Absolute,X    CMP $4400,X   $DD  3   4+
+-- Absolute,Y    CMP $4400,Y   $D9  3   4+
+-- Indirect,X    CMP ($44,X)   $C1  2   6
+-- Indirect,Y    CMP ($44),Y   $D1  2   5+
+
+#block check_CMP
+ ifeq IR 201
+   addr_immediate
+   execute_CMP A
+   inc P 2
+ end
+ ifeq IR 197
+   addr_zero_page
+   execute_CMP A
+   inc P 2
+ end
+ ifeq IR 213
+   addr_zero_page_indexed X
+   execute_CMP A
+   inc P 2
+ end
+ ifeq IR 205
+   addr_absolute
+   execute_CMP A
+   inc P 3
+ end
+ ifeq IR 221
+   addr_absolute_indexed X
+   execute_CMP A
+   inc P 3
+ end
+ ifeq IR 217
+   addr_absolute_indexed Y
+   execute_CMP A
+   inc P 3
+ end
+ ifeq IR 193
+   addr_indexed_indirect_X
+   execute_CMP A
+   inc P 2
+ end
+ ifeq IR 209
+   addr_indirect_indexed_Y
+   execute_CMP A
+   inc P 2
+ end
+#endblock
+
+#block execute_CMP _ec_reg
+	set N_Flag 0
+	set Z_Flag 0
+	set C_Flag 0
+	rtable mem operand_addr tmp0
+	comp _ec_reg tmp0 tmp1
+	ifeq tmp1 0
+		set C_Flag 1
+	end
+	ifeq tmp1 1
+		set Z_Flag 1
+		set C_Flag 1
+	end
+	ifeq tmp1 2
+		set N_Flag 1
+	end	
+	set exception 0
+#endblock
+
+-- CPX (ComPare X register)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     CPX #$44      $E0  2   2
+-- Zero Page     CPX $44       $E4  2   3
+-- Absolute      CPX $4400     $EC  3   4
+
+#block check_CPX
+ ifeq IR 224
+   addr_immediate
+   execute_CMP X
+   inc P 2
+ end
+ ifeq IR 228
+   addr_zero_page
+   execute_CMP X
+   inc P 2
+ end
+ ifeq IR 236
+   addr_absolute
+   execute_CMP X
+   inc P 3
+ end
+#endblock
+
+-- CPY (ComPare Y register)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Immediate     CPY #$44      $C0  2   2
+-- Zero Page     CPY $44       $C4  2   3
+-- Absolute      CPY $4400     $CC  3   4
+
+#block check_CPY
+ ifeq IR 192
+   addr_immediate
+   execute_CMP Y
+   inc P 2
+ end
+ ifeq IR 196
+   addr_zero_page
+   execute_CMP Y
+   inc P 2
+ end
+ ifeq IR 204
+   addr_absolute
+   execute_CMP Y
+   inc P 3
+ end
+#endblock
+
+-- BIT (test BITs)
+-- Affects Flags: N V Z
+-- MODE           SYNTAX       HEX LEN TIM
+-- Zero Page     BIT $44       $24  2   3
+-- Absolute      BIT $4400     $2C  3   4
+
+#block check_BIT 
+	ifeq IR 36
+		addr_zero_page
+		execute_BIT
+		inc P 2
+	end
+	ifeq IR 44
+		addr_absolute
+		execute_BIT
+		inc P 3
+	end
+#endblock
+
+#block execute_BIT
+	set N_Flag 0
+	set V_Flag 0
+	set Z_Flag 0
+	rtable mem operand_addr tmp0
+	AND tmp0 CONST_128 tmp1
+	ifnoteq tmp1 0
+		set N_Flag 1
+	end
+	AND tmp0 CONST_64 tmp1
+	ifnoteq tmp1 0
+		set V_Flag 1
+	end
+	AND tmp0 A tmp1
+	ifeq tmp1 0
+		set Z_Flag 1
+	end
+	set exception 0
+#endblock
+
+-- ASL (Arithmetic Shift Left)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Accumulator   ASL A         $0A  1   2
+-- Zero Page     ASL $44       $06  2   5
+-- Zero Page,X   ASL $44,X     $16  2   6
+-- Absolute      ASL $4400     $0E  3   6
+-- Absolute,X    ASL $4400,X   $1E  3   7
+
+#block check_ASL
+ ifeq IR 10
+   execute_ASL A
+   inc P 1
+ end
+ ifeq IR 6
+   addr_zero_page
+   rtable mem operand_addr tmp0
+   execute_ASL tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 22
+   addr_zero_page_indexed X
+   rtable mem operand_addr tmp0
+   execute_ASL tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 14
+   addr_absolute
+   rtable mem operand_addr tmp0
+   execute_ASL tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+ ifeq IR 30
+   addr_absolute_indexed X
+   rtable mem operand_addr tmp0
+   execute_ASL tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+#endblock
+
+#block execute_ASL _asl_v
+	multi _asl_v 2 _asl_v
+	-- beware of possible overwriting of tmp variables here
+	comp _asl_v 255 tmp4
+	set C_flag 0
+	ifeq tmp4 0
+		set C_Flag 1
+		AND _asl_v CONST_255 _asl_v
+	end
+	update_N _asl_v
+	update_Z _asl_v
+	set exception 0
+#endblock
+
+-- LSR (Logical Shift Right)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Accumulator   LSR A         $4A  1   2
+-- Zero Page     LSR $44       $46  2   5
+-- Zero Page,X   LSR $44,X     $56  2   6
+-- Absolute      LSR $4400     $4E  3   6
+-- Absolute,X    LSR $4400,X   $5E  3   7
+
+#block check_LSR
+ ifeq IR 74
+   execute_LSR A
+   inc P 1
+ end
+ ifeq IR 70
+   addr_zero_page
+   rtable mem operand_addr tmp0
+   execute_LSR tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 86
+   addr_zero_page_indexed X
+   rtable mem operand_addr tmp0
+   execute_LSR tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 78
+   addr_absolute
+   rtable mem operand_addr tmp0
+   execute_LSR tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+ ifeq IR 94
+   addr_absolute_indexed X
+   rtable mem operand_addr tmp0
+   execute_LSR tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+#endblock
+
+#block execute_LSR _lsr_v
+	AND _lsr_v CONST_1 C_Flag
+	div _lsr_v 2 _lsr_v
+	update_N _lsr_v
+	update_Z _lsr_v
+	set exception 0
+#endblock
+
+-- ROL (ROtate Left)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Accumulator   ROL A         $2A  1   2
+-- Zero Page     ROL $44       $26  2   5
+-- Zero Page,X   ROL $44,X     $36  2   6
+-- Absolute      ROL $4400     $2E  3   6
+-- Absolute,X    ROL $4400,X   $3E  3   7
+
+#block check_ROL
+ ifeq IR 42
+   execute_ROL A
+   inc P 1
+ end
+ ifeq IR 38
+   addr_zero_page
+   rtable mem operand_addr tmp0
+   execute_ROL tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 54
+   addr_zero_page_indexed X
+   rtable mem operand_addr tmp0
+   execute_ROL tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 46
+   addr_absolute
+   rtable mem operand_addr tmp0
+   execute_ROL tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+ ifeq IR 62
+   addr_absolute_indexed X
+   rtable mem operand_addr tmp0
+   execute_ROL tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+#endblock
+
+#block execute_ROL _rol_v
+	multi _rol_v 2 _rol_v
+	add _rol_v C_flag _rol_v
+	-- beware of possible overwriting of tmp variables here
+	comp _rol_v 255 tmp4
+	set C_flag 0
+	ifeq tmp4 0
+		set C_Flag 1
+		AND _rol_v CONST_255 _rol_v
+	end
+	update_N _rol_v
+	update_Z _rol_v
+	set exception 0
+#endblock
+
+-- ROR (ROtate Right)
+-- Affects Flags: N Z C
+-- MODE           SYNTAX       HEX LEN TIM
+-- Accumulator   ROR A         $6A  1   2
+-- Zero Page     ROR $44       $66  2   5
+-- Zero Page,X   ROR $44,X     $76  2   6
+-- Absolute      ROR $4400     $6E  3   6
+-- Absolute,X    ROR $4400,X   $7E  3   7
+
+#block check_ROR
+ ifeq IR 106
+   execute_ROR A
+   inc P 1
+ end
+ ifeq IR 102
+   addr_zero_page
+   rtable mem operand_addr tmp0
+   execute_ROR tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 118
+   addr_zero_page_indexed X
+   rtable mem operand_addr tmp0
+   execute_ROR tmp0
+   wtable mem operand_addr tmp0
+   inc P 2
+ end
+ ifeq IR 110
+   addr_absolute
+   rtable mem operand_addr tmp0
+   execute_ROR tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+ ifeq IR 126
+   addr_absolute_indexed X
+   rtable mem operand_addr tmp0
+   execute_ROR tmp0
+   wtable mem operand_addr tmp0
+   inc P 3
+ end
+#endblock
+
+#block execute_ROR _ror_v
+	-- Beware of overwriting tmp0
+	divmod _ror_v CONST_2 _ror_v tmp4
+	multi C_flag 128 C_flag
+	add _ror_v C_Flag _ror_v
+	copy tmp4 C_flag
+	update_N _ror_v
+	update_Z _ror_v
+	set exception 0
+#endblock
+
+-- Transfer Instructions
+-- Affect Flags: N Z
+-- These instructions are implied mode, have a length of one byte and require two machine cycles.
+-- MNEMONIC                 HEX
+-- TAX (Transfer A to X)    $AA
+-- TXA (Transfer X to A)    $8A
+-- TAY (Transfer A to Y)    $A8
+-- TYA (Transfer Y to A)    $98
+
+#block check_transfer_instructions
+	ifeq IR 170
+		copy A X
+		update_N X
+		update_Z X
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 138
+		copy X A
+		update_N A
+		update_Z A
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 168
+		copy A Y
+		update_N Y
+		update_Z Y
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 152
+		copy Y A
+		update_N A
+		update_Z A
+		inc P 1
+		set exception 0
+	end
+#endblock
+
+-- Stack Instructions
+-- MNEMONIC                        HEX TIM
+-- TXS (Transfer X to Stack ptr)   $9A  2
+-- TSX (Transfer Stack ptr to X)   $BA  2
+-- PHA (PusH Accumulator)          $48  3
+-- PLA (PuLl Accumulator)          $68  4
+-- PHP (PusH Processor status)     $08  3
+-- PLP (PuLl Processor status)     $28  4
+
+#block check_stack_instructions
+	ifeq IR 154
+		copy X S
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 186
+		copy S X
+		update_N S
+		update_Z S
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 72
+		push_stack A
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 104
+		pop_stack A
+		update_N A
+		update_Z A
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 8
+		set_status
+		push_stack status
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 40
+		pop_stack status
+		set_flags
+		inc P 1
+		set exception 0
+	end
+#endblock
+
+-- JSR (Jump to SubRoutine)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Absolute      JSR $5597     $20  3   6
+
+#block check_JSR
+	ifeq IR 32
+		-- Infinite loop check
+		copy P tmp4
+		
+		addr_absolute
+		inc P 2
+		divmod P CONST_256 tmp0 tmp1
+		push_stack tmp0
+		push_stack tmp1
+		copy operand_addr P
+		set exception 0
+			
+		-- Infinite loop check
+		ifeq P tmp4
+			set exception 4
+		end		
+	end
+#endblock
+
+-- RTS (ReTurn from Subroutine)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Implied       RTS           $60  1   6
+
+#block check_RTS
+	ifeq IR 96
+		pop_stack tmp0
+		pop_stack P
+		multi P 256 P
+		add P tmp0 P
+		inc P 1
+		set exception 0
+	end
+#endblock
+
+-- RTI (ReTurn from Interrupt)
+-- Affects Flags: all
+-- MODE           SYNTAX       HEX LEN TIM
+-- Implied       RTI           $40  1   6
+
+#block check_RTI
+	ifeq IR 64
+		pop_stack status
+		set_flags
+		pop_stack tmp0
+		pop_stack P
+		multi P 256 P
+		add P tmp0 P
+		set exception 0
+	end
+#endblock
+
+-- Flag (Processor Status) Instructions
+-- CLC (CLear Carry)              $18
+-- SEC (SEt Carry)                $38
+-- CLI (CLear Interrupt)          $58
+-- SEI (SEt Interrupt)            $78
+-- CLV (CLear oVerflow)           $B8
+-- CLD (CLear Decimal)            $D8
+-- SED (SEt Decimal)              $F8
+
+#block check_flag_instructions
+	ifeq IR 24
+		set C_flag 0
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 56
+		set C_flag 1
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 88
+		set I_flag 0
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 120
+		set I_flag 1
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 184
+		set V_flag 0
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 216
+		set D_flag 0
+		inc P 1
+		set exception 0
+	end
+	ifeq IR 248
+		set D_flag 1
+		inc P 1
+		set exception 0
+	end
+#endblock
+
+-- NOP (No OPeration)
+-- Affects Flags: none
+-- MODE           SYNTAX       HEX LEN TIM
+-- Implied       NOP           $EA  1   2
+
+#block check_NOP
+	ifeq IR 234
+		inc P 1
+		set exception 0
+	end
+#endblock
+
+-- BRK (BReaK)
+-- Affects Flags: B
+-- MODE           SYNTAX       HEX LEN TIM
+-- Implied       BRK           $00  1   7
+
+#block check_BRK
+	ifeq IR 0
+		inc P 2
+		divmod P CONST_256 tmp0 tmp1
+		push_stack tmp0
+		push_stack tmp1
+		set_status
+		push_stack status
+		set I_flag 1
+		rtable mem 65535 P 
+		multi P 256 P
+		rtable mem 65534 tmp0
+		add P tmp0 P 
+		set exception 0
+	end
+#endblock
+
+-- The below block uses the illegal opcode $42 to get access to BrainFuck functionalities from assembler.
+-- Actual action depends on the "SYSCALL code" in the byte followig the $42 opcode.
+
+#block check_SYSCALL
+	ifeq IR 66
+		-- Set exception to "unrecognized SYSCALL" in case we don't find a valid call code
+		set exception 3
+		
+		inc P 1
+		rtable mem P tmp0
+		
+		-- 0 prints a dump
+		ifeq tmp0 0 			
+			dump
+			inc P 1
+			set exception 0
+		end
+		-- 16 print the character coresponding to the ASCII value in the accumulator
+		ifeq tmp0 16 
+			print A
+			inc P 1
+			set exception 0
+		end
+		-- 17 reads a character into the accumulator; updates Z flag!!!
+		ifeq tmp0 17
+			read A
+			update_Z A
+			inc P 1
+			set exception 0
+		end
+		-- 18 prints null terminated string following opcode
+		ifeq tmp0 18
+			inc P 1
+			rtable mem P tmp0
+			uneq tmp0 0
+				print tmp0
+				inc P 1
+				rtable mem P tmp0					
+			end
+			inc P 1
+			set exception 0
+		end
+		-- 19 prints hex byte value (absolute adderssing) 
+		-- The word following the SYSCALL opcode  used as a pointer to a memory cell whose content will be printed.
+		ifeq tmp0 19
+			addr_absolute
+			rtable mem operand_addr tmp0
+			out16 tmp0
+			inc P 3
+			set exception 0
+		end
+		-- 20 prints hex word value (absolute adderssing) 
+		-- The word following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
+		ifeq tmp0 20
+			addr_absolute
+			rtable mem operand_addr tmp0
+			inc operand_addr 1
+			rtable mem operand_addr tmp1
+			multi tmp1 256 tmp1
+			add tmp1 tmp0 tmp0
+			out16 tmp0
+			inc P 3
+			set exception 0
+		end		
+		-- 21 prints hex byte value (zeropage adderssing) 
+		-- The byte following the SYSCALL opcode is used as a pointer to a memory cell whose content will be printed.
+		ifeq tmp0 21
+			addr_zero_page
+			rtable mem operand_addr tmp0
+			out16 tmp0
+			inc P 2
+			set exception 0
+		end
+		-- 22 prints hex word value (zeropage adderssing) 
+		-- The byte following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
+		ifeq tmp0 22
+			addr_zero_page
+			rtable mem operand_addr tmp0
+			inc operand_addr 1
+			rtable mem operand_addr tmp1
+			multi tmp1 256 tmp1
+			add tmp1 tmp0 tmp0
+			out16 tmp0
+			inc P 2
+			set exception 0
+		end
+		-- 23 prints a string (absolute adderssing) 
+		-- The word following the SYSCALL opcode is used as a pointer to a 0-terminated string which will be will be printed.
+		ifeq tmp0 23
+			addr_absolute
+			rtable mem operand_addr tmp0
+			uneq tmp0 0
+				print tmp0
+				inc operand_addr 1
+				rtable mem operand_addr tmp0
+			end
+			inc P 3
+			set exception 0
+		end		
+		
+		-- TODO implement printing string given its pointer (no string inlining)
+		
+		-- 32 quit emulator
+		ifeq tmp0 32
+			set running FALSE
+			set exception 0
+		end
+	end
+#endblock
+
+-- ------------------
+-- 6502 CODE 
+-- ------------------
+
+-- This will load 6502 code and jump vectors into 6502 memory.
+-- Either developers are writing this piece manually or some build tool needs to create corresponding BF code before starting emulation.
+#block load_memory
+	-- CODE
+
+	-- LDA #33
+	-- wtable mem 0 169
+	-- wtable mem 1 33
+
+	-- Jump vectors
+	-- wtable mem 65532 RESET_VECTOR_L
+	-- wtable mem 65533 RESET_VECTOR_H
+#endblock
+
+-- -----------------------------------------------------------------------------------
+-- MAIN VARIABLES
+-- -----------------------------------------------------------------------------------
+
+-- If TRUE, keep running
+#dim running
+
+-- If not 0, signals a critical error that must terminate execution
+--   1 unsupported opcode
+--   2 unsupported BCD math operation
+--   3 unsupported SYSCALL code (illegal opcode $42 causes execution of a "SYStem CALL" which behavior depends on byte following illegal opcode).
+--   4 an infinite loop has been detected (JMP or JSR to itself).
+#dim exception
+
+-- Instruction Register with opcode to execute
+#dim IR
+
+-- Address of operand used in instructions
+#dim operand_addr
+
+-- 6502 registers
+#dim P A X Y S
+#dim N_flag V_flag I_flag Z_flag C_flag D_flag status 
+
+-- 6502 memory
+#table mem 65536
+
+-- -----------------------------------------------------------------------------------
+-- MAIN PROGRAM
+-- -----------------------------------------------------------------------------------
+
+reset
+
+-- Main execution loop
+set running TRUE
+uneq running FALSE
+	-- We set this to "unsupported opcode" by default. If the opcode is correctly executed, this will be reset.
+	set exception 1
+
+	read_opcode	
+	execute_opcode
+	handle_exceptions
+end
+
+ifnoteq exception 0
+	-- An error occurred, print the CPU status
+	line
+	dump
+end
+

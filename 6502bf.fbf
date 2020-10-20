@@ -2648,21 +2648,22 @@ set CONST_FF00 65280
   inc P 1
   rtable mem P tmp0
   
-  -- 0 prints a dump
+  -- 0 prints a dump of 6502 registers.
   ifeq tmp0 0
     dump
     inc P 1
     set exception 0
   end
   
-  -- 16 print the character coresponding to the ASCII value in the accumulator
+  -- 16 prints the character coresponding to the ASCII value in the accumulator.
   ifeq tmp0 16
     print A
     inc P 1
     set exception 0
   end
   
-  -- 17 reads a character into the accumulator; updates Z flag!!!
+  -- 17 reads a character into the accumulator and updates Z flag accordingly.
+  -- Z flag set if ASCII $00 is read, reset otherwise.
   ifeq tmp0 17
     read A
     update_Z A
@@ -2670,7 +2671,7 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 18 prints null terminated string following opcode
+  -- 18 prints null terminated string following opcode.
   ifeq tmp0 18
     inc P 1
     rtable mem P tmp0
@@ -2683,7 +2684,7 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 19 prints hex byte value (absolute addressing)
+  -- 19 prints hex byte value (absolute addressing).
   -- The word following the SYSCALL opcode  used as a pointer to a memory cell whose content will be printed.
   ifeq tmp0 19
     addr_absolute
@@ -2692,7 +2693,7 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 20 prints hex word value (absolute addressing)
+  -- 20 prints hex word value (absolute addressing).
   -- The word following the SYSCALL opcode is used as a pointer to a word in memory (LO byte, HI byte) whose content will be printed.
   ifeq tmp0 20
     addr_absolute
@@ -2705,7 +2706,7 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 21 prints hex byte value (zeropage addressing)
+  -- 21 prints hex byte value (zeropage addressing).
   -- The byte following the SYSCALL opcode is used as a pointer to a zeropage memory cell whose content will be printed.
   ifeq tmp0 21
     addr_zero_page
@@ -2714,7 +2715,7 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 22 prints hex word value (zeropage addressing)
+  -- 22 prints hex word value (zeropage addressing).
   -- The byte following the SYSCALL opcode is used as a pointer to a word in zeropage (LO byte, HI byte) whose content will be printed.
   ifeq tmp0 22
     addr_zero_page
@@ -2727,7 +2728,20 @@ set CONST_FF00 65280
     set exception 0
   end
   
-  -- 32 quit emulator
+  -- 23 prints a string (absolute addressing) 
+  -- The word following the SYSCALL opcode is used as a pointer to a 0-terminated string which will be will be printed.
+  ifeq tmp0 23
+    addr_absolute
+    rtable mem operand_addr tmp0
+	uneq tmp0 0
+		print tmp0
+		inc operand_addr 1
+		rtable mem operand_addr tmp0
+	end
+    set exception 0
+  end
+  
+  -- 32 quit emulator.
   ifeq tmp0 32
     set running FALSE
     set exception 0
@@ -2767,7 +2781,7 @@ set CONST_FF00 65280
   -- 41 Reads a string as required by cc65 libraries.
   -- This implements the below C function call:
   --     int read (int fd, void* buf, unsigned count);
-  -- See write.s for details.
+  -- See read.s for details.
   ifeq tmp0 41
   
 	-- the pointer to buf goes in tmp0 from stack

@@ -119,7 +119,7 @@ to compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-The file `cc65\6502bf.inc` contains a set of macros that expose some features available in the 6502bf emulator.
+The file `<root>\cc65\6502bf.inc` contains a set of macros that expose some features available in the 6502bf emulator.
 
 The code can use zeropage variables (except for 26 bytes reserved by ca65) and the whole of RAM (starting from $200),
 with the exception of a 4KB stack located in high memory. For more information, please refer to `cc65\6502bf.cfg`
@@ -142,6 +142,10 @@ Again, if Python or C compilers have not been configured, compilation will stop 
 
 Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_cl` will enable some optimization (`-Oir`). Please notices that cc65 somehow [differs](https://www.cc65.org/doc/cc65-4.html) from ANSI C.
 
+#### Libraries
+
+  * how to rebuild libraries.
+  
 ## The 6502bf emulator
 
  * DEC mode
