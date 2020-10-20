@@ -5,12 +5,24 @@
 ; Useful macros
 .include        "..\..\cc65\6502bf.inc"
 
-.DATA
+.SEGMENT "ZEROPAGE"
+
+zpbyt:
+	.byte $00
+zpwrd:
+	.word $0000
+
+
+.SEGMENT "DATA"
 
 str:
-	.byte ">This is a String.<", 00
+	.byte "ZZZ", 00
+byt:
+	.byte $12
+wrd:
+	.word $3456
 	
-.CODE
+.SEGMENT "CODE"
 ; ---------------------------------------------------------------------------
 ; A little light 6502 housekeeping
 
@@ -34,8 +46,50 @@ str:
 ; ---------------------------------------------------------------------------
 ; Main code
 
-	EMU_PRINTLNS "Hello World."  
+	lda #$AB
+	sta zpbyt
+	
+	lda #$EF
+	sta zpwrd
+	lda #$CD
+	sta zpwrd+1
+	
+	EMU_DUMP
+	
+	lda #$7C
+	EMU_PUTC
+	lda #65
+	EMU_PUTC
+	lda #$7C
+	EMU_PUTC
+
+	EMU_PRINTS "XXX"
+	lda #$7C
+	EMU_PUTC
+
+	EMU_PRINTLNS "YYY"
+	lda #$7C
+	EMU_PUTC
+	
 	EMU_PRINTSAT str  
+	lda #$7C
+	EMU_PUTC
+	
+	EMU_PRINTBAT byt
+	lda #$7C
+	EMU_PUTC
+	
+	EMU_PRINTWAT wrd
+	lda #$7C
+	EMU_PUTC
+	
+	EMU_PRINTBZP zpbyt
+	lda #$7C
+	EMU_PUTC
+	
+	EMU_PRINTWZP zpwrd
+	lda #$7C
+	EMU_PUTC
 	
 	EMU_QUIT
 
