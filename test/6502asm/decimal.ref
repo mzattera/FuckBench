@@ -1,0 +1,12 @@
+
+
+*ERROR* BCD mode not implemented.
+
+P:	$0212	530
+IR:	$0069	105
+A:	$0001	1
+X:	$00FF	255
+Y:	$0000	0
+SP:	$00FF	255
+Status:	NV-BDIZC
+	00111000

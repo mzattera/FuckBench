@@ -1,8 +1,3 @@
-JSR/JMp/BRA test for loop check
-Code to test unrecognized SYSCALL code
-Code to test BCD mode
-
-
 First working FB_java.bat
 
 b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file

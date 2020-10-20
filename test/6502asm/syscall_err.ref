@@ -1,0 +1,13 @@
+
+
+*ERROR* Unrecognized SYSCALL opcode:	1
+
+
+P:	$020F	527
+IR:	$0042	66
+A:	$0002	2
+X:	$00FF	255
+Y:	$0000	0
+SP:	$00FF	255
+Status:	NV-BDIZC
+	00110000
