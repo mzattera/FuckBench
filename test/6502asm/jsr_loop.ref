@@ -1,0 +1,12 @@
+
+
+*LOOP* detected
+
+P:	$020E	526
+IR:	$0020	32
+A:	$0002	2
+X:	$00FF	255
+Y:	$0000	0
+SP:	$00FD	253
+Status:	NV-BDIZC
+	00110000
