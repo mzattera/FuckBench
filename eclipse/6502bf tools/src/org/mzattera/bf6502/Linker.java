@@ -27,7 +27,7 @@ public class Linker {
 	public final static String CODE_NAME = "6502bf";
 
 	// Cells on the BF tape to skip before finding 6502 memory (start of mem[] array on tape)
-	public final static int SKIP = 118;
+	public final static int SKIP = 120;
 
 	// Start address of 6502 program
 	public final static int START_ADDRESS = 0x0200;

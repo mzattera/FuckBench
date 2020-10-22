@@ -84,4 +84,11 @@
 	.byte $42, $29
 .endmacro
 
+; 80 Read 6502bf instruction counter (surrogate for real time clock) into a long.
+; Uses cc65 calling convention
+.macro EMU_CC65_CLOCK
+	.byte $42, $50
+.endmacro
+
+
 
