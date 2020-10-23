@@ -7,7 +7,6 @@
 .import         popax, popptr1
 .importzp       ptr1
 
-.include        "zeropage.inc"
 .include        "6502bf.inc"
 
 ; int write (int fd, const void* buf, int count);

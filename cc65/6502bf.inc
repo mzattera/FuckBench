@@ -6,8 +6,6 @@
 ; MACRO 
 ; These macro use invalid opcode $42 to trigger 6502bf emulator special behavior
 
-.P02
-
 ; 0 prints a dump of 6502 registers.
 .macro EMU_DUMP   
 	.byte $42, $00

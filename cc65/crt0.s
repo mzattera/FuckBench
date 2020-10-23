@@ -7,12 +7,12 @@
 .import 	__MAIN_START__, __MAIN_SIZE__
 .import    	copydata, zerobss, initlib, donelib, _main
 .import   	_irq_int, _nmi_int
+.importzp	sp
 
 ; TODO zeropage.inc is taken from cc65 source tree and 6502bf.lib is a copy of none.lib.
 ; These should be updated when a new version of the compilr comes out.
 
 .include  "6502bf.inc"
-.include  "zeropage.inc"
 
 ; ---------------------------------------------------------------------------
 ; Place the startup code in a special segment
