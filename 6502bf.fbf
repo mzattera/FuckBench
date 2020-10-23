@@ -15,6 +15,33 @@
 #linemode DOS
 
 -- -----------------------------------------------------------------------------------
+-- MAIN VARIABLES
+-- -----------------------------------------------------------------------------------
+
+-- If TRUE, keep running
+#dim running
+
+-- Instruction Register with opcode to execute
+#dim IR
+
+-- Address of operand used in instructions
+#dim operand_addr
+
+-- CPU "ticks" (indeed it counts number of instructions being executed, for performance reasons)
+#dim ticLo ticHi
+
+-- 6502 registers
+#dim P A X Y S
+#dim N_flag V_flag I_flag Z_flag C_flag D_flag status
+
+-- If not 0, signals a critical error that must terminate execution
+--   1 unsupported opcode
+--   2 unsupported BCD math operation
+--   3 unsupported SYSCALL code (illegal opcode $42 causes execution of a "SYStem CALL" which behavior depends on byte following illegal opcode).
+--   4 an infinite loop has been detected (JMP or JSR to itself).
+#dim exception
+
+-- -----------------------------------------------------------------------------------
 -- SOME CONSTANTS
 -- -----------------------------------------------------------------------------------
 
@@ -2829,6 +2856,27 @@ set CONST_FF00 65280
 	inc P 1
     set exception 0
   end
+  
+  -- 50 Writes clock
+  -- The internal "clock" is copied into an unsigned long (4 bytes word) which address is passed in A/X (cc65 fastcall convention)
+  ifeq tmp0 80
+	SHL_8 X tmp2
+	add tmp2 A tmp2
+	
+	divmod ticLo CONST_256 tmp0 tmp1
+    wtable mem tmp2 tmp1
+	inc tmp2 1
+    wtable mem tmp2 tmp0
+	inc tmp2 1
+	divmod ticHi CONST_256 tmp0 tmp1
+    wtable mem tmp2 tmp1
+	inc tmp2 1
+    wtable mem tmp2 tmp0
+	
+	inc P 1
+    set exception 0
+  end
+  
 #endblock
 
 -- ------------------
@@ -2850,35 +2898,11 @@ set CONST_FF00 65280
 #endblock
 
 -- -----------------------------------------------------------------------------------
--- MAIN VARIABLES
+-- MAIN PROGRAM
 -- -----------------------------------------------------------------------------------
-
--- If TRUE, keep running
-#dim running
-
--- If not 0, signals a critical error that must terminate execution
---   1 unsupported opcode
---   2 unsupported BCD math operation
---   3 unsupported SYSCALL code (illegal opcode $42 causes execution of a "SYStem CALL" which behavior depends on byte following illegal opcode).
---   4 an infinite loop has been detected (JMP or JSR to itself).
-#dim exception
-
--- Instruction Register with opcode to execute
-#dim IR
-
--- Address of operand used in instructions
-#dim operand_addr
-
--- 6502 registers
-#dim P A X Y S
-#dim N_flag V_flag I_flag Z_flag C_flag D_flag status
 
 -- 6502 memory
 #table mem 65536
-
--- -----------------------------------------------------------------------------------
--- MAIN PROGRAM
--- -----------------------------------------------------------------------------------
 
 reset
 
@@ -2891,6 +2915,12 @@ uneq running FALSE
   read_opcode
   execute_opcode
   handle_exceptions
+  
+  -- Update internal "clock" 
+  inc ticLo 1
+  ifeq ticLo 0
+	inc ticHi 1
+  end
 end
 
 ifnoteq exception 0
@@ -2898,5 +2928,9 @@ ifnoteq exception 0
   line
   dump
 end
+
+out16 tichi
+out16 ticLo
+
 
 
