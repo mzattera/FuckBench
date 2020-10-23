@@ -1,17 +1,27 @@
-; Read 6502bf instruction counter (surrogate for real time clock).
+; implements clock() by reading 6502bf instruction counter.
 
 .P02
 
-.export         _get_instr_count
-.import         popax, popptr1
-.importzp       ptr1
+.export         _clock
+.import         popax, popsreg
+.importzp 		sreg
 
 .include        "6502bf.inc"
 
-; void __fastcall__ get_instr_count(unsigned long*);
+; clock_t clock (void);
 
-.proc   _get_instr_count
+.proc   _clock
 	EMU_CC65_CLOCK
+	
+	; fetches return value from 6502 stack
+	pla
+	sta sreg+1
+	pla
+	sta sreg
+	pla
+	tax
+	pla
+	
 	rts
 .endproc
 

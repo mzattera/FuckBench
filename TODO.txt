@@ -8,6 +8,7 @@ Downgrade to Java 8? Update README.md accordingly
 
 Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
 
+Batch to auto rebuild Java tools
 
 
 SHR (?)
@@ -16,7 +17,7 @@ IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this)
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
-is mod X 255 faster than AND X 255? -> check siumilar stuff.
+is mod X 255 faster than AND X 255? -> check similar stuff.
 
 Check FBF code for accessing tables, maybe it's not super efficient?
 

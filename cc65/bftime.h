@@ -3,6 +3,7 @@
 
 #include <time.h>
 
-extern void __fastcall__ get_instr_count(unsigned long*);
+#define CLK_TCK			6000 	/* POSIX */
+#define CLOCKS_PER_SEC	6000	/* ANSI */
 
 #endif

@@ -2858,20 +2858,14 @@ set CONST_FF00 65280
   end
   
   -- 50 Writes clock
-  -- The internal "clock" is copied into an unsigned long (4 bytes word) which address is passed in A/X (cc65 fastcall convention)
+  -- The internal "clock" (instruction counter) it is pushed to the 6502 stack.
   ifeq tmp0 80
-	SHL_8 X tmp2
-	add tmp2 A tmp2
-	
-	divmod ticLo CONST_256 tmp0 tmp1
-    wtable mem tmp2 tmp1
-	inc tmp2 1
-    wtable mem tmp2 tmp0
-	inc tmp2 1
-	divmod ticHi CONST_256 tmp0 tmp1
-    wtable mem tmp2 tmp1
-	inc tmp2 1
-    wtable mem tmp2 tmp0
+	divmod ticLo CONST_256 tmp1 tmp0
+	push_stack tmp0
+	push_stack tmp1
+	divmod ticHi CONST_256 tmp1 tmp0
+	push_stack tmp0
+	push_stack tmp1
 	
 	inc P 1
     set exception 0
