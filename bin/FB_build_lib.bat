@@ -17,7 +17,19 @@ copy /Y "%FB_CC65%\lib\none.lib" 6502bf.lib
 for %%i in (*.s) do (
 	echo %%i
 	if exist 6502bf.lib (
-		"%FB_CC65%\bin\ca65" "%%i"
+		"%FB_CC65%\bin\ca65" %FB_CA65_PARAMS% "%%i"
+		if exist "%%~ni.o" (
+			"%FB_CC65%\bin\ar65" a 6502bf.lib "%%~ni.o"
+		) else (
+			del /F /Q *.lib
+		)
+	)
+)
+
+for %%i in (*.c) do (
+	echo %%i
+	if exist 6502bf.lib (
+		call "%FB_BIN%FB_cc.bat" "%%~ni"
 		if exist "%%~ni.o" (
 			"%FB_CC65%\bin\ar65" a 6502bf.lib "%%~ni.o"
 		) else (

@@ -1,14 +1,17 @@
 #include <stdio.h>
-#include "..\cc65\bftime.h"
+#include "fbtime.h"
 
 int main() {
-	
-	clock_t last = 0;
-	clock_t current = last;
+
+	time_t last = 0;
+	time_t current = last;
+
+	printf ("CLOCKS_PER_SEC value is: %lu\n", CLOCKS_PER_SEC);
+	printf ("CLK_TCK value is:        %lu\n\n", CLK_TCK);
 
 	while (1) {
 		while (current == last) {
-			current = clock() / CLOCKS_PER_SEC;
+			time (&current);
 		}
 		printf ("Time passed [s]: %lu\n", current);
 		last = current;

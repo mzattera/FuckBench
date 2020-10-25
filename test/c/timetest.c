@@ -1,20 +1,5 @@
 #include <stdio.h>
-#include "..\cc65\bftime.h"
-
-int __fastcall__ clock_getres (clockid_t clock_id, struct timespec *res) {
-	res->tv_sec = 1;
-    res->tv_nsec = 0;
-	
-	return 0;
-}
-
-
-int __fastcall__ clock_gettime (clockid_t clock_id, struct timespec *tp) {
-	tp->tv_sec = clock() / CLOCKS_PER_SEC;
-    tp->tv_nsec = 0;
-	
-	return 0;
-}
+#include "fbtime.h"
 
 void printtm (struct tm* _tm) {
 	printf ("[YY=%d MM=%d DOY=%d hh=%d mm=%d ss=%d]\n", _tm->tm_year, _tm->tm_mon, _tm->tm_yday, _tm->tm_hour, _tm->tm_min, _tm->tm_sec);
@@ -28,8 +13,6 @@ int main() {
 	struct tm* _tm;
 	char buf[128];
 	struct timespec ts;
-
-
 
 	/* ISO C function prototypes */
 

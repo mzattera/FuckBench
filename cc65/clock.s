@@ -3,7 +3,6 @@
 .P02
 
 .export         _clock
-.import         popax, popsreg
 .importzp 		sreg
 
 .include        "6502bf.inc"
