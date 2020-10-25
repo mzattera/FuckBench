@@ -146,7 +146,7 @@ The command
 FB_cc f
 ```
 
-Is also available to compile f.c into object file f.o for later linking, this might be useful for bigger project where more than one
+Is also available to compile `f.c` into object file `f.o` for later linking; this might be useful for bigger projects where more than one
 single C source file is needed.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
@@ -157,16 +157,16 @@ Please notices that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#
 
 #### C Libraries
 
-cc65 provides extensive C libraries covering most of the C standard ones: FB adds some (machine-dependant) functions as well.
+cc65 provides extensive C libraries covering most of the C standard ones, FB adds some (machine-dependant) functions as well.
 To re-build the libraries used by FB, you can call `<root>\bin\FB_build_lib.bat`; this will compile all `.s` (6502 aseembler) and 
-`.c` files under `<root>\cc65` folder and add them to the standard cc65 library (`none.lib`).
+`.c` files under `<root>\cc65` folder and add them to the cc65 library.
 
 ##### time.h
 
-All standard libray fuctions in `time.h`, with the exception of `clock_settime (clockid_t, const struct timespec)` are available
-in FB, with some limitations.
+All standard libray fuctions in `time.h`, with the exception of `clock_settime (clockid_t, const struct timespec)`, are available
+in FB with some limitations, as explained below.
 
-Please notice that to use the time library function you must use*
+Please notice that to use the time library function you must include:
 
 ```
 #include "fbtime.h"
@@ -180,14 +180,14 @@ instead of:
 
 the former will, among other things, define the macro `CLOCKS_PER_SEC` and include the standard `time.h` header.
 
-BF has no access to a system clock, however, the 6502bf emulator keeps track of number of instructions being executed;
+BF has no access to a system clock, however, the 6502bf emulator keeps track of the number of instructions being executed;
 this is returned by the standard `clock()` function.
 
 The `time()` function takes the value returend by `clock()` and divides it by `CLOCKS_PER_SEC` to have a (rough) estimate
 of seconds passed since the program started. The file `<root>\examples\watch.c` can be used to test the clock;
 it is supposed to print a line every second, but the timing will depend on how fast your machine is
 (how many 6502 instructionsit executes in a second). You can fine tune `CLOCKS_PER_SEC` for your machine by changing its definintion
-in `fbtime.h` (rebuild the libraries if you do so).
+in `fbtime.h` (rebuild the libraries if you do so, as explained above).
 
 ##### srand()
 
@@ -198,9 +198,10 @@ srand((unsigned) time(NULL));
 ```
 
 Please notice that the above will compile successfully but, because `time()` and `clock()` are based on the number of 6502 instruction executed
-up to that point in the code, they will always return same value at each execution so the random number generator will always beinitialized with the same seed.
+up to that point in the code, they will always return same value at each execution, therefore the random number generator will always be
+initialized with the same seed.
 
-The only way to properly initialize th erandom number generator in FB, it to ask a random seed to the user.
+The only way to properly initialize the random number generator in FB, it to ask a random seed to the user.
 
   
 ## The 6502bf emulator
