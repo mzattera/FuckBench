@@ -13,7 +13,7 @@
 .proc   _clock
 	EMU_CC65_CLOCK
 	
-	; fetches return value from 6502 stack
+	; fetches return value from 6502 stack and put it in A/X/sreg
 	pla
 	sta sreg+1
 	pla
@@ -24,4 +24,3 @@
 	
 	rts
 .endproc
-

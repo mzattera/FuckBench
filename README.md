@@ -9,7 +9,7 @@ higly optimized C files using the [Esotope](https://github.com/lifthrasiir/esoto
 If a C compiler is available, a Windows executable is also created.
 
 Currently, FB supports compiling the following languages to BF:
- * ANSI C (with some [limitations](https://www.cc65.org/doc/cc65-4.html))
+ * ANSI C
  * 6502 Assembly
  * [FuckBrainFuck](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck)
  
@@ -106,8 +106,8 @@ Again, if Python or C compilers have not been configured, compilation will stop 
 
 ### Compiling 6502 assembly
 
-FB uses [ca65](https://www.cc65.org/doc/ca65.html), a 6502 assembler contained within [cc65](https://cc65.github.io/) 6502 C cross-compiler to compile 6502 assembly code into a 6502 executable that is then linked to the 6502bf BF emulator to produce
-final BF code.
+FB uses [ca65](https://cc65.github.io/doc/ca65.html), a 6502 assembler contained within [cc65](https://cc65.github.io/) 6502 C cross-compiler
+to compile 6502 assembly code into a 6502 executable that is then linked to the 6502bf BF emulator to produce final BF code.
 
 You can invoke:
 
@@ -119,10 +119,12 @@ to compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-The file `<root>\cc65\6502bf.inc` contains a set of macros that expose some features available in the 6502bf emulator.
+The file `<root>\cc65\6502bf.inc` contains a set of macros that exposes features available in the 6502bf emulator.
+
+[Parameters](https://cc65.github.io/doc/ca65.html#ss2.1) used by the assembler can be configured in `<root>\bin\FB_config.bat`.
 
 The code can use zeropage variables (except for 26 bytes reserved by ca65) and the whole of RAM (starting from $200),
-with the exception of a 4KB stack located in high memory. For more information, please refer to `cc65\6502bf.cfg`
+with the exception of a software stack located in high memory. For more information, please refer to `<root>\cc65\6502bf.cfg`
 configuration file and [cc65 documentation](https://cc65.github.io/doc/customizing.html).
 
 ### Compiling ANSI C
@@ -138,9 +140,20 @@ FB_cl f
 
 to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
+The command 
+
+```
+FB_cc f
+```
+
+Is also available to compile f.c into object file f.o for later linking, this might be useful for bigger project where more than one
+single C source file is needed.
+
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-Notice you can pass [compilation parameters](https://www.cc65.org/doc/cl65-2.html) to the compiler; by default `FB_cl` will enable some optimization (`-Oir`). Please notices that cc65 somehow [differs](https://www.cc65.org/doc/cc65-4.html) from ANSI C.
+[Parameters](https://cc65.github.io/doc/cc65.html#ss2.1) used by the compiler can be configured in `<root>\bin\FB_config.bat`.
+
+Please notices that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#s4) from ANSI C.
 
 #### Libraries
 

@@ -20,17 +20,19 @@ if exist %1.exe del /F /Q %1.exe
 rem compiles %1.ca65 into %1.out
 echo on
 
-"%FB_CC65%\bin\ca65" -o %1.o %1.s
+"%FB_CC65%\bin\ca65" %FB_CA65_PARAMS% -o %1.o %1.s
 @java -jar "%FB_BIN%CheckFile.jar" %1.o
 if errorlevel 0 (
-	"%FB_CC65%\bin\ld65" -C "%FB_HOME%\cc65\6502bf.cfg" -o %1.out %1.o
+	"%FB_CC65%\bin\ld65" %FB_LA65_PARAMS% -o %1.out %1.o 6502bf.lib
+
 	@del /F /Q %1.o
 )
 
-@rem merges 6502bf.bf and %1.out into %1.bf
+@echo off
+rem merges 6502bf.bf and %1.out into %1.bf
 
-@java -jar "%FB_BIN%CheckFile.jar" %1.out
-@if errorlevel 0 (
+java -jar "%FB_BIN%CheckFile.jar" %1.out
+if errorlevel 0 (
 	echo.
 	java -jar "%FB_BIN%Linker.jar" %1.out %1.bf -i "%FB_HOME%\6502bf.bf" %2 %3 %4 %5 %6 %7 %8 %9
 

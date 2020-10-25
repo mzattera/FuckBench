@@ -1,8 +1,10 @@
+
 First working FB_java.bat
 
 b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file
 how to setup Eclipse so you can develop a whole java project (using correct java version and lang classes).
 
+SET LOCAL
 
 Downgrade to Java 8? Update README.md accordingly
 
@@ -10,6 +12,8 @@ Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will s
 
 Batch to auto rebuild Java tools
 
+
+test code for clock.s and opthjer time functions
 
 SHR (?)
 
@@ -20,6 +24,10 @@ Bitwise functions clear workarea; do it effciently (clear the minimum required i
 is mod X 255 faster than AND X 255? -> check similar stuff.
 
 Check FBF code for accessing tables, maybe it's not super efficient?
+
+Removing printing instruction counter when emulator exits
+
+Time libraries from C to ASM (there are examples in libsrc)
 
 
 

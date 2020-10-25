@@ -159,7 +159,7 @@ public class TestRunner {
 			System.out.println("Running tests in " + fbTest.getCanonicalPath() + "...");
 			ok &= runTests(new File(fbTest, "bf"), ".bf", "FB_bf.bat");
 			ok &= runTests(new File(fbTest, "fbf"), ".fbf", "FB_fbf.bat");
-			ok &= runTests(new File(fbTest, "6502asm"), ".s", "FB_asm.bat");
+			ok &= runTests(new File(fbTest, "asm"), ".s", "FB_asm.bat");
 			ok &= runTests(new File(fbTest, "c"), ".c", "FB_cl.bat");
 		}
 
