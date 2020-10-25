@@ -1,11 +1,6 @@
 *.lnk
 /mcs6500_family_programming_manual.pdf - Shortcut.lnk
 /Developer Command Prompt for VS 2017.lnk
-/6502bf.c
-/6502bf.exe
-/6502bf_v1.c
-/6502bf_v1.exe
-/How to Improve FBF.txt
 *.bat
-/6502bf - VERBOSE.bf
-/~$opcodes.xlsx
+wip/
+/How to Improve FBF.txt
