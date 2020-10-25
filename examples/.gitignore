@@ -13,3 +13,5 @@
 /fib_c.c
 /fib_c.exe
 *.exe
+*_c.bf
+*_c.c
