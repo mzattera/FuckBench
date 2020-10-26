@@ -13,12 +13,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * *** OBSOLETE ***
+ * 
  * Based on result from ReorganizeOpcode re-writes 6502bf execute_opcode.
  * 
- * @author mzatt
+ * It was used to move from V1 to V2 version of the emulator, but V2 is obsolete now.
+ * 
+ * @author Massimiliano "Maxi" Zattera
  *
  */
-public class RewriteEmu {
+public class CreateV2 {
 
 	private static final File SOURCE = new File("D:\\Users\\mzatt\\Projects\\FBF - 6502bf\\6502bf.fbf");
 

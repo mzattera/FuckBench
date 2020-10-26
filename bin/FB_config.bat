@@ -6,7 +6,7 @@ rem Configures FuckBench
 rem === Below section sets 3rd party tools  ===========================================
 rem *** YOu MUST change this section based on your machine setup ***
 
-rem cc65 home. NOTICE IT MUST *NOT* CONTAIN SPACES
+rem cc65 home. NOTICE IT MUST *NOT* CONTAIN SPACES and must NOT have a trailing '\'
 set "FB_CC65=D:\Programs\cc65"
 
 

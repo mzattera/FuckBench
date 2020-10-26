@@ -15,15 +15,19 @@ import org.mzattera.bf6502.stats.ReorganizeOpcodes;
 import org.mzattera.bf6502.stats.ReorganizeOpcodes.Instruction;
 
 /**
+ * *** OBSOLETE ****
+ * 
  * Takes original (V1) version of the emulator, extracts code for each opcode
  * from the body of "ifeq IR NN ... end" statements, creates a block out of it,
  * replace the code in the ifeq statement with a call to the block, finally
  * prints the new code, beginning with new blocks.
  * 
+ * The result is in V1_1 version.
+ * 
  * @author Massimiliano Zattera
  *
  */
-public class ExtractOpcodesCode {
+public class CreateV1_1 {
 
 	private static final File SOURCE = new File("D:\\Users\\mzatt\\Projects\\FBF - 6502bf\\6502bf_v1.fbf");
 
@@ -113,7 +117,7 @@ public class ExtractOpcodesCode {
 	/**
 	 * Returns name of FBF code block for one given opcode.
 	 */
-	private static String getBlockName(int opcode) {
+	public static String getBlockName(int opcode) {
 		Instruction i = ReorganizeOpcodes.instructionMap.get(opcode);
 		return i.mnemonic.toUpperCase() + "_"
 				+ i.addrMode.toLowerCase().replace("\\(", "").replace("\\)", "").replace(',', '_');

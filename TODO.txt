@@ -1,3 +1,9 @@
+Maybe there is a pattern in accessing mem[] we can optimize in TweakCCode.java
+
+Remove set exception = 0 from V3
+
+
+Remove FB_cc?
 
 First working FB_java.bat
 
@@ -13,11 +19,9 @@ Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will s
 Batch to auto rebuild Java tools
 
 
-test code for clock.s and opthjer time functions
-
 SHR (?)
 
-IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this)
+IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this) >> ALREADY DONE in V3
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
@@ -47,3 +51,7 @@ implemnet BCD mode?
 
 Can we move b2fJ to Java 15 removing dependency on 1.8?
 
+****** INSTRUCION COUNT  **************************
+
+* 6502 functional test	: 26'764'008
+* fib(15)				: 350'198

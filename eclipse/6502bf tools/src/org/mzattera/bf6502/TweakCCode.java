@@ -58,6 +58,7 @@ public class TweakCCode {
 		System.out.println(TweakCCode.class.getName() + " tweaking generated code.");
 		System.out.println("Input File Name : " + new File(inputFileName).getCanonicalPath());
 		System.out.println("Output File Name: " + new File(outputFileName).getCanonicalPath());
+		System.out.println("Total tape size : " + tapeSize);
 
 		// Read the emulator .c code
 		List<String> in = Files.readAllLines(new File(inputFileName).toPath(), Charset.forName("ASCII"));

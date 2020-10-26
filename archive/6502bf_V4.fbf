@@ -5,12 +5,15 @@
 
 -- In order to work, this code assumes 16 bit unsigned cells with wrapping.
 
--- VERSION 3
+-- VERSION 4
 -- -----------
--- In this version execute_opcode uses if...then...else blocks, checking from most used opcodes to least used ones.
--- This because we do not have a switch statemetn in FBF.
+-- In this version, execute_opcode checks most frequently used opcodes first. It also checks regularly whether (exception == 1), 
+-- meaning the opcode to exectue has not yet been found, in order to stop once the opcode has been executed, 
+-- without checking all remaining opcodes. The optimal order of the opcodes being checked and the positioning of the (exception == 1) 
+-- test are based on some Montecarlo simulation using opcode frequencies obtained from a tweaked C64 emulator.
 -- Based on V1_1
 
+-- This is similar to V2 but has been derived from V1_1 instead of V1.
 
 #linebreaks 72
 #linemode DOS
@@ -39,7 +42,7 @@
 --   1 unsupported opcode
 --   2 unsupported BCD math operation
 --   3 unsupported SYSCALL code (illegal opcode $42 causes execution of a "SYStem CALL" which behavior depends on byte following illegal opcode).
---   4 an infinite loop has been detected (JMP or JSR to itself).
+--   4 an infinite loop has been detected (BRA, JMP, JSR or BRK to itself).
 #dim exception
 
 -- -----------------------------------------------------------------------------------
@@ -75,39 +78,6 @@ set CONST_FF00 65280
 -- -----------------------------------------------------------------------------------
 -- CODE BLOCKS
 -- -----------------------------------------------------------------------------------
-
-#dim _doIf _doElse _ifCond _ifIR
-
--- Below blocks are used to implement an if...then...else statement that checks condition based on the value of IR register.
--- These blocks are used to speed up execution, rather then checking all opcodes one by one.
--- THis is needed because FBF lacks if...then...else and switch statements
-
--- IF (IR == _ifCond) THEN ... 
-#block _if_IR_eq_cond
-	copy IR _ifIR	
-	moveto _doIf	
-	brainfuck [-]+>[-]			_doIf=1; _doElse=0;
-	brainfuck >[->-<]			_ifCond = 0; _ifIR=_ifIR minus _ifCond
-	brainfuck >[<<+<->>>[-]]	if (_ifIR != 0) {_doIf=0; _doElse=1; _ifIR=0}; pos in _ifCond
-	brainfuck <<<[				if (_doIf == 1)
-	returnfrom _doIf				
-#endblock
-
--- ... ELSE ...
-#block _else		
-	moveto _doElse
-	brainfuck   [-]<[-]		_doIf = _doElse = 0 (could have changed in the IF body) pos in _doIf
-	brainfuck ]				end if clause
-	brainfuck >[			if (_doElse == 1)
-	returnfrom _doElse		
-#endblock
-
--- ... END if statement
-#block _endif
-	moveto _doElse
-	brainfuck [-]]			_doElse = 0 (could have changed in the ELSE body); end else clause
-	returnfrom _doElse
-#endblock
 
 -- -----------------------------------------------------------------------------------
 
@@ -686,770 +656,535 @@ set CONST_FF00 65280
 #endblock
 
 -- This block is responsible for executing the instruction contained in IR
--- Looks a bit messy because of identation.
 #block execute_opcode
-set _ifCond 208
-_if_IR_eq_cond
-  BNE_relative
-_else
-set _ifCond 173
-_if_IR_eq_cond
-  LDA_abs
-_else
-set _ifCond 41
-_if_IR_eq_cond
-  AND_imm
-_else
-set _ifCond 16
-_if_IR_eq_cond
-  BPL_relative
-_else
-set _ifCond 168
-_if_IR_eq_cond
-  TAY_implied
-_else
-set _ifCond 240
-_if_IR_eq_cond
-  BEQ_relative
-_else
-set _ifCond 165
-_if_IR_eq_cond
-  LDA_zp
-_else
-set _ifCond 197
-_if_IR_eq_cond
-  CMP_zp
-_else
-set _ifCond 48
-_if_IR_eq_cond
-  BMI_relative
-_else
-set _ifCond 32
-_if_IR_eq_cond
-  JSR_abs
-_else
-set _ifCond 96
-_if_IR_eq_cond
-  RTS_implied
-_else
-set _ifCond 202
-_if_IR_eq_cond
-  DEX_implied
-_else
-set _ifCond 189
-_if_IR_eq_cond
-  LDA_abs_x
-_else
-set _ifCond 44
-_if_IR_eq_cond
-  BIT_abs
-_else
-set _ifCond 205
-_if_IR_eq_cond
-  CMP_abs
-_else
-set _ifCond 201
-_if_IR_eq_cond
-  CMP_imm
-_else
-set _ifCond 133
-_if_IR_eq_cond
-  STA_zp
-_else
-set _ifCond 141
-_if_IR_eq_cond
-  STA_abs
-_else
-set _ifCond 166
-_if_IR_eq_cond
-  LDX_zp
-_else
-set _ifCond 185
-_if_IR_eq_cond
-  LDA_abs_y
-_else
-set _ifCond 198
-_if_IR_eq_cond
-  DEC_zp
-_else
-set _ifCond 169
-_if_IR_eq_cond
-  LDA_imm
-_else
-set _ifCond 230
-_if_IR_eq_cond
-  INC_zp
-_else
-set _ifCond 24
-_if_IR_eq_cond
-  CLC_implied
-_else
-set _ifCond 170
-_if_IR_eq_cond
-  TAX_implied
-_else
-set _ifCond 152
-_if_IR_eq_cond
-  TYA_implied
-_else
-set _ifCond 138
-_if_IR_eq_cond
-  TXA_implied
-_else
-set _ifCond 136
-_if_IR_eq_cond
-  DEY_implied
-_else
-set _ifCond 108
-_if_IR_eq_cond
-  JMP_(abs)
-_else
-set _ifCond 145
-_if_IR_eq_cond
-  STA_(ind)_y
-_else
-set _ifCond 74
-_if_IR_eq_cond
-  LSR_accum
-_else
-set _ifCond 9
-_if_IR_eq_cond
-  ORA_imm
-_else
-set _ifCond 144
-_if_IR_eq_cond
-  BCC_relative
-_else
-set _ifCond 153
-_if_IR_eq_cond
-  STA_abs_y
-_else
-set _ifCond 200
-_if_IR_eq_cond
-  INY_implied
-_else
-set _ifCond 181
-_if_IR_eq_cond
-  LDA_zp_x
-_else
-set _ifCond 72
-_if_IR_eq_cond
-  PHA_implied
-_else
-set _ifCond 104
-_if_IR_eq_cond
-  PLA_implied
-_else
-set _ifCond 10
-_if_IR_eq_cond
-  ASL_accum
-_else
-set _ifCond 76
-_if_IR_eq_cond
-  JMP_abs
-_else
-set _ifCond 162
-_if_IR_eq_cond
-  LDX_imm
-_else
-set _ifCond 157
-_if_IR_eq_cond
-  STA_abs_x
-_else
-set _ifCond 177
-_if_IR_eq_cond
-  LDA_(ind)_y
-_else
-set _ifCond 160
-_if_IR_eq_cond
-  LDY_imm
-_else
-set _ifCond 88
-_if_IR_eq_cond
-  CLI_implied
-_else
-set _ifCond 176
-_if_IR_eq_cond
-  BCS_relative
-_else
-set _ifCond 102
-_if_IR_eq_cond
-  ROR_zp
-_else
-set _ifCond 70
-_if_IR_eq_cond
-  LSR_zp
-_else
-set _ifCond 80
-_if_IR_eq_cond
-  BVC_relative
-_else
-set _ifCond 105
-_if_IR_eq_cond
-  ADC_imm
-_else
-set _ifCond 174
-_if_IR_eq_cond
-  LDX_abs
-_else
-set _ifCond 192
-_if_IR_eq_cond
-  CPY_imm
-_else
-set _ifCond 164
-_if_IR_eq_cond
-  LDY_zp
-_else
-set _ifCond 232
-_if_IR_eq_cond
-  INX_implied
-_else
-set _ifCond 221
-_if_IR_eq_cond
-  CMP_abs_x
-_else
-set _ifCond 120
-_if_IR_eq_cond
-  SEI_implied
-_else
-set _ifCond 149
-_if_IR_eq_cond
-  STA_zp_x
-_else
-set _ifCond 228
-_if_IR_eq_cond
-  CPX_zp
-_else
-set _ifCond 56
-_if_IR_eq_cond
-  SEC_implied
-_else
-set _ifCond 42
-_if_IR_eq_cond
-  ROL_accum
-_else
-set _ifCond 233
-_if_IR_eq_cond
-  SBC_imm
-_else
-set _ifCond 132
-_if_IR_eq_cond
-  STY_zp
-_else
-set _ifCond 224
-_if_IR_eq_cond
-  CPX_imm
-_else
-set _ifCond 134
-_if_IR_eq_cond
-  STX_zp
-_else
-set _ifCond 5
-_if_IR_eq_cond
-  ORA_zp
-_else
-set _ifCond 73
-_if_IR_eq_cond
-  EOR_imm
-_else
-set _ifCond 109
-_if_IR_eq_cond
-  ADC_abs
-_else
-set _ifCond 206
-_if_IR_eq_cond
-  DEC_abs
-_else
-set _ifCond 172
-_if_IR_eq_cond
-  LDY_abs
-_else
-set _ifCond 184
-_if_IR_eq_cond
-  CLV_implied
-_else
-set _ifCond 125
-_if_IR_eq_cond
-  ADC_abs_x
-_else
-set _ifCond 64
-_if_IR_eq_cond
-  RTI_implied
-_else
-set _ifCond 101
-_if_IR_eq_cond
-  ADC_zp
-_else
-set _ifCond 186
-_if_IR_eq_cond
-  TSX_implied
-_else
-set _ifCond 29
-_if_IR_eq_cond
-  ORA_abs_x
-_else
-set _ifCond 180
-_if_IR_eq_cond
-  LDY_zp_x
-_else
-set _ifCond 222
-_if_IR_eq_cond
-  DEC_abs_x
-_else
-set _ifCond 81
-_if_IR_eq_cond
-  EOR_(ind)_y
-_else
-set _ifCond 237
-_if_IR_eq_cond
-  SBC_abs
-_else
-set _ifCond 78
-_if_IR_eq_cond
-  LSR_abs
-_else
-set _ifCond 188
-_if_IR_eq_cond
-  LDY_abs_x
-_else
-set _ifCond 38
-_if_IR_eq_cond
-  ROL_zp
-_else
-set _ifCond 217
-_if_IR_eq_cond
-  CMP_abs_y
-_else
-set _ifCond 238
-_if_IR_eq_cond
-  INC_abs
-_else
-set _ifCond 13
-_if_IR_eq_cond
-  ORA_abs
-_else
-set _ifCond 213
-_if_IR_eq_cond
-  CMP_zp_x
-_else
-set _ifCond 214
-_if_IR_eq_cond
-  DEC_zp_x
-_else
-set _ifCond 57
-_if_IR_eq_cond
-  AND_abs_y
-_else
-set _ifCond 234
-_if_IR_eq_cond
-  NOP_implied
-_else
-set _ifCond 216
-_if_IR_eq_cond
-  CLD_implied
-_else
-set _ifCond 140
-_if_IR_eq_cond
-  STY_abs
-_else
-set _ifCond 245
-_if_IR_eq_cond
-  SBC_zp_x
-_else
-set _ifCond 142
-_if_IR_eq_cond
-  STX_abs
-_else
-set _ifCond 45
-_if_IR_eq_cond
-  AND_abs
-_else
-set _ifCond 229
-_if_IR_eq_cond
-  SBC_zp
-_else
-set _ifCond 254
-_if_IR_eq_cond
-  INC_abs_x
-_else
-set _ifCond 6
-_if_IR_eq_cond
-  ASL_zp
-_else
-set _ifCond 117
-_if_IR_eq_cond
-  ADC_zp_x
-_else
-set _ifCond 190
-_if_IR_eq_cond
-  LDX_abs_y
-_else
-set _ifCond 49
-_if_IR_eq_cond
-  AND_(ind)_y
-_else
-set _ifCond 106
-_if_IR_eq_cond
-  ROR_accum
-_else
-set _ifCond 253
-_if_IR_eq_cond
-  SBC_abs_x
-_else
-set _ifCond 89
-_if_IR_eq_cond
-  EOR_abs_y
-_else
-set _ifCond 77
-_if_IR_eq_cond
-  EOR_abs
-_else
-set _ifCond 121
-_if_IR_eq_cond
-  ADC_abs_y
-_else
-set _ifCond 37
-_if_IR_eq_cond
-  AND_zp
-_else
-set _ifCond 69
-_if_IR_eq_cond
-  EOR_zp
-_else
-set _ifCond 241
-_if_IR_eq_cond
-  SBC_(ind)_y
-_else
-set _ifCond 209
-_if_IR_eq_cond
-  CMP_(ind)_y
-_else
-set _ifCond 196
-_if_IR_eq_cond
-  CPY_zp
-_else
-set _ifCond 61
-_if_IR_eq_cond
-  AND_abs_x
-_else
-set _ifCond 112
-_if_IR_eq_cond
-  BVS_relative
-_else
-set _ifCond 246
-_if_IR_eq_cond
-  INC_zp_x
-_else
-set _ifCond 154
-_if_IR_eq_cond
-  TXS_implied
-_else
-set _ifCond 248
-_if_IR_eq_cond
-  SED_implied
-_else
-set _ifCond 236
-_if_IR_eq_cond
-  CPX_abs
-_else
-set _ifCond 94
-_if_IR_eq_cond
-  LSR_abs_x
-_else
-set _ifCond 113
-_if_IR_eq_cond
-  ADC_(ind)_y
-_else
-set _ifCond 8
-_if_IR_eq_cond
-  PHP_implied
-_else
-set _ifCond 40
-_if_IR_eq_cond
-  PLP_implied
-_else
-set _ifCond 66
-_if_IR_eq_cond
-  SYSCALL_
-_else
-set _ifCond 0
-_if_IR_eq_cond
-  BRK_implied
-_else
-set _ifCond 1
-_if_IR_eq_cond
-  ORA_(ind_x)
-_else
-set _ifCond 14
-_if_IR_eq_cond
-  ASL_abs
-_else
-set _ifCond 17
-_if_IR_eq_cond
-  ORA_(ind)_y
-_else
-set _ifCond 21
-_if_IR_eq_cond
-  ORA_zp_x
-_else
-set _ifCond 22
-_if_IR_eq_cond
-  ASL_zp_x
-_else
-set _ifCond 25
-_if_IR_eq_cond
-  ORA_abs_y
-_else
-set _ifCond 30
-_if_IR_eq_cond
-  ASL_abs_x
-_else
-set _ifCond 33
-_if_IR_eq_cond
-  AND_(ind_x)
-_else
-set _ifCond 36
-_if_IR_eq_cond
-  BIT_zp
-_else
-set _ifCond 46
-_if_IR_eq_cond
-  ROL_abs
-_else
-set _ifCond 53
-_if_IR_eq_cond
-  AND_zp_x
-_else
-set _ifCond 54
-_if_IR_eq_cond
-  ROL_zp_x
-_else
-set _ifCond 62
-_if_IR_eq_cond
-  ROL_abs_x
-_else
-set _ifCond 65
-_if_IR_eq_cond
-  EOR_(ind_x)
-_else
-set _ifCond 85
-_if_IR_eq_cond
-  EOR_zp_x
-_else
-set _ifCond 86
-_if_IR_eq_cond
-  LSR_zp_x
-_else
-set _ifCond 93
-_if_IR_eq_cond
-  EOR_abs_x
-_else
-set _ifCond 97
-_if_IR_eq_cond
-  ADC_(ind_x)
-_else
-set _ifCond 110
-_if_IR_eq_cond
-  ROR_abs
-_else
-set _ifCond 118
-_if_IR_eq_cond
-  ROR_zp_x
-_else
-set _ifCond 126
-_if_IR_eq_cond
-  ROR_abs_x
-_else
-set _ifCond 129
-_if_IR_eq_cond
-  STA_(ind_x)
-_else
-set _ifCond 148
-_if_IR_eq_cond
-  STY_zp_x
-_else
-set _ifCond 150
-_if_IR_eq_cond
-  STX_zp_y
-_else
-set _ifCond 161
-_if_IR_eq_cond
-  LDA_(ind_x)
-_else
-set _ifCond 182
-_if_IR_eq_cond
-  LDX_zp_y
-_else
-set _ifCond 193
-_if_IR_eq_cond
-  CMP_(ind_x)
-_else
-set _ifCond 204
-_if_IR_eq_cond
-  CPY_abs
-_else
-set _ifCond 225
-_if_IR_eq_cond
-  SBC_(ind_x)
-_else
-set _ifCond 249
-_if_IR_eq_cond
-  SBC_abs_y
-_else
--- Unrecognized opcode
-set exception 1
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
-_endif
+  ifeq IR 208
+    BNE_relative
+  end
+  ifeq IR 173
+    LDA_abs
+  end
+  ifeq IR 41
+    AND_imm
+  end
+  ifeq exception 1
+    ifeq IR 16
+      BPL_relative
+    end
+    ifeq IR 168
+      TAY_implied
+    end
+    ifeq IR 240
+      BEQ_relative
+    end
+    ifeq IR 165
+      LDA_zp
+    end
+    ifeq exception 1
+      ifeq IR 197
+        CMP_zp
+      end
+      ifeq IR 48
+        BMI_relative
+      end
+      ifeq IR 32
+        JSR_abs
+      end
+      ifeq IR 96
+        RTS_implied
+      end
+      ifeq exception 1
+        ifeq IR 202
+          DEX_implied
+        end
+        ifeq IR 189
+          LDA_abs_x
+        end
+        ifeq IR 44
+          BIT_abs
+        end
+        ifeq IR 205
+          CMP_abs
+        end
+        ifeq IR 201
+          CMP_imm
+        end
+        ifeq IR 133
+          STA_zp
+        end
+        ifeq exception 1
+          ifeq IR 141
+            STA_abs
+          end
+          ifeq IR 166
+            LDX_zp
+          end
+          ifeq IR 185
+            LDA_abs_y
+          end
+          ifeq IR 198
+            DEC_zp
+          end
+          ifeq IR 169
+            LDA_imm
+          end
+          ifeq IR 230
+            INC_zp
+          end
+          ifeq exception 1
+            ifeq IR 24
+              CLC_implied
+            end
+            ifeq IR 170
+              TAX_implied
+            end
+            ifeq IR 152
+              TYA_implied
+            end
+            ifeq IR 138
+              TXA_implied
+            end
+            ifeq IR 136
+              DEY_implied
+            end
+            ifeq IR 108
+              JMP_(abs)
+            end
+            ifeq exception 1
+              ifeq IR 145
+                STA_(ind)_y
+              end
+              ifeq IR 74
+                LSR_accum
+              end
+              ifeq IR 9
+                ORA_imm
+              end
+              ifeq IR 144
+                BCC_relative
+              end
+              ifeq IR 153
+                STA_abs_y
+              end
+              ifeq exception 1
+                ifeq IR 200
+                  INY_implied
+                end
+                ifeq IR 181
+                  LDA_zp_x
+                end
+                ifeq IR 72
+                  PHA_implied
+                end
+                ifeq IR 104
+                  PLA_implied
+                end
+                ifeq IR 10
+                  ASL_accum
+                end
+                ifeq exception 1
+                  ifeq IR 76
+                    JMP_abs
+                  end
+                  ifeq IR 162
+                    LDX_imm
+                  end
+                  ifeq IR 157
+                    STA_abs_x
+                  end
+                  ifeq IR 177
+                    LDA_(ind)_y
+                  end
+                  ifeq IR 160
+                    LDY_imm
+                  end
+                  ifeq exception 1
+                    ifeq IR 88
+                      CLI_implied
+                    end
+                    ifeq IR 176
+                      BCS_relative
+                    end
+                    ifeq IR 102
+                      ROR_zp
+                    end
+                    ifeq IR 70
+                      LSR_zp
+                    end
+                    ifeq IR 80
+                      BVC_relative
+                    end
+                    ifeq IR 105
+                      ADC_imm
+                    end
+                    ifeq exception 1
+                      ifeq IR 174
+                        LDX_abs
+                      end
+                      ifeq IR 192
+                        CPY_imm
+                      end
+                      ifeq IR 164
+                        LDY_zp
+                      end
+                      ifeq IR 232
+                        INX_implied
+                      end
+                      ifeq IR 221
+                        CMP_abs_x
+                      end
+                      ifeq exception 1
+                        ifeq IR 120
+                          SEI_implied
+                        end
+                        ifeq IR 149
+                          STA_zp_x
+                        end
+                        ifeq IR 228
+                          CPX_zp
+                        end
+                        ifeq IR 56
+                          SEC_implied
+                        end
+                        ifeq IR 42
+                          ROL_accum
+                        end
+                        ifeq exception 1
+                          ifeq IR 233
+                            SBC_imm
+                          end
+                          ifeq IR 132
+                            STY_zp
+                          end
+                          ifeq IR 224
+                            CPX_imm
+                          end
+                          ifeq IR 134
+                            STX_zp
+                          end
+                          ifeq IR 5
+                            ORA_zp
+                          end
+                          ifeq exception 1
+                            ifeq IR 73
+                              EOR_imm
+                            end
+                            ifeq IR 109
+                              ADC_abs
+                            end
+                            ifeq IR 206
+                              DEC_abs
+                            end
+                            ifeq IR 172
+                              LDY_abs
+                            end
+                            ifeq IR 184
+                              CLV_implied
+                            end
+                            ifeq IR 125
+                              ADC_abs_x
+                            end
+                            ifeq exception 1
+                              ifeq IR 64
+                                RTI_implied
+                              end
+                              ifeq IR 101
+                                ADC_zp
+                              end
+                              ifeq IR 186
+                                TSX_implied
+                              end
+                              ifeq IR 29
+                                ORA_abs_x
+                              end
+                              ifeq IR 180
+                                LDY_zp_x
+                              end
+                              ifeq exception 1
+                                ifeq IR 222
+                                  DEC_abs_x
+                                end
+                                ifeq IR 81
+                                  EOR_(ind)_y
+                                end
+                                ifeq IR 237
+                                  SBC_abs
+                                end
+                                ifeq IR 78
+                                  LSR_abs
+                                end
+                                ifeq exception 1
+                                  ifeq IR 188
+                                    LDY_abs_x
+                                  end
+                                  ifeq IR 38
+                                    ROL_zp
+                                  end
+                                  ifeq IR 217
+                                    CMP_abs_y
+                                  end
+                                  ifeq IR 238
+                                    INC_abs
+                                  end
+                                  ifeq exception 1
+                                    ifeq IR 13
+                                      ORA_abs
+                                    end
+                                    ifeq IR 213
+                                      CMP_zp_x
+                                    end
+                                    ifeq IR 214
+                                      DEC_zp_x
+                                    end
+                                    ifeq IR 57
+                                      AND_abs_y
+                                    end
+                                    ifeq exception 1
+                                      ifeq IR 234
+                                        NOP_implied
+                                      end
+                                      ifeq IR 216
+                                        CLD_implied
+                                      end
+                                      ifeq IR 140
+                                        STY_abs
+                                      end
+                                      ifeq IR 245
+                                        SBC_zp_x
+                                      end
+                                      ifeq exception 1
+                                        ifeq IR 142
+                                          STX_abs
+                                        end
+                                        ifeq IR 45
+                                          AND_abs
+                                        end
+                                        ifeq IR 229
+                                          SBC_zp
+                                        end
+                                        ifeq exception 1
+                                          ifeq IR 254
+                                            INC_abs_x
+                                          end
+                                          ifeq IR 6
+                                            ASL_zp
+                                          end
+                                          ifeq IR 117
+                                            ADC_zp_x
+                                          end
+                                          ifeq exception 1
+                                            ifeq IR 190
+                                              LDX_abs_y
+                                            end
+                                            ifeq IR 49
+                                              AND_(ind)_y
+                                            end
+                                            ifeq exception 1
+                                              ifeq IR 106
+                                                ROR_accum
+                                              end
+                                              ifeq IR 253
+                                                SBC_abs_x
+                                              end
+                                              ifeq exception 1
+                                                ifeq IR 89
+                                                  EOR_abs_y
+                                                end
+                                                ifeq IR 77
+                                                  EOR_abs
+                                                end
+                                                ifeq exception 1
+                                                  ifeq IR 121
+                                                    ADC_abs_y
+                                                  end
+                                                  ifeq exception 1
+                                                    ifeq IR 37
+                                                      AND_zp
+                                                    end
+                                                    ifeq IR 69
+                                                      EOR_zp
+                                                    end
+                                                    ifeq exception 1
+                                                      ifeq IR 241
+                                                        SBC_(ind)_y
+                                                      end
+                                                      ifeq IR 209
+                                                        CMP_(ind)_y
+                                                      end
+                                                      ifeq exception 1
+                                                        ifeq IR 196
+                                                          CPY_zp
+                                                        end
+                                                        ifeq IR 61
+                                                          AND_abs_x
+                                                        end
+                                                        ifeq exception 1
+                                                          ifeq IR 112
+                                                            BVS_relative
+                                                          end
+                                                          ifeq exception 1
+                                                            ifeq IR 246
+                                                              INC_zp_x
+                                                            end
+                                                            ifeq IR 154
+                                                              TXS_implied
+                                                            end
+                                                            ifeq exception 1
+                                                              ifeq IR 248
+                                                                SED_implied
+                                                              end
+                                                              ifeq exception 1
+                                                                ifeq IR 236
+                                                                  CPX_abs
+                                                                end
+                                                                ifeq exception 1
+                                                                  ifeq IR 94
+                                                                    LSR_abs_x
+                                                                  end
+                                                                  ifeq exception 1
+                                                                    ifeq IR 113
+                                                                      ADC_(ind)_y
+                                                                    end
+                                                                    ifeq exception 1
+                                                                      ifeq IR 8
+                                                                        PHP_implied
+                                                                      end
+                                                                      ifeq exception 1
+                                                                        ifeq IR 40
+                                                                          PLP_implied
+                                                                        end
+                                                                        ifeq exception 1
+                                                                          ifeq IR 66
+                                                                            SYSCALL_
+                                                                          end
+                                                                          ifeq IR 0
+                                                                            BRK_implied
+                                                                          end
+                                                                          ifeq IR 1
+                                                                            ORA_(ind_x)
+                                                                          end
+                                                                          ifeq IR 14
+                                                                            ASL_abs
+                                                                          end
+                                                                          ifeq IR 17
+                                                                            ORA_(ind)_y
+                                                                          end
+                                                                          ifeq IR 21
+                                                                            ORA_zp_x
+                                                                          end
+                                                                          ifeq IR 22
+                                                                            ASL_zp_x
+                                                                          end
+                                                                          ifeq IR 25
+                                                                            ORA_abs_y
+                                                                          end
+                                                                          ifeq IR 30
+                                                                            ASL_abs_x
+                                                                          end
+                                                                          ifeq IR 33
+                                                                            AND_(ind_x)
+                                                                          end
+                                                                          ifeq IR 36
+                                                                            BIT_zp
+                                                                          end
+                                                                          ifeq IR 46
+                                                                            ROL_abs
+                                                                          end
+                                                                          ifeq IR 53
+                                                                            AND_zp_x
+                                                                          end
+                                                                          ifeq IR 54
+                                                                            ROL_zp_x
+                                                                          end
+                                                                          ifeq IR 62
+                                                                            ROL_abs_x
+                                                                          end
+                                                                          ifeq IR 65
+                                                                            EOR_(ind_x)
+                                                                          end
+                                                                          ifeq IR 85
+                                                                            EOR_zp_x
+                                                                          end
+                                                                          ifeq IR 86
+                                                                            LSR_zp_x
+                                                                          end
+                                                                          ifeq IR 93
+                                                                            EOR_abs_x
+                                                                          end
+                                                                          ifeq IR 97
+                                                                            ADC_(ind_x)
+                                                                          end
+                                                                          ifeq IR 110
+                                                                            ROR_abs
+                                                                          end
+                                                                          ifeq IR 118
+                                                                            ROR_zp_x
+                                                                          end
+                                                                          ifeq IR 126
+                                                                            ROR_abs_x
+                                                                          end
+                                                                          ifeq IR 129
+                                                                            STA_(ind_x)
+                                                                          end
+                                                                          ifeq IR 148
+                                                                            STY_zp_x
+                                                                          end
+                                                                          ifeq IR 150
+                                                                            STX_zp_y
+                                                                          end
+                                                                          ifeq IR 161
+                                                                            LDA_(ind_x)
+                                                                          end
+                                                                          ifeq IR 182
+                                                                            LDX_zp_y
+                                                                          end
+                                                                          ifeq IR 193
+                                                                            CMP_(ind_x)
+                                                                          end
+                                                                          ifeq IR 204
+                                                                            CPY_abs
+                                                                          end
+                                                                          ifeq IR 225
+                                                                            SBC_(ind_x)
+                                                                          end
+                                                                          ifeq IR 249
+                                                                            SBC_abs_y
+                                                                          end
+                                                                        end
+                                                                      end
+                                                                    end
+                                                                  end
+                                                                end
+                                                              end
+                                                            end
+                                                          end
+                                                        end
+                                                      end
+                                                    end
+                                                  end
+                                                end
+                                              end
+                                            end
+                                          end
+                                        end
+                                      end
+                                    end
+                                  end
+                                end
+                              end
+                            end
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 #endblock
 
 -- LDA (LoaD Accumulator)
@@ -3663,7 +3398,6 @@ _endif
 -- -----------------------------------------------------------------------------------
 
 -- 6502 memory
--- KEEP THIS AS LAST VARIABLE or change how TweakEmu.jave calculates tape size.
 #table mem 65536
 
 reset

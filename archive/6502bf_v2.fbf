@@ -11,6 +11,7 @@
 -- meaning the opcode to exectue has not yet been found, in order to stop once the opcode has been executed, 
 -- without checking all remaining opcodes. The optimal order of the opcodes being checked and the positioning of the (exception == 1) 
 -- test are based on some Montecarlo simulation using opcode frequencies obtained from a tweaked C64 emulator.
+-- Originally based on V1
 
 #linebreaks 72
 #linemode DOS

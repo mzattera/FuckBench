@@ -201,7 +201,7 @@ Please notice that the above will compile successfully but, because `time()` and
 up to that point in the code, they will always return same value at each execution, therefore the random number generator will always be
 initialized with the same seed.
 
-The only way to properly initialize the random number generator in FB, it to ask a random seed to the user.
+The only way to properly initialize the random number generator in FB, it to ask for a random seed to the user.
 
   
 ## The 6502bf emulator
