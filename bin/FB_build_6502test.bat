@@ -1,6 +1,6 @@
 @echo  off
 rem This builds 6502 functional tests contained in this folder.
-rem You *MUST* pass it the name of the .ca65 file to build (without .ca65 extension).
+rem You *MUST* pass it the name of the .ca65 file to build (WITHOUT .ca65 extension abd WITHOUT path).
 
 rem Configuration
 set "FB_BIN=%~dp0%"

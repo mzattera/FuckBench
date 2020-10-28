@@ -2214,6 +2214,8 @@ set CONST_FF00 65280
 #dim N_flag V_flag I_flag Z_flag C_flag D_flag status 
 
 -- 6502 memory
+-- *** ALWAYS KEEP THIS AS LAST VARIABLE IN THE CODE ***
+-- It will otherwise break tweaking C code and create HUGE move instruction to access other variables.
 #table mem 65536
 
 -- -----------------------------------------------------------------------------------
@@ -2238,4 +2240,3 @@ ifnoteq exception 0
 	line
 	dump
 end
-

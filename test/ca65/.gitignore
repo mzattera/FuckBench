@@ -3,3 +3,4 @@
 *.bf
 /6502_functional_test.txt
 *.result
+*.bin

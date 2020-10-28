@@ -1,6 +1,7 @@
-Maybe there is a pattern in accessing mem[] we can optimize in TweakCCode.java
-Check FBF code for accessing tables, maybe it's not super efficient?
+After you found fastest emu between V3 and V4, remove the one you use from archive
 
+Comment in all archive files to keep mem[] as last variable
+remove printing clock cunter at the end from all versions
 
 
 First working FB_java.bat
@@ -18,7 +19,7 @@ Batch to auto rebuild Java tools
 
 SHR (?)
 
-remove set exception 0 -> check how SYSCALL sets this in V3
+if V3 is chosen remove set exception 0 and all check blocks -> check how SYSCALL sets this in V3
 
 SET LOCAL
 
