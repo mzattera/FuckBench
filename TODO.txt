@@ -1,7 +1,8 @@
 After you found fastest emu between V3 and V4, remove the one you use from archive
 
-Comment in all archive files to keep mem[] as last variable
-remove printing clock cunter at the end from all versions
+
+Migrate to latest cc65 that solve CLOCK_TICKS issue.
+
 
 
 First working FB_java.bat
@@ -26,8 +27,6 @@ SET LOCAL
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
 is mod X 255 faster than AND X 255? -> check similar stuff.
-
-Removing printing instruction counter when emulator exits
 
 Move time libraries from C to ASM (there are examples in libsrc)
 
