@@ -3,9 +3,10 @@
  */
 package org.mzattera.bf6502.codegen;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.mzattera.util.StringUtil;
 
 /**
  * Based on result from ReorganizeOpcode re-writes 6502bf execute_opcode.
@@ -58,23 +59,17 @@ public class CreateV4 {
 		for (String step : s.split("\\n")) {
 			Matcher m = INDENT_BEGIN.matcher(step);
 			if (m.find()) {
-				code.append(spaces(indent)).append(step.trim()).append("\n");
+				code.append(StringUtil.spaces(indent)).append(step.trim()).append("\n");
 				indent += 2;
 			} else {
 				m = INDENT_END.matcher(step);
 				if (m.find())
 					indent -= 2;
-				code.append(spaces(indent)).append(step.trim()).append("\n");
+				code.append(StringUtil.spaces(indent)).append(step.trim()).append("\n");
 			}
 		}
 
 		code.append("#endblock");
 		return code.toString();
-	}
-
-	private static String spaces(int indent) {
-		char[] c = new char[indent];
-		Arrays.fill(c, ' ');
-		return new String(c);
 	}
 }

@@ -1,16 +1,12 @@
 Maybe there is a pattern in accessing mem[] we can optimize in TweakCCode.java
+Check FBF code for accessing tables, maybe it's not super efficient?
 
-Remove set exception = 0 from V3
 
-
-Remove FB_cc?
 
 First working FB_java.bat
 
 b2jf should be able to take a .jar and its main class (or a runnable jar) as input and link it...now it works with a single file
 how to setup Eclipse so you can develop a whole java project (using correct java version and lang classes).
-
-SET LOCAL
 
 Downgrade to Java 8? Update README.md accordingly
 
@@ -19,19 +15,20 @@ Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will s
 Batch to auto rebuild Java tools
 
 
+
 SHR (?)
 
-IF...THEN...ELSE (remove set exception 0 -> check how SYSCALL sets this) >> ALREADY DONE in V3
+remove set exception 0 -> check how SYSCALL sets this in V3
+
+SET LOCAL
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
 
 is mod X 255 faster than AND X 255? -> check similar stuff.
 
-Check FBF code for accessing tables, maybe it's not super efficient?
-
 Removing printing instruction counter when emulator exits
 
-Time libraries from C to ASM (there are examples in libsrc)
+Move time libraries from C to ASM (there are examples in libsrc)
 
 
 
@@ -46,6 +43,8 @@ Separate emu compile batch that automatically switches on or off checks for loop
 FB_java.bat uses a workaround that fixes issues with cc65 and spaces in path; maybe we can use same approach in FB_cl?
 If this is possible, we can then use the cc65 redistributed with b2fj instead of having to install it
 have FB_Java.bat to use loop instead compiling files one by one, maybe linker can use *.o; if so, update b2fJ as well.
+
+Remove FB_cc?
 
 implemnet BCD mode?
 

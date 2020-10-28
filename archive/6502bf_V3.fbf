@@ -690,765 +690,765 @@ set CONST_FF00 65280
 #block execute_opcode
 set _ifCond 208
 _if_IR_eq_cond
- BNE_relative
+  BNE_relative
 _else
-  set _ifCond 173
-  _if_IR_eq_cond
-   LDA_abs
-  _else
-    set _ifCond 41
-    _if_IR_eq_cond
-     AND_imm
-    _else
-      set _ifCond 16
-      _if_IR_eq_cond
-       BPL_relative
-      _else
-        set _ifCond 168
-        _if_IR_eq_cond
-         TAY_implied
-        _else
-          set _ifCond 240
-          _if_IR_eq_cond
-           BEQ_relative
-          _else
-            set _ifCond 165
-            _if_IR_eq_cond
-             LDA_zp
-            _else
-              set _ifCond 197
-              _if_IR_eq_cond
-               CMP_zp
-              _else
-                set _ifCond 48
-                _if_IR_eq_cond
-                 BMI_relative
-                _else
-                  set _ifCond 32
-                  _if_IR_eq_cond
-                   JSR_abs
-                  _else
-                    set _ifCond 96
-                    _if_IR_eq_cond
-                     RTS_implied
-                    _else
-                      set _ifCond 202
-                      _if_IR_eq_cond
-                       DEX_implied
-                      _else
-                        set _ifCond 189
-                        _if_IR_eq_cond
-                         LDA_abs_x
-                        _else
-                          set _ifCond 44
-                          _if_IR_eq_cond
-                           BIT_abs
-                          _else
-                            set _ifCond 205
-                            _if_IR_eq_cond
-                             CMP_abs
-                            _else
-                              set _ifCond 201
-                              _if_IR_eq_cond
-                               CMP_imm
-                              _else
-                                set _ifCond 133
-                                _if_IR_eq_cond
-                                 STA_zp
-                                _else
-                                  set _ifCond 141
-                                  _if_IR_eq_cond
-                                   STA_abs
-                                  _else
-                                    set _ifCond 166
-                                    _if_IR_eq_cond
-                                     LDX_zp
-                                    _else
-                                      set _ifCond 185
-                                      _if_IR_eq_cond
-                                       LDA_abs_y
-                                      _else
-                                        set _ifCond 198
-                                        _if_IR_eq_cond
-                                         DEC_zp
-                                        _else
-                                          set _ifCond 169
-                                          _if_IR_eq_cond
-                                           LDA_imm
-                                          _else
-                                            set _ifCond 230
-                                            _if_IR_eq_cond
-                                             INC_zp
-                                            _else
-                                              set _ifCond 24
-                                              _if_IR_eq_cond
-                                               CLC_implied
-                                              _else
-                                                set _ifCond 170
-                                                _if_IR_eq_cond
-                                                 TAX_implied
-                                                _else
-                                                  set _ifCond 152
-                                                  _if_IR_eq_cond
-                                                   TYA_implied
-                                                  _else
-                                                    set _ifCond 138
-                                                    _if_IR_eq_cond
-                                                     TXA_implied
-                                                    _else
-                                                      set _ifCond 136
-                                                      _if_IR_eq_cond
-                                                       DEY_implied
-                                                      _else
-                                                        set _ifCond 108
-                                                        _if_IR_eq_cond
-                                                         JMP_(abs)
-                                                        _else
-                                                          set _ifCond 145
-                                                          _if_IR_eq_cond
-                                                           STA_(ind)_y
-                                                          _else
-                                                            set _ifCond 74
-                                                            _if_IR_eq_cond
-                                                             LSR_accum
-                                                            _else
-                                                              set _ifCond 9
-                                                              _if_IR_eq_cond
-                                                               ORA_imm
-                                                              _else
-                                                                set _ifCond 144
-                                                                _if_IR_eq_cond
-                                                                 BCC_relative
-                                                                _else
-                                                                  set _ifCond 153
-                                                                  _if_IR_eq_cond
-                                                                   STA_abs_y
-                                                                  _else
-                                                                    set _ifCond 200
-                                                                    _if_IR_eq_cond
-                                                                     INY_implied
-                                                                    _else
-                                                                      set _ifCond 181
-                                                                      _if_IR_eq_cond
-                                                                       LDA_zp_x
-                                                                      _else
-                                                                        set _ifCond 72
-                                                                        _if_IR_eq_cond
-                                                                         PHA_implied
-                                                                        _else
-                                                                          set _ifCond 104
-                                                                          _if_IR_eq_cond
-                                                                           PLA_implied
-                                                                          _else
-                                                                            set _ifCond 10
-                                                                            _if_IR_eq_cond
-                                                                             ASL_accum
-                                                                            _else
-                                                                              set _ifCond 76
-                                                                              _if_IR_eq_cond
-                                                                               JMP_abs
-                                                                              _else
-                                                                                set _ifCond 162
-                                                                                _if_IR_eq_cond
-                                                                                 LDX_imm
-                                                                                _else
-                                                                                  set _ifCond 157
-                                                                                  _if_IR_eq_cond
-                                                                                   STA_abs_x
-                                                                                  _else
-                                                                                    set _ifCond 177
-                                                                                    _if_IR_eq_cond
-                                                                                     LDA_(ind)_y
-                                                                                    _else
-                                                                                      set _ifCond 160
-                                                                                      _if_IR_eq_cond
-                                                                                       LDY_imm
-                                                                                      _else
-                                                                                        set _ifCond 88
-                                                                                        _if_IR_eq_cond
-                                                                                         CLI_implied
-                                                                                        _else
-                                                                                          set _ifCond 176
-                                                                                          _if_IR_eq_cond
-                                                                                           BCS_relative
-                                                                                          _else
-                                                                                            set _ifCond 102
-                                                                                            _if_IR_eq_cond
-                                                                                             ROR_zp
-                                                                                            _else
-                                                                                              set _ifCond 70
-                                                                                              _if_IR_eq_cond
-                                                                                               LSR_zp
-                                                                                              _else
-                                                                                                set _ifCond 80
-                                                                                                _if_IR_eq_cond
-                                                                                                 BVC_relative
-                                                                                                _else
-                                                                                                  set _ifCond 105
-                                                                                                  _if_IR_eq_cond
-                                                                                                   ADC_imm
-                                                                                                  _else
-                                                                                                    set _ifCond 174
-                                                                                                    _if_IR_eq_cond
-                                                                                                     LDX_abs
-                                                                                                    _else
-                                                                                                      set _ifCond 192
-                                                                                                      _if_IR_eq_cond
-                                                                                                       CPY_imm
-                                                                                                      _else
-                                                                                                        set _ifCond 164
-                                                                                                        _if_IR_eq_cond
-                                                                                                         LDY_zp
-                                                                                                        _else
-                                                                                                          set _ifCond 232
-                                                                                                          _if_IR_eq_cond
-                                                                                                           INX_implied
-                                                                                                          _else
-                                                                                                            set _ifCond 221
-                                                                                                            _if_IR_eq_cond
-                                                                                                             CMP_abs_x
-                                                                                                            _else
-                                                                                                              set _ifCond 120
-                                                                                                              _if_IR_eq_cond
-                                                                                                               SEI_implied
-                                                                                                              _else
-                                                                                                                set _ifCond 149
-                                                                                                                _if_IR_eq_cond
-                                                                                                                 STA_zp_x
-                                                                                                                _else
-                                                                                                                  set _ifCond 228
-                                                                                                                  _if_IR_eq_cond
-                                                                                                                   CPX_zp
-                                                                                                                  _else
-                                                                                                                    set _ifCond 56
-                                                                                                                    _if_IR_eq_cond
-                                                                                                                     SEC_implied
-                                                                                                                    _else
-                                                                                                                      set _ifCond 42
-                                                                                                                      _if_IR_eq_cond
-                                                                                                                       ROL_accum
-                                                                                                                      _else
-                                                                                                                        set _ifCond 233
-                                                                                                                        _if_IR_eq_cond
-                                                                                                                         SBC_imm
-                                                                                                                        _else
-                                                                                                                          set _ifCond 132
-                                                                                                                          _if_IR_eq_cond
-                                                                                                                           STY_zp
-                                                                                                                          _else
-                                                                                                                            set _ifCond 224
-                                                                                                                            _if_IR_eq_cond
-                                                                                                                             CPX_imm
-                                                                                                                            _else
-                                                                                                                              set _ifCond 134
-                                                                                                                              _if_IR_eq_cond
-                                                                                                                               STX_zp
-                                                                                                                              _else
-                                                                                                                                set _ifCond 5
-                                                                                                                                _if_IR_eq_cond
-                                                                                                                                 ORA_zp
-                                                                                                                                _else
-                                                                                                                                  set _ifCond 73
-                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                   EOR_imm
-                                                                                                                                  _else
-                                                                                                                                    set _ifCond 109
-                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                     ADC_abs
-                                                                                                                                    _else
-                                                                                                                                      set _ifCond 206
-                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                       DEC_abs
-                                                                                                                                      _else
-                                                                                                                                        set _ifCond 172
-                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                         LDY_abs
-                                                                                                                                        _else
-                                                                                                                                          set _ifCond 184
-                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                           CLV_implied
-                                                                                                                                          _else
-                                                                                                                                            set _ifCond 125
-                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                             ADC_abs_x
-                                                                                                                                            _else
-                                                                                                                                              set _ifCond 64
-                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                               RTI_implied
-                                                                                                                                              _else
-                                                                                                                                                set _ifCond 101
-                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                 ADC_zp
-                                                                                                                                                _else
-                                                                                                                                                  set _ifCond 186
-                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                   TSX_implied
-                                                                                                                                                  _else
-                                                                                                                                                    set _ifCond 29
-                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                     ORA_abs_x
-                                                                                                                                                    _else
-                                                                                                                                                      set _ifCond 180
-                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                       LDY_zp_x
-                                                                                                                                                      _else
-                                                                                                                                                        set _ifCond 222
-                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                         DEC_abs_x
-                                                                                                                                                        _else
-                                                                                                                                                          set _ifCond 81
-                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                           EOR_(ind)_y
-                                                                                                                                                          _else
-                                                                                                                                                            set _ifCond 237
-                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                             SBC_abs
-                                                                                                                                                            _else
-                                                                                                                                                              set _ifCond 78
-                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                               LSR_abs
-                                                                                                                                                              _else
-                                                                                                                                                                set _ifCond 188
-                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                 LDY_abs_x
-                                                                                                                                                                _else
-                                                                                                                                                                  set _ifCond 38
-                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                   ROL_zp
-                                                                                                                                                                  _else
-                                                                                                                                                                    set _ifCond 217
-                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                     CMP_abs_y
-                                                                                                                                                                    _else
-                                                                                                                                                                      set _ifCond 238
-                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                       INC_abs
-                                                                                                                                                                      _else
-                                                                                                                                                                        set _ifCond 13
-                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                         ORA_abs
-                                                                                                                                                                        _else
-                                                                                                                                                                          set _ifCond 213
-                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                           CMP_zp_x
-                                                                                                                                                                          _else
-                                                                                                                                                                            set _ifCond 214
-                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                             DEC_zp_x
-                                                                                                                                                                            _else
-                                                                                                                                                                              set _ifCond 57
-                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                               AND_abs_y
-                                                                                                                                                                              _else
-                                                                                                                                                                                set _ifCond 234
-                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                 NOP_implied
-                                                                                                                                                                                _else
-                                                                                                                                                                                  set _ifCond 216
-                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                   CLD_implied
-                                                                                                                                                                                  _else
-                                                                                                                                                                                    set _ifCond 140
-                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                     STY_abs
-                                                                                                                                                                                    _else
-                                                                                                                                                                                      set _ifCond 245
-                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                       SBC_zp_x
-                                                                                                                                                                                      _else
-                                                                                                                                                                                        set _ifCond 142
-                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                         STX_abs
-                                                                                                                                                                                        _else
-                                                                                                                                                                                          set _ifCond 45
-                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                           AND_abs
-                                                                                                                                                                                          _else
-                                                                                                                                                                                            set _ifCond 229
-                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                             SBC_zp
-                                                                                                                                                                                            _else
-                                                                                                                                                                                              set _ifCond 254
-                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                               INC_abs_x
-                                                                                                                                                                                              _else
-                                                                                                                                                                                                set _ifCond 6
-                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                 ASL_zp
-                                                                                                                                                                                                _else
-                                                                                                                                                                                                  set _ifCond 117
-                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                   ADC_zp_x
-                                                                                                                                                                                                  _else
-                                                                                                                                                                                                    set _ifCond 190
-                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                     LDX_abs_y
-                                                                                                                                                                                                    _else
-                                                                                                                                                                                                      set _ifCond 49
-                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                       AND_(ind)_y
-                                                                                                                                                                                                      _else
-                                                                                                                                                                                                        set _ifCond 106
-                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                         ROR_accum
-                                                                                                                                                                                                        _else
-                                                                                                                                                                                                          set _ifCond 253
-                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                           SBC_abs_x
-                                                                                                                                                                                                          _else
-                                                                                                                                                                                                            set _ifCond 89
-                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                             EOR_abs_y
-                                                                                                                                                                                                            _else
-                                                                                                                                                                                                              set _ifCond 77
-                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                               EOR_abs
-                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                set _ifCond 121
-                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                 ADC_abs_y
-                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                  set _ifCond 37
-                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                   AND_zp
-                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                    set _ifCond 69
-                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                     EOR_zp
-                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                      set _ifCond 241
-                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                       SBC_(ind)_y
-                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                        set _ifCond 209
-                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                         CMP_(ind)_y
-                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                          set _ifCond 196
-                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                           CPY_zp
-                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                            set _ifCond 61
-                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                             AND_abs_x
-                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                              set _ifCond 112
-                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                               BVS_relative
-                                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                                set _ifCond 246
-                                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                                 INC_zp_x
-                                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                                  set _ifCond 154
-                                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                                   TXS_implied
-                                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                                    set _ifCond 248
-                                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                                     SED_implied
-                                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                                      set _ifCond 236
-                                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                                       CPX_abs
-                                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                                        set _ifCond 94
-                                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                                         LSR_abs_x
-                                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                                          set _ifCond 113
-                                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                                           ADC_(ind)_y
-                                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                                            set _ifCond 8
-                                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                                             PHP_implied
-                                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                                              set _ifCond 40
-                                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                                               PLP_implied
-                                                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                                                set _ifCond 66
-                                                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                                                 SYSCALL_
-                                                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                                                  set _ifCond 0
-                                                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                                                   BRK_implied
-                                                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                                                    set _ifCond 1
-                                                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                                                     ORA_(ind_x)
-                                                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                                                      set _ifCond 14
-                                                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                                                       ASL_abs
-                                                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                                                        set _ifCond 17
-                                                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                                                         ORA_(ind)_y
-                                                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                                                          set _ifCond 21
-                                                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                                                           ORA_zp_x
-                                                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                                                            set _ifCond 22
-                                                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                                                             ASL_zp_x
-                                                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                                                              set _ifCond 25
-                                                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                                                               ORA_abs_y
-                                                                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                                                                set _ifCond 30
-                                                                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                                                                 ASL_abs_x
-                                                                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                                                                  set _ifCond 33
-                                                                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                                                                   AND_(ind_x)
-                                                                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                                                                    set _ifCond 36
-                                                                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                                                                     BIT_zp
-                                                                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                                                                      set _ifCond 46
-                                                                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                                                                       ROL_abs
-                                                                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                                                                        set _ifCond 53
-                                                                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                                                                         AND_zp_x
-                                                                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                                                                          set _ifCond 54
-                                                                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                                                                           ROL_zp_x
-                                                                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                                                                            set _ifCond 62
-                                                                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                                                                             ROL_abs_x
-                                                                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                                                                              set _ifCond 65
-                                                                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                                                                               EOR_(ind_x)
-                                                                                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                                                                                set _ifCond 85
-                                                                                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                 EOR_zp_x
-                                                                                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                                                                                  set _ifCond 86
-                                                                                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                   LSR_zp_x
-                                                                                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                                                                                    set _ifCond 93
-                                                                                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                     EOR_abs_x
-                                                                                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                                                                                      set _ifCond 97
-                                                                                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                       ADC_(ind_x)
-                                                                                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                                                                                        set _ifCond 110
-                                                                                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                         ROR_abs
-                                                                                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                                                                                          set _ifCond 118
-                                                                                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                           ROR_zp_x
-                                                                                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                                                                                            set _ifCond 126
-                                                                                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                             ROR_abs_x
-                                                                                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                                                                                              set _ifCond 129
-                                                                                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                               STA_(ind_x)
-                                                                                                                                                                                                                                                                                              _else
-                                                                                                                                                                                                                                                                                                set _ifCond 148
-                                                                                                                                                                                                                                                                                                _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                 STY_zp_x
-                                                                                                                                                                                                                                                                                                _else
-                                                                                                                                                                                                                                                                                                  set _ifCond 150
-                                                                                                                                                                                                                                                                                                  _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                   STX_zp_y
-                                                                                                                                                                                                                                                                                                  _else
-                                                                                                                                                                                                                                                                                                    set _ifCond 161
-                                                                                                                                                                                                                                                                                                    _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                     LDA_(ind_x)
-                                                                                                                                                                                                                                                                                                    _else
-                                                                                                                                                                                                                                                                                                      set _ifCond 182
-                                                                                                                                                                                                                                                                                                      _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                       LDX_zp_y
-                                                                                                                                                                                                                                                                                                      _else
-                                                                                                                                                                                                                                                                                                        set _ifCond 193
-                                                                                                                                                                                                                                                                                                        _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                         CMP_(ind_x)
-                                                                                                                                                                                                                                                                                                        _else
-                                                                                                                                                                                                                                                                                                          set _ifCond 204
-                                                                                                                                                                                                                                                                                                          _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                           CPY_abs
-                                                                                                                                                                                                                                                                                                          _else
-                                                                                                                                                                                                                                                                                                            set _ifCond 225
-                                                                                                                                                                                                                                                                                                            _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                             SBC_(ind_x)
-                                                                                                                                                                                                                                                                                                            _else
-                                                                                                                                                                                                                                                                                                              set _ifCond 249
-                                                                                                                                                                                                                                                                                                              _if_IR_eq_cond
-                                                                                                                                                                                                                                                                                                               SBC_abs_y
-                                                                                                                                                                                                                                                                                                              _else
+set _ifCond 173
+_if_IR_eq_cond
+  LDA_abs
+_else
+set _ifCond 41
+_if_IR_eq_cond
+  AND_imm
+_else
+set _ifCond 16
+_if_IR_eq_cond
+  BPL_relative
+_else
+set _ifCond 168
+_if_IR_eq_cond
+  TAY_implied
+_else
+set _ifCond 240
+_if_IR_eq_cond
+  BEQ_relative
+_else
+set _ifCond 165
+_if_IR_eq_cond
+  LDA_zp
+_else
+set _ifCond 197
+_if_IR_eq_cond
+  CMP_zp
+_else
+set _ifCond 48
+_if_IR_eq_cond
+  BMI_relative
+_else
+set _ifCond 32
+_if_IR_eq_cond
+  JSR_abs
+_else
+set _ifCond 96
+_if_IR_eq_cond
+  RTS_implied
+_else
+set _ifCond 202
+_if_IR_eq_cond
+  DEX_implied
+_else
+set _ifCond 189
+_if_IR_eq_cond
+  LDA_abs_x
+_else
+set _ifCond 44
+_if_IR_eq_cond
+  BIT_abs
+_else
+set _ifCond 205
+_if_IR_eq_cond
+  CMP_abs
+_else
+set _ifCond 201
+_if_IR_eq_cond
+  CMP_imm
+_else
+set _ifCond 133
+_if_IR_eq_cond
+  STA_zp
+_else
+set _ifCond 141
+_if_IR_eq_cond
+  STA_abs
+_else
+set _ifCond 166
+_if_IR_eq_cond
+  LDX_zp
+_else
+set _ifCond 185
+_if_IR_eq_cond
+  LDA_abs_y
+_else
+set _ifCond 198
+_if_IR_eq_cond
+  DEC_zp
+_else
+set _ifCond 169
+_if_IR_eq_cond
+  LDA_imm
+_else
+set _ifCond 230
+_if_IR_eq_cond
+  INC_zp
+_else
+set _ifCond 24
+_if_IR_eq_cond
+  CLC_implied
+_else
+set _ifCond 170
+_if_IR_eq_cond
+  TAX_implied
+_else
+set _ifCond 152
+_if_IR_eq_cond
+  TYA_implied
+_else
+set _ifCond 138
+_if_IR_eq_cond
+  TXA_implied
+_else
+set _ifCond 136
+_if_IR_eq_cond
+  DEY_implied
+_else
+set _ifCond 108
+_if_IR_eq_cond
+  JMP_(abs)
+_else
+set _ifCond 145
+_if_IR_eq_cond
+  STA_(ind)_y
+_else
+set _ifCond 74
+_if_IR_eq_cond
+  LSR_accum
+_else
+set _ifCond 9
+_if_IR_eq_cond
+  ORA_imm
+_else
+set _ifCond 144
+_if_IR_eq_cond
+  BCC_relative
+_else
+set _ifCond 153
+_if_IR_eq_cond
+  STA_abs_y
+_else
+set _ifCond 200
+_if_IR_eq_cond
+  INY_implied
+_else
+set _ifCond 181
+_if_IR_eq_cond
+  LDA_zp_x
+_else
+set _ifCond 72
+_if_IR_eq_cond
+  PHA_implied
+_else
+set _ifCond 104
+_if_IR_eq_cond
+  PLA_implied
+_else
+set _ifCond 10
+_if_IR_eq_cond
+  ASL_accum
+_else
+set _ifCond 76
+_if_IR_eq_cond
+  JMP_abs
+_else
+set _ifCond 162
+_if_IR_eq_cond
+  LDX_imm
+_else
+set _ifCond 157
+_if_IR_eq_cond
+  STA_abs_x
+_else
+set _ifCond 177
+_if_IR_eq_cond
+  LDA_(ind)_y
+_else
+set _ifCond 160
+_if_IR_eq_cond
+  LDY_imm
+_else
+set _ifCond 88
+_if_IR_eq_cond
+  CLI_implied
+_else
+set _ifCond 176
+_if_IR_eq_cond
+  BCS_relative
+_else
+set _ifCond 102
+_if_IR_eq_cond
+  ROR_zp
+_else
+set _ifCond 70
+_if_IR_eq_cond
+  LSR_zp
+_else
+set _ifCond 80
+_if_IR_eq_cond
+  BVC_relative
+_else
+set _ifCond 105
+_if_IR_eq_cond
+  ADC_imm
+_else
+set _ifCond 174
+_if_IR_eq_cond
+  LDX_abs
+_else
+set _ifCond 192
+_if_IR_eq_cond
+  CPY_imm
+_else
+set _ifCond 164
+_if_IR_eq_cond
+  LDY_zp
+_else
+set _ifCond 232
+_if_IR_eq_cond
+  INX_implied
+_else
+set _ifCond 221
+_if_IR_eq_cond
+  CMP_abs_x
+_else
+set _ifCond 120
+_if_IR_eq_cond
+  SEI_implied
+_else
+set _ifCond 149
+_if_IR_eq_cond
+  STA_zp_x
+_else
+set _ifCond 228
+_if_IR_eq_cond
+  CPX_zp
+_else
+set _ifCond 56
+_if_IR_eq_cond
+  SEC_implied
+_else
+set _ifCond 42
+_if_IR_eq_cond
+  ROL_accum
+_else
+set _ifCond 233
+_if_IR_eq_cond
+  SBC_imm
+_else
+set _ifCond 132
+_if_IR_eq_cond
+  STY_zp
+_else
+set _ifCond 224
+_if_IR_eq_cond
+  CPX_imm
+_else
+set _ifCond 134
+_if_IR_eq_cond
+  STX_zp
+_else
+set _ifCond 5
+_if_IR_eq_cond
+  ORA_zp
+_else
+set _ifCond 73
+_if_IR_eq_cond
+  EOR_imm
+_else
+set _ifCond 109
+_if_IR_eq_cond
+  ADC_abs
+_else
+set _ifCond 206
+_if_IR_eq_cond
+  DEC_abs
+_else
+set _ifCond 172
+_if_IR_eq_cond
+  LDY_abs
+_else
+set _ifCond 184
+_if_IR_eq_cond
+  CLV_implied
+_else
+set _ifCond 125
+_if_IR_eq_cond
+  ADC_abs_x
+_else
+set _ifCond 64
+_if_IR_eq_cond
+  RTI_implied
+_else
+set _ifCond 101
+_if_IR_eq_cond
+  ADC_zp
+_else
+set _ifCond 186
+_if_IR_eq_cond
+  TSX_implied
+_else
+set _ifCond 29
+_if_IR_eq_cond
+  ORA_abs_x
+_else
+set _ifCond 180
+_if_IR_eq_cond
+  LDY_zp_x
+_else
+set _ifCond 222
+_if_IR_eq_cond
+  DEC_abs_x
+_else
+set _ifCond 81
+_if_IR_eq_cond
+  EOR_(ind)_y
+_else
+set _ifCond 237
+_if_IR_eq_cond
+  SBC_abs
+_else
+set _ifCond 78
+_if_IR_eq_cond
+  LSR_abs
+_else
+set _ifCond 188
+_if_IR_eq_cond
+  LDY_abs_x
+_else
+set _ifCond 38
+_if_IR_eq_cond
+  ROL_zp
+_else
+set _ifCond 217
+_if_IR_eq_cond
+  CMP_abs_y
+_else
+set _ifCond 238
+_if_IR_eq_cond
+  INC_abs
+_else
+set _ifCond 13
+_if_IR_eq_cond
+  ORA_abs
+_else
+set _ifCond 213
+_if_IR_eq_cond
+  CMP_zp_x
+_else
+set _ifCond 214
+_if_IR_eq_cond
+  DEC_zp_x
+_else
+set _ifCond 57
+_if_IR_eq_cond
+  AND_abs_y
+_else
+set _ifCond 234
+_if_IR_eq_cond
+  NOP_implied
+_else
+set _ifCond 216
+_if_IR_eq_cond
+  CLD_implied
+_else
+set _ifCond 140
+_if_IR_eq_cond
+  STY_abs
+_else
+set _ifCond 245
+_if_IR_eq_cond
+  SBC_zp_x
+_else
+set _ifCond 142
+_if_IR_eq_cond
+  STX_abs
+_else
+set _ifCond 45
+_if_IR_eq_cond
+  AND_abs
+_else
+set _ifCond 229
+_if_IR_eq_cond
+  SBC_zp
+_else
+set _ifCond 254
+_if_IR_eq_cond
+  INC_abs_x
+_else
+set _ifCond 6
+_if_IR_eq_cond
+  ASL_zp
+_else
+set _ifCond 117
+_if_IR_eq_cond
+  ADC_zp_x
+_else
+set _ifCond 190
+_if_IR_eq_cond
+  LDX_abs_y
+_else
+set _ifCond 49
+_if_IR_eq_cond
+  AND_(ind)_y
+_else
+set _ifCond 106
+_if_IR_eq_cond
+  ROR_accum
+_else
+set _ifCond 253
+_if_IR_eq_cond
+  SBC_abs_x
+_else
+set _ifCond 89
+_if_IR_eq_cond
+  EOR_abs_y
+_else
+set _ifCond 77
+_if_IR_eq_cond
+  EOR_abs
+_else
+set _ifCond 121
+_if_IR_eq_cond
+  ADC_abs_y
+_else
+set _ifCond 37
+_if_IR_eq_cond
+  AND_zp
+_else
+set _ifCond 69
+_if_IR_eq_cond
+  EOR_zp
+_else
+set _ifCond 241
+_if_IR_eq_cond
+  SBC_(ind)_y
+_else
+set _ifCond 209
+_if_IR_eq_cond
+  CMP_(ind)_y
+_else
+set _ifCond 196
+_if_IR_eq_cond
+  CPY_zp
+_else
+set _ifCond 61
+_if_IR_eq_cond
+  AND_abs_x
+_else
+set _ifCond 112
+_if_IR_eq_cond
+  BVS_relative
+_else
+set _ifCond 246
+_if_IR_eq_cond
+  INC_zp_x
+_else
+set _ifCond 154
+_if_IR_eq_cond
+  TXS_implied
+_else
+set _ifCond 248
+_if_IR_eq_cond
+  SED_implied
+_else
+set _ifCond 236
+_if_IR_eq_cond
+  CPX_abs
+_else
+set _ifCond 94
+_if_IR_eq_cond
+  LSR_abs_x
+_else
+set _ifCond 113
+_if_IR_eq_cond
+  ADC_(ind)_y
+_else
+set _ifCond 8
+_if_IR_eq_cond
+  PHP_implied
+_else
+set _ifCond 40
+_if_IR_eq_cond
+  PLP_implied
+_else
+set _ifCond 66
+_if_IR_eq_cond
+  SYSCALL_
+_else
+set _ifCond 0
+_if_IR_eq_cond
+  BRK_implied
+_else
+set _ifCond 1
+_if_IR_eq_cond
+  ORA_(ind_x)
+_else
+set _ifCond 14
+_if_IR_eq_cond
+  ASL_abs
+_else
+set _ifCond 17
+_if_IR_eq_cond
+  ORA_(ind)_y
+_else
+set _ifCond 21
+_if_IR_eq_cond
+  ORA_zp_x
+_else
+set _ifCond 22
+_if_IR_eq_cond
+  ASL_zp_x
+_else
+set _ifCond 25
+_if_IR_eq_cond
+  ORA_abs_y
+_else
+set _ifCond 30
+_if_IR_eq_cond
+  ASL_abs_x
+_else
+set _ifCond 33
+_if_IR_eq_cond
+  AND_(ind_x)
+_else
+set _ifCond 36
+_if_IR_eq_cond
+  BIT_zp
+_else
+set _ifCond 46
+_if_IR_eq_cond
+  ROL_abs
+_else
+set _ifCond 53
+_if_IR_eq_cond
+  AND_zp_x
+_else
+set _ifCond 54
+_if_IR_eq_cond
+  ROL_zp_x
+_else
+set _ifCond 62
+_if_IR_eq_cond
+  ROL_abs_x
+_else
+set _ifCond 65
+_if_IR_eq_cond
+  EOR_(ind_x)
+_else
+set _ifCond 85
+_if_IR_eq_cond
+  EOR_zp_x
+_else
+set _ifCond 86
+_if_IR_eq_cond
+  LSR_zp_x
+_else
+set _ifCond 93
+_if_IR_eq_cond
+  EOR_abs_x
+_else
+set _ifCond 97
+_if_IR_eq_cond
+  ADC_(ind_x)
+_else
+set _ifCond 110
+_if_IR_eq_cond
+  ROR_abs
+_else
+set _ifCond 118
+_if_IR_eq_cond
+  ROR_zp_x
+_else
+set _ifCond 126
+_if_IR_eq_cond
+  ROR_abs_x
+_else
+set _ifCond 129
+_if_IR_eq_cond
+  STA_(ind_x)
+_else
+set _ifCond 148
+_if_IR_eq_cond
+  STY_zp_x
+_else
+set _ifCond 150
+_if_IR_eq_cond
+  STX_zp_y
+_else
+set _ifCond 161
+_if_IR_eq_cond
+  LDA_(ind_x)
+_else
+set _ifCond 182
+_if_IR_eq_cond
+  LDX_zp_y
+_else
+set _ifCond 193
+_if_IR_eq_cond
+  CMP_(ind_x)
+_else
+set _ifCond 204
+_if_IR_eq_cond
+  CPY_abs
+_else
+set _ifCond 225
+_if_IR_eq_cond
+  SBC_(ind_x)
+_else
+set _ifCond 249
+_if_IR_eq_cond
+  SBC_abs_y
+_else
 -- Unrecognized opcode
 set exception 1
-                                                                                                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                                _endif
-                                                                                                                                                                                                              _endif
-                                                                                                                                                                                                            _endif
-                                                                                                                                                                                                          _endif
-                                                                                                                                                                                                        _endif
-                                                                                                                                                                                                      _endif
-                                                                                                                                                                                                    _endif
-                                                                                                                                                                                                  _endif
-                                                                                                                                                                                                _endif
-                                                                                                                                                                                              _endif
-                                                                                                                                                                                            _endif
-                                                                                                                                                                                          _endif
-                                                                                                                                                                                        _endif
-                                                                                                                                                                                      _endif
-                                                                                                                                                                                    _endif
-                                                                                                                                                                                  _endif
-                                                                                                                                                                                _endif
-                                                                                                                                                                              _endif
-                                                                                                                                                                            _endif
-                                                                                                                                                                          _endif
-                                                                                                                                                                        _endif
-                                                                                                                                                                      _endif
-                                                                                                                                                                    _endif
-                                                                                                                                                                  _endif
-                                                                                                                                                                _endif
-                                                                                                                                                              _endif
-                                                                                                                                                            _endif
-                                                                                                                                                          _endif
-                                                                                                                                                        _endif
-                                                                                                                                                      _endif
-                                                                                                                                                    _endif
-                                                                                                                                                  _endif
-                                                                                                                                                _endif
-                                                                                                                                              _endif
-                                                                                                                                            _endif
-                                                                                                                                          _endif
-                                                                                                                                        _endif
-                                                                                                                                      _endif
-                                                                                                                                    _endif
-                                                                                                                                  _endif
-                                                                                                                                _endif
-                                                                                                                              _endif
-                                                                                                                            _endif
-                                                                                                                          _endif
-                                                                                                                        _endif
-                                                                                                                      _endif
-                                                                                                                    _endif
-                                                                                                                  _endif
-                                                                                                                _endif
-                                                                                                              _endif
-                                                                                                            _endif
-                                                                                                          _endif
-                                                                                                        _endif
-                                                                                                      _endif
-                                                                                                    _endif
-                                                                                                  _endif
-                                                                                                _endif
-                                                                                              _endif
-                                                                                            _endif
-                                                                                          _endif
-                                                                                        _endif
-                                                                                      _endif
-                                                                                    _endif
-                                                                                  _endif
-                                                                                _endif
-                                                                              _endif
-                                                                            _endif
-                                                                          _endif
-                                                                        _endif
-                                                                      _endif
-                                                                    _endif
-                                                                  _endif
-                                                                _endif
-                                                              _endif
-                                                            _endif
-                                                          _endif
-                                                        _endif
-                                                      _endif
-                                                    _endif
-                                                  _endif
-                                                _endif
-                                              _endif
-                                            _endif
-                                          _endif
-                                        _endif
-                                      _endif
-                                    _endif
-                                  _endif
-                                _endif
-                              _endif
-                            _endif
-                          _endif
-                        _endif
-                      _endif
-                    _endif
-                  _endif
-                _endif
-              _endif
-            _endif
-          _endif
-        _endif
-      _endif
-    _endif
-  _endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
+_endif
 _endif
 #endblock
 

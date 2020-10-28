@@ -3663,7 +3663,6 @@ _endif
 -- -----------------------------------------------------------------------------------
 
 -- 6502 memory
--- KEEP THIS AS LAST VARIABLE or change how TweakEmu.jave calculates tape size.
 #table mem 65536
 
 reset

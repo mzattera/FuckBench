@@ -6,13 +6,13 @@ package org.mzattera.bf6502.codegen;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mzattera.bf6502.stats.ReorganizeOpcodes;
 import org.mzattera.bf6502.stats.ReorganizeOpcodes.Instruction;
+import org.mzattera.util.StringUtil;
 
 /**
  * *** OBSOLETE ****
@@ -72,9 +72,9 @@ public class CreateV1_1 {
 
 							// the new code will have only an if and an invocation to a code block for the
 							// code
-							newCode.add(spaces(tab) + "ifeq IR " + opcode);
-							newCode.add(spaces(tab) + "  " + getBlockName(opcode));
-							newCode.add(spaces(tab) + "end");
+							newCode.add(StringUtil.spaces(tab) + "ifeq IR " + opcode);
+							newCode.add(StringUtil.spaces(tab) + "  " + getBlockName(opcode));
+							newCode.add(StringUtil.spaces(tab) + "end");
 							break;
 						} else {
 							c.add(original.get(i));
@@ -140,22 +140,16 @@ public class CreateV1_1 {
 		for (String line : code) {
 			Matcher m = INDENT_BEGIN.matcher(line);
 			if (m.find()) {
-				result.append(spaces(indent)).append(line.trim()).append("\n");
+				result.append(StringUtil.spaces(indent)).append(line.trim()).append("\n");
 				indent += 2;
 			} else {
 				m = INDENT_END.matcher(line);
 				if (m.find())
 					indent -= 2;
-				result.append(spaces(indent)).append(line.trim()).append("\n");
+				result.append(StringUtil.spaces(indent)).append(line.trim()).append("\n");
 			}
 		}
 
 		return result.toString();
-	}
-
-	private static String spaces(int indent) {
-		char[] c = new char[indent];
-		Arrays.fill(c, ' ');
-		return new String(c);
 	}
 }
