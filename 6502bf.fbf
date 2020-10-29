@@ -5,11 +5,9 @@
 
 -- In order to work, this code assumes 16 bit unsigned cells with wrapping.
 
--- VERSION 3
+-- VERSION 5
 -- -----------
--- In this version execute_opcode uses if...then...else blocks, checking from most used opcodes to least used ones.
--- This because we do not have a switch statemetn in FBF.
--- Based on V1_1
+-- Improves on V4
 
 
 #linebreaks 72
@@ -686,6 +684,7 @@ set CONST_FF00 65280
 #endblock
 
 -- This block is responsible for executing the instruction contained in IR
+-- It uses a custom if...then...else block to make up for a similar statement or switch this are missing in FBF.
 -- Looks a bit messy because of identation.
 #block execute_opcode
 set _ifCond 208
@@ -1464,33 +1463,6 @@ _endif
 -- Indirect,X    LDA ($44,X)   $A1  2   6
 -- Indirect,Y    LDA ($44),Y   $B1  2   5+
 
-#block check_LDA
-  ifeq IR 169
-    LDA_imm
-  end
-  ifeq IR 165
-    LDA_zp
-  end
-  ifeq IR 181
-    LDA_zp_x
-  end
-  ifeq IR 173
-    LDA_abs
-  end
-  ifeq IR 189
-    LDA_abs_x
-  end
-  ifeq IR 185
-    LDA_abs_y
-  end
-  ifeq IR 161
-    LDA_(ind_x)
-  end
-  ifeq IR 177
-    LDA_(ind)_y
-  end
-#endblock
-
 #block LDA_imm
   addr_immediate
   execute_LD A
@@ -1535,7 +1507,7 @@ _endif
   rtable mem operand_addr _el_reg
   update_N _el_reg
   update_Z _el_reg
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- LDX (LoaD X register)
@@ -1546,24 +1518,6 @@ _endif
 -- Zero Page,Y   LDX $44,Y     $B6  2   4
 -- Absolute      LDX $4400     $AE  3   4
 -- Absolute,Y    LDX $4400,Y   $BE  3   4+
-
-#block check_LDX
-  ifeq IR 162
-    LDX_imm
-  end
-  ifeq IR 166
-    LDX_zp
-  end
-  ifeq IR 182
-    LDX_zp_y
-  end
-  ifeq IR 174
-    LDX_abs
-  end
-  ifeq IR 190
-    LDX_abs_y
-  end
-#endblock
 
 #block LDX_imm
   addr_immediate
@@ -1598,25 +1552,6 @@ _endif
 -- Zero Page,X   LDY $44,X     $B4  2   4
 -- Absolute      LDY $4400     $AC  3   4
 -- Absolute,X    LDY $4400,X   $BC  3   4+
-
-#block check_LDY
-  ifeq IR 160
-    LDY_imm
-  end
-  ifeq IR 164
-    LDY_zp
-  end
-  ifeq IR 180
-    LDY_zp_x
-  end
-  ifeq IR 172
-    LDY_abs
-  end
-  ifeq IR 188
-    LDY_abs_x
-  end
-#endblock
-
 
 #block LDY_imm
   addr_immediate
@@ -1653,31 +1588,6 @@ _endif
 -- Absolute,Y    STA $4400,Y   $99  3   5
 -- Indirect,X    STA ($44,X)   $81  2   6
 -- Indirect,Y    STA ($44),Y   $91  2   6
-
-#block check_STA
-  ifeq IR 133
-    STA_zp
-  end
-  ifeq IR 149
-    STA_zp_x
-  end
-  ifeq IR 141
-    STA_abs
-  end
-  ifeq IR 157
-    STA_abs_x
-  end
-  ifeq IR 153
-    STA_abs_y
-  end
-  ifeq IR 129
-    STA_(ind_x)
-  end
-  ifeq IR 145
-    STA_(ind)_y
-  end
-#endblock
-
 
 #block STA_zp
   addr_zero_page
@@ -1716,7 +1626,7 @@ _endif
 
 #block execute_ST _es_reg
   wtable mem operand_addr _es_reg
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- STX (STore X register)
@@ -1725,18 +1635,6 @@ _endif
 -- Zero Page     STX $44       $86  2   3
 -- Zero Page,Y   STX $44,Y     $96  2   4
 -- Absolute      STX $4400     $8E  3   4
-
-#block check_STX
-  ifeq IR 134
-    STX_zp
-  end
-  ifeq IR 150
-    STX_zp_y
-  end
-  ifeq IR 142
-    STX_abs
-  end
-#endblock
 
 #block STX_zp
   addr_zero_page
@@ -1760,18 +1658,6 @@ _endif
 -- Zero Page     STY $44       $84  2   3
 -- Zero Page,X   STY $44,X     $94  2   4
 -- Absolute      STY $4400     $8C  3   4
-
-#block check_STY
-  ifeq IR 132
-    STY_zp
-  end
-  ifeq IR 148
-    STY_zp_x
-  end
-  ifeq IR 140
-    STY_abs
-  end
-#endblock
 
 #block STY_zp
   addr_zero_page
@@ -1799,33 +1685,6 @@ _endif
 -- Absolute,Y    ADC $4400,Y   $79  3   4+
 -- Indirect,X    ADC ($44,X)   $61  2   6
 -- Indirect,Y    ADC ($44),Y   $71  2   5+
-
-#block check_ADC
-  ifeq IR 105
-    ADC_imm
-  end
-  ifeq IR 101
-    ADC_zp
-  end
-  ifeq IR 117
-    ADC_zp_x
-  end
-  ifeq IR 109
-    ADC_abs
-  end
-  ifeq IR 125
-    ADC_abs_x
-  end
-  ifeq IR 121
-    ADC_abs_y
-  end
-  ifeq IR 97
-    ADC_(ind_x)
-  end
-  ifeq IR 113
-    ADC_(ind)_y
-  end
-#endblock
 
 #block ADC_imm
   addr_immediate
@@ -1871,7 +1730,7 @@ _endif
   ifeq D_flag 0
     rtable mem operand_addr tmp0
     ADC tmp0
-    set exception 0
+    -- set exception 0
   end
   ifeq D_flag 1
     -- TODO Implement BCD mode
@@ -1933,33 +1792,6 @@ _endif
 -- Indirect,X    SBC ($44,X)   $E1  2   6
 -- Indirect,Y    SBC ($44),Y   $F1  2   5+
 
-#block check_SBC
-  ifeq IR 233
-    SBC_imm
-  end
-  ifeq IR 229
-    SBC_zp
-  end
-  ifeq IR 245
-    SBC_zp_x
-  end
-  ifeq IR 237
-    SBC_abs
-  end
-  ifeq IR 253
-    SBC_abs_x
-  end
-  ifeq IR 249
-    SBC_abs_y
-  end
-  ifeq IR 225
-    SBC_(ind_x)
-  end
-  ifeq IR 241
-    SBC_(ind)_y
-  end
-#endblock
-
 #block SBC_imm
   addr_immediate
   execute_SBC
@@ -2005,7 +1837,7 @@ _endif
     rtable mem operand_addr tmp0
     XOR tmp0 CONST_255 tmp0
     ADC tmp0
-    set exception 0
+    -- set exception 0
   end
   ifeq D_flag 1
     -- TODO Implement BCD mode
@@ -2025,26 +1857,6 @@ _endif
 -- INX (INcrement X)        $E8
 -- INY (INcrement Y)        $C8
 
-#block check_INC
-  ifeq IR 230
-    INC_zp
-  end
-  ifeq IR 246
-    INC_zp_x
-  end
-  ifeq IR 238
-    INC_abs
-  end
-  ifeq IR 254
-    INC_abs_x
-  end
-  ifeq IR 232
-    INX_implied
-  end
-  ifeq IR 200
-    INY_implied
-  end
-#endblock
 #block INC_zp
   addr_zero_page
   execute_INC
@@ -2086,7 +1898,7 @@ _endif
   AND _i_op CONST_255 _i_op
   update_N _i_op
   update_Z _i_op
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- DEC (DECrement memory)
@@ -2100,27 +1912,6 @@ _endif
 -- These instructions are implied mode, have a length of one byte and require two machine cycles.
 -- DEX (DEcrement X)        $CA
 -- DEY (DEcrement Y)        $88
-
-#block check_DEC
-  ifeq IR 198
-    DEC_zp
-  end
-  ifeq IR 214
-    DEC_zp_x
-  end
-  ifeq IR 206
-    DEC_abs
-  end
-  ifeq IR 222
-    DEC_abs_x
-  end
-  ifeq IR 202
-    DEX_implied
-  end
-  ifeq IR 136
-    DEY_implied
-  end
-#endblock
 
 #block DEC_zp
   addr_zero_page
@@ -2163,7 +1954,7 @@ _endif
   AND _d_op CONST_255 _d_op
   update_N _d_op
   update_Z _d_op
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- AND (bitwise AND with accumulator)
@@ -2177,33 +1968,6 @@ _endif
 -- Absolute,Y    AND $4400,Y   $39  3   4+
 -- Indirect,X    AND ($44,X)   $21  2   6
 -- Indirect,Y    AND ($44),Y   $31  2   5+
-
-#block check_AND
-  ifeq IR 41
-    AND_imm
-  end
-  ifeq IR 37
-    AND_zp
-  end
-  ifeq IR 53
-    AND_zp_x
-  end
-  ifeq IR 45
-    AND_abs
-  end
-  ifeq IR 61
-    AND_abs_x
-  end
-  ifeq IR 57
-    AND_abs_y
-  end
-  ifeq IR 33
-    AND_(ind_x)
-  end
-  ifeq IR 49
-    AND_(ind)_y
-  end
-#endblock
 
 #block AND_imm
   addr_immediate
@@ -2250,7 +2014,7 @@ _endif
   AND A tmp0 A
   update_N A
   update_Z A
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- ORA (bitwise OR with Accumulator)
@@ -2264,33 +2028,6 @@ _endif
 -- Absolute,Y    ORA $4400,Y   $19  3   4+
 -- Indirect,X    ORA ($44,X)   $01  2   6
 -- Indirect,Y    ORA ($44),Y   $11  2   5+
-
-#block check_ORA
-  ifeq IR 9
-    ORA_imm
-  end
-  ifeq IR 5
-    ORA_zp
-  end
-  ifeq IR 21
-    ORA_zp_x
-  end
-  ifeq IR 13
-    ORA_abs
-  end
-  ifeq IR 29
-    ORA_abs_x
-  end
-  ifeq IR 25
-    ORA_abs_y
-  end
-  ifeq IR 1
-    ORA_(ind_x)
-  end
-  ifeq IR 17
-    ORA_(ind)_y
-  end
-#endblock
 
 #block ORA_imm
   addr_immediate
@@ -2337,7 +2074,7 @@ _endif
   OR A tmp0 A
   update_N A
   update_Z A
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- EOR (bitwise Exclusive OR)
@@ -2351,33 +2088,6 @@ _endif
 -- Absolute,Y    EOR $4400,Y   $59  3   4+
 -- Indirect,X    EOR ($44,X)   $41  2   6
 -- Indirect,Y    EOR ($44),Y   $51  2   5+
-
-#block check_EOR
-  ifeq IR 73
-    EOR_imm
-  end
-  ifeq IR 69
-    EOR_zp
-  end
-  ifeq IR 85
-    EOR_zp_x
-  end
-  ifeq IR 77
-    EOR_abs
-  end
-  ifeq IR 93
-    EOR_abs_x
-  end
-  ifeq IR 89
-    EOR_abs_y
-  end
-  ifeq IR 65
-    EOR_(ind_x)
-  end
-  ifeq IR 81
-    EOR_(ind)_y
-  end
-#endblock
 
 #block EOR_imm
   addr_immediate
@@ -2424,7 +2134,7 @@ _endif
   XOR A tmp0 A
   update_N A
   update_Z A
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- JMP (JuMP)
@@ -2433,22 +2143,13 @@ _endif
 -- Absolute      JMP $5597     $4C  3   3
 -- Indirect      JMP ($5597)   $6C  3   5
 
-#block check_JMP
-  ifeq IR 76
-    JMP_abs
-  end
-  ifeq IR 108
-    JMP_(abs)
-  end
-#endblock
-
 #block JMP_abs
   -- Infinite loop check
   copy P tmp4
   
   addr_absolute
   copy operand_addr P
-  set exception 0
+  -- set exception 0
   
   -- Infinite loop check
   ifeq P tmp4
@@ -2474,7 +2175,7 @@ _endif
   rtable mem operand_addr P
   SHL_8 P P
   add tmp0 P P
-  set exception 0
+  -- set exception 0
   
   -- Infinite loop check
   ifeq P tmp4
@@ -2492,35 +2193,8 @@ _endif
 -- BNE (Branch on Not Equal)      $D0
 -- BEQ (Branch on EQual)          $F0
 
-#block check_BRA
-  ifeq IR 16
-    BPL_relative
-  end
-  ifeq IR 48
-    BMI_relative
-  end
-  ifeq IR 80
-    BVC_relative
-  end
-  ifeq IR 112
-    BVS_relative
-  end
-  ifeq IR 144
-    BCC_relative
-  end
-  ifeq IR 176
-    BCS_relative
-  end
-  ifeq IR 208
-    BNE_relative
-  end
-  ifeq IR 240
-    BEQ_relative
-  end
-#endblock
-
 #block BPL_relative
-  set exception 0
+  -- set exception 0
   ifeq N_Flag 0
     execute_BRA
   end
@@ -2528,7 +2202,7 @@ _endif
 #endblock
 
 #block BMI_relative
-  set exception 0
+  -- set exception 0
   ifeq N_Flag 1
     execute_BRA
   end
@@ -2536,7 +2210,7 @@ _endif
 #endblock
 
 #block BVC_relative
-  set exception 0
+  -- set exception 0
   ifeq V_Flag 0
     execute_BRA
   end
@@ -2544,7 +2218,7 @@ _endif
 #endblock
 
 #block BVS_relative
-  set exception 0
+  -- set exception 0
   ifeq V_Flag 1
     execute_BRA
   end
@@ -2552,7 +2226,7 @@ _endif
 #endblock
 
 #block BCC_relative
-  set exception 0
+  -- set exception 0
   ifeq C_Flag 0
     execute_BRA
   end
@@ -2560,7 +2234,7 @@ _endif
 #endblock
 
 #block BCS_relative
-  set exception 0
+  -- set exception 0
   ifeq C_Flag 1
     execute_BRA
   end
@@ -2568,7 +2242,7 @@ _endif
 #endblock
 
 #block BNE_relative
-  set exception 0
+  -- set exception 0
   ifeq Z_Flag 0
     execute_BRA
   end
@@ -2576,7 +2250,7 @@ _endif
 #endblock
 
 #block BEQ_relative
-  set exception 0
+  -- set exception 0
   ifeq Z_Flag 1
     execute_BRA
   end
@@ -2615,33 +2289,6 @@ _endif
 -- Absolute,Y    CMP $4400,Y   $D9  3   4+
 -- Indirect,X    CMP ($44,X)   $C1  2   6
 -- Indirect,Y    CMP ($44),Y   $D1  2   5+
-
-#block check_CMP
-  ifeq IR 201
-    CMP_imm
-  end
-  ifeq IR 197
-    CMP_zp
-  end
-  ifeq IR 213
-    CMP_zp_x
-  end
-  ifeq IR 205
-    CMP_abs
-  end
-  ifeq IR 221
-    CMP_abs_x
-  end
-  ifeq IR 217
-    CMP_abs_y
-  end
-  ifeq IR 193
-    CMP_(ind_x)
-  end
-  ifeq IR 209
-    CMP_(ind)_y
-  end
-#endblock
 
 #block CMP_imm
   addr_immediate
@@ -2699,7 +2346,7 @@ _endif
   ifeq tmp1 2
     set N_Flag 1
   end
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- CPX (ComPare X register)
@@ -2708,18 +2355,6 @@ _endif
 -- Immediate     CPX #$44      $E0  2   2
 -- Zero Page     CPX $44       $E4  2   3
 -- Absolute      CPX $4400     $EC  3   4
-
-#block check_CPX
-  ifeq IR 224
-    CPX_imm
-  end
-  ifeq IR 228
-    CPX_zp
-  end
-  ifeq IR 236
-    CPX_abs
-  end
-#endblock
 
 #block CPX_imm
   addr_immediate
@@ -2743,18 +2378,6 @@ _endif
 -- Zero Page     CPY $44       $C4  2   3
 -- Absolute      CPY $4400     $CC  3   4
 
-#block check_CPY
-  ifeq IR 192
-    CPY_imm
-  end
-  ifeq IR 196
-    CPY_zp
-  end
-  ifeq IR 204
-    CPY_abs
-  end
-#endblock
-
 #block CPY_imm
   addr_immediate
   execute_CMP Y
@@ -2775,15 +2398,6 @@ _endif
 -- MODE           SYNTAX       HEX LEN TIM
 -- Zero Page     BIT $44       $24  2   3
 -- Absolute      BIT $4400     $2C  3   4
-
-#block check_BIT
-  ifeq IR 36
-    BIT_zp
-  end
-  ifeq IR 44
-    BIT_abs
-  end
-#endblock
 
 #block BIT_zp
   addr_zero_page
@@ -2812,7 +2426,7 @@ _endif
   ifeq tmp1 0
     set Z_Flag 1
   end
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- ASL (Arithmetic Shift Left)
@@ -2823,24 +2437,6 @@ _endif
 -- Zero Page,X   ASL $44,X     $16  2   6
 -- Absolute      ASL $4400     $0E  3   6
 -- Absolute,X    ASL $4400,X   $1E  3   7
-
-#block check_ASL
-  ifeq IR 10
-    ASL_accum
-  end
-  ifeq IR 6
-    ASL_zp
-  end
-  ifeq IR 22
-    ASL_zp_x
-  end
-  ifeq IR 14
-    ASL_abs
-  end
-  ifeq IR 30
-    ASL_abs_x
-  end
-#endblock
 
 #block ASL_accum
   execute_ASL A
@@ -2886,7 +2482,7 @@ _endif
   end
   update_N _asl_v
   update_Z _asl_v
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- LSR (Logical Shift Right)
@@ -2897,24 +2493,6 @@ _endif
 -- Zero Page,X   LSR $44,X     $56  2   6
 -- Absolute      LSR $4400     $4E  3   6
 -- Absolute,X    LSR $4400,X   $5E  3   7
-
-#block check_LSR
-  ifeq IR 74
-    LSR_accum
-  end
-  ifeq IR 70
-    LSR_zp
-  end
-  ifeq IR 86
-    LSR_zp_x
-  end
-  ifeq IR 78
-    LSR_abs
-  end
-  ifeq IR 94
-    LSR_abs_x
-  end
-#endblock
 
 #block LSR_accum
   execute_LSR A
@@ -2954,7 +2532,7 @@ _endif
   div _lsr_v 2 _lsr_v
   update_N _lsr_v
   update_Z _lsr_v
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- ROL (ROtate Left)
@@ -2965,24 +2543,6 @@ _endif
 -- Zero Page,X   ROL $44,X     $36  2   6
 -- Absolute      ROL $4400     $2E  3   6
 -- Absolute,X    ROL $4400,X   $3E  3   7
-
-#block check_ROL
-  ifeq IR 42
-    ROL_accum
-  end
-  ifeq IR 38
-    ROL_zp
-  end
-  ifeq IR 54
-    ROL_zp_x
-  end
-  ifeq IR 46
-    ROL_abs
-  end
-  ifeq IR 62
-    ROL_abs_x
-  end
-#endblock
 
 #block ROL_accum
   execute_ROL A
@@ -3029,7 +2589,7 @@ _endif
   end
   update_N _rol_v
   update_Z _rol_v
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- ROR (ROtate Right)
@@ -3040,24 +2600,6 @@ _endif
 -- Zero Page,X   ROR $44,X     $76  2   6
 -- Absolute      ROR $4400     $6E  3   6
 -- Absolute,X    ROR $4400,X   $7E  3   7
-
-#block check_ROR
-  ifeq IR 106
-    ROR_accum
-  end
-  ifeq IR 102
-    ROR_zp
-  end
-  ifeq IR 118
-    ROR_zp_x
-  end
-  ifeq IR 110
-    ROR_abs
-  end
-  ifeq IR 126
-    ROR_abs_x
-  end
-#endblock
 
 #block ROR_accum
   execute_ROR A
@@ -3100,7 +2642,7 @@ _endif
   copy tmp4 C_flag
   update_N _ror_v
   update_Z _ror_v
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- Transfer Instructions
@@ -3112,27 +2654,12 @@ _endif
 -- TAY (Transfer A to Y)    $A8
 -- TYA (Transfer Y to A)    $98
 
-#block check_transfer_instructions
-  ifeq IR 170
-    TAX_implied
-  end
-  ifeq IR 138
-    TXA_implied
-  end
-  ifeq IR 168
-    TAY_implied
-  end
-  ifeq IR 152
-    TYA_implied
-  end
-#endblock
-
 #block TAX_implied
   copy A X
   update_N X
   update_Z X
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block TXA_implied
@@ -3140,7 +2667,7 @@ _endif
   update_N A
   update_Z A
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block TAY_implied
@@ -3148,7 +2675,7 @@ _endif
   update_N Y
   update_Z Y
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block TYA_implied
@@ -3156,7 +2683,7 @@ _endif
   update_N A
   update_Z A
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- Stack Instructions
@@ -3168,31 +2695,10 @@ _endif
 -- PHP (PusH Processor status)     $08  3
 -- PLP (PuLl Processor status)     $28  4
 
-#block check_stack_instructions
-  ifeq IR 154
-    TXS_implied
-  end
-  ifeq IR 186
-    TSX_implied
-  end
-  ifeq IR 72
-    PHA_implied
-  end
-  ifeq IR 104
-    PLA_implied
-  end
-  ifeq IR 8
-    PHP_implied
-  end
-  ifeq IR 40
-    PLP_implied
-  end
-#endblock
-
 #block TXS_implied
   copy X S
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block TSX_implied
@@ -3200,13 +2706,13 @@ _endif
   update_N S
   update_Z S
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block PHA_implied
   push_stack A
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block PLA_implied
@@ -3214,33 +2720,27 @@ _endif
   update_N A
   update_Z A
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block PHP_implied
   set_status
   push_stack status
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block PLP_implied
   pop_stack status
   set_flags
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- JSR (Jump to SubRoutine)
 -- Affects Flags: none
 -- MODE           SYNTAX       HEX LEN TIM
 -- Absolute      JSR $5597     $20  3   6
-
-#block check_JSR
-  ifeq IR 32
-    JSR_abs
-  end
-#endblock
 
 #block JSR_abs
   -- Infinite loop check
@@ -3252,7 +2752,7 @@ _endif
   push_stack tmp0
   push_stack tmp1
   copy operand_addr P
-  set exception 0
+  -- set exception 0
   
   -- Infinite loop check
   ifeq P tmp4
@@ -3265,31 +2765,19 @@ _endif
 -- MODE           SYNTAX       HEX LEN TIM
 -- Implied       RTS           $60  1   6
 
-#block check_RTS
-  ifeq IR 96
-    RTS_implied
-  end
-#endblock
-
 #block RTS_implied
   pop_stack tmp0
   pop_stack P
   SHL_8 P P
   add P tmp0 P
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- RTI (ReTurn from Interrupt)
 -- Affects Flags: all
 -- MODE           SYNTAX       HEX LEN TIM
 -- Implied       RTI           $40  1   6
-
-#block check_RTI
-  ifeq IR 64
-    RTI_implied
-  end
-#endblock
 
 #block RTI_implied
   pop_stack status
@@ -3298,7 +2786,7 @@ _endif
   pop_stack P
   SHL_8 P P
   add P tmp0 P
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- Flag (Processor Status) Instructions
@@ -3310,70 +2798,46 @@ _endif
 -- CLD (CLear Decimal)            $D8
 -- SED (SEt Decimal)              $F8
 
-#block check_flag_instructions
-  ifeq IR 24
-    CLC_implied
-  end
-  ifeq IR 56
-    SEC_implied
-  end
-  ifeq IR 88
-    CLI_implied
-  end
-  ifeq IR 120
-    SEI_implied
-  end
-  ifeq IR 184
-    CLV_implied
-  end
-  ifeq IR 216
-    CLD_implied
-  end
-  ifeq IR 248
-    SED_implied
-  end
-#endblock
-
 #block CLC_implied
   set C_flag 0
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block SEC_implied
   set C_flag 1
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block CLI_implied
   set I_flag 0
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block SEI_implied
   set I_flag 1
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block CLV_implied
   set V_flag 0
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block CLD_implied
   set D_flag 0
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 #block SED_implied
   set D_flag 1
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- NOP (No OPeration)
@@ -3381,27 +2845,15 @@ _endif
 -- MODE           SYNTAX       HEX LEN TIM
 -- Implied       NOP           $EA  1   2
 
-#block check_NOP
-  ifeq IR 234
-    NOP_implied
-  end
-#endblock
-
 #block NOP_implied
   inc P 1
-  set exception 0
+  -- set exception 0
 #endblock
 
 -- BRK (BReaK)
 -- Affects Flags: B
 -- MODE           SYNTAX       HEX LEN TIM
 -- Implied       BRK           $00  1   7
-
-#block check_BRK
-  ifeq IR 0
-    BRK_implied
-  end
-#endblock
 
 #block BRK_implied
 	-- Infinite loop check
@@ -3418,7 +2870,7 @@ _endif
 	SHL_8 P P
 	rtable mem 65534 tmp0
 	add P tmp0 P 
-	set exception 0
+	-- set exception 0
 		
 	-- Infinite loop check
 	ifeq P tmp4
@@ -3428,12 +2880,6 @@ _endif
 
 -- The below block uses the illegal opcode $42 to get access to BrainFuck functionalities from assembler.
 -- Actual action depends on the "SYSCALL code" in the byte followig the $42 opcode.
-
-#block check_SYSCALL
-  ifeq IR 66
-    SYSCALL_
-  end
-#endblock
 
 #block SYSCALL_
   -- Set exception to "unrecognized SYSCALL" in case we don't find a valid call code
@@ -3672,9 +3118,6 @@ reset
 -- Main execution loop
 set running TRUE
 uneq running FALSE
-  -- We set this to "unsupported opcode" by default. If the opcode is correctly executed, this will be reset.
-  set exception 1
-  
   read_opcode
   execute_opcode
   handle_exceptions
