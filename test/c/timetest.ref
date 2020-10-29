@@ -9,4 +9,4 @@ asctime(): Thu Jan  1 00:00:00 1970
 
 strftime(): Thu Jan  1 00:00:00 1970
 clock_getres: s:1 ns:0
-clock_gettime: s:15 ns:0
+clock_gettime: s:6 ns:0

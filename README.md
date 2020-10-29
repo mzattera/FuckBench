@@ -166,28 +166,15 @@ To re-build the libraries used by FB, you can call `<root>\bin\FB_build_lib.bat`
 All standard libray fuctions in `time.h`, with the exception of `clock_settime (clockid_t, const struct timespec)`, are available
 in FB with some limitations, as explained below.
 
-Please notice that to use the time library function you must include:
-
-```
-#include "fbtime.h"
-```
-
-instead of:
-
-```
-#include <time.h>
-```
-
-the former will, among other things, define the macro `CLOCKS_PER_SEC` and include the standard `time.h` header.
-
 BF has no access to a system clock, however, the 6502bf emulator keeps track of the number of instructions being executed;
 this is returned by the standard `clock()` function.
 
 The `time()` function takes the value returend by `clock()` and divides it by `CLOCKS_PER_SEC` to have a (rough) estimate
 of seconds passed since the program started. The file `<root>\examples\watch.c` can be used to test the clock;
 it is supposed to print a line every second, but the timing will depend on how fast your machine is
-(how many 6502 instructionsit executes in a second). You can fine tune `CLOCKS_PER_SEC` for your machine by changing its definintion
-in `fbtime.h` (rebuild the libraries if you do so, as explained above).
+(how many 6502 instructionsit executes in a second). You can fine tune `CLOCKS_PER_SEC` for your machine by changing 
+`CPS` macro in `<root>\cc65\fbtime.c` (rebuild the libraries if you do so, as explained above).
+Keep im mind `watch` can be so slow to not be able to print a line per second, no matter how low `CPS` is ;-)
 
 ##### srand()
 

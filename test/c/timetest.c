@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "fbtime.h"
+#include <time.h>
 
 void printtm (struct tm* _tm) {
 	printf ("[YY=%d MM=%d DOY=%d hh=%d mm=%d ss=%d]\n", _tm->tm_year, _tm->tm_mon, _tm->tm_yday, _tm->tm_hour, _tm->tm_min, _tm->tm_sec);

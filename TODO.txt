@@ -1,8 +1,3 @@
-After you found fastest emu between V3 and V4, remove the one you use from archive
-
-
-Migrate to latest cc65 that solve CLOCK_TICKS issue.
-
 
 
 First working FB_java.bat
@@ -20,8 +15,6 @@ Batch to auto rebuild Java tools
 
 SHR (?)
 
-if V3 is chosen remove set exception 0 and all check blocks -> check how SYSCALL sets this in V3
-
 SET LOCAL
 
 Bitwise functions clear workarea; do it effciently (clear the minimum required in BF directly) 
@@ -29,6 +22,8 @@ Bitwise functions clear workarea; do it effciently (clear the minimum required i
 is mod X 255 faster than AND X 255? -> check similar stuff.
 
 Move time libraries from C to ASM (there are examples in libsrc)
+
+test\c\timetest.c non funziona se cambi CLOCKS_SEC
 
 
 

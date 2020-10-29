@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "fbtime.h"
+#include <time.h>
 
 int main() {
 
@@ -7,7 +7,6 @@ int main() {
 	time_t current = last;
 
 	printf ("CLOCKS_PER_SEC value is: %lu\n", CLOCKS_PER_SEC);
-	printf ("CLK_TCK value is:        %lu\n\n", CLK_TCK);
 
 	while (1) {
 		while (current == last) {

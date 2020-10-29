@@ -1,4 +1,4 @@
-; Checks wrong SYSCALL codes are recognized
+; Checks that using decimal mode causes an error
 
 .P02
 
