@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mzattera.util.FileUtil;
+import org.mzattera.util.StringUtil;
 
 /**
  * This modifies .c files created by Esotope BrainFuck to C compiler such that:
@@ -163,7 +164,7 @@ public class TweakCCode {
 				// found a possible begin of a read array pattern
 				String rpl = replaceRead(source, i);
 				if (rpl != null) {
-					newCode.add(rpl);
+					addFormatted(rpl, newCode, line);
 					i += (READ_TABLE_PATTERN.length - 1);
 					continue;
 				}
@@ -174,7 +175,7 @@ public class TweakCCode {
 				// found a possible begin of a read array pattern
 				String rpl = replaceWrite(source, i);
 				if (rpl != null) {
-					newCode.add(rpl);
+					addFormatted(rpl, newCode, line);
 					i += (WRITE_TABLE_PATTERN.length - 1);
 					continue;
 				}
@@ -184,6 +185,31 @@ public class TweakCCode {
 		}
 
 		FileUtil.write(newCode, outputFileName);
+	}
+
+	private static final Pattern TABS = Pattern.compile("(\\s*).*");
+
+	/**
+	 * Add formatted version of replacement code, including indentation.
+	 * 
+	 * @param rpl     replacement code
+	 * @param newCode new code being created
+	 * @param line    first lin ein the replaced pattern (to find indentation)
+	 * @return
+	 */
+	private static void addFormatted(String rpl, List<String> newCode, String line) {
+		int tab = 0;
+		Matcher m = TABS.matcher(line);
+
+		if (m.matches()) {
+			tab = m.group(1).length();
+			String[] l = rpl.split("\\n");
+			for (String s : l) {
+				newCode.add(StringUtil.tabs(tab) + s);
+			}
+		} else {
+			newCode.add(rpl);
+		}
 	}
 
 	/**
@@ -257,7 +283,7 @@ public class TweakCCode {
 			if (!m.matches())
 				return -1;
 			for (int k = 1; k <= m.groupCount(); ++k) {
-					d[j++] = Integer.parseInt(m.group(k));
+				d[j++] = Integer.parseInt(m.group(k));
 			}
 		}
 

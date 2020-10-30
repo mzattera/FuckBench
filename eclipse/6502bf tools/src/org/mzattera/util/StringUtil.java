@@ -28,4 +28,11 @@ public final class StringUtil {
 	public static String spaces(int n) {
 		return chars(n, ' ');
 	}
+
+	/**
+	 * @return a string of n tabs.
+	 */
+	public static String tabs(int n) {
+		return chars(n, '\t');
+	}
 }
