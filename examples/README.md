@@ -1,5 +1,7 @@
-This folder contains code examples in various languages that can be all compiled to BF using FB.
+This folder contains code examples in various languages that can all be compiled to BF using FB.
 
-When the files are not created by FB autor, corresponding copyright/attribution text is included in the file.
+When the files are not created by FB author, corresponding copyright/attribution text is included in the file.
+
+The folder `compiled` contains some of these examples already compiled as BrainFuck, C or Windows executables.
 
 

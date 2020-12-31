@@ -161,6 +161,7 @@ public class TestRunner {
 			ok &= runTests(new File(fbTest, "fbf"), ".fbf", "FB_fbf.bat");
 			ok &= runTests(new File(fbTest, "asm"), ".s", "FB_asm.bat");
 			ok &= runTests(new File(fbTest, "c"), ".c", "FB_cl.bat");
+			ok &= runTests(new File(fbTest, "java"), ".java", "FB_java.bat");
 		}
 
 		return ok;

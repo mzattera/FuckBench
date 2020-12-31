@@ -1,4 +1,8 @@
 /*
+ * This code comes from https://github.com/dangookin/interesting and is redistributed, with minimal changes, under GPL 3.0.
+ */
+
+/*
  * Dan Gookin
  * https://c-for-dummies.com
  * January, 2020

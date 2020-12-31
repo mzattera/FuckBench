@@ -140,20 +140,11 @@ FB_cl f
 
 to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
-The command 
-
-```
-FB_cc f
-```
-
-Is also available to compile `f.c` into object file `f.o` for later linking; this might be useful for bigger projects where more than one
-single C source file is needed.
-
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
 [Parameters](https://cc65.github.io/doc/cc65.html#ss2.1) used by the compiler can be configured in `<root>\bin\FB_config.bat`.
 
-Please notices that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#s4) from ANSI C.
+Please notice that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#s4) from ANSI C.
 
 #### C Libraries
 
@@ -190,23 +181,53 @@ initialized with the same seed.
 
 The only way to properly initialize the random number generator in FB, it to ask for a random seed to the user.
 
+
+
+### Compiling Java
+
+FB uses [b2fJ](https://github.com/mzattera/b2fJ) tiny Java virtual machine to convert Java code into a 6502 executable that is then
+linked to the 6502bf BF emulator to produce final BF code.
+
+You can invoke:
+
+```
+FB_java f
+```
+
+to compile `f.java` source file into `f.bf` BrainFuck code, `f.c` C code (for `f.bf`) and corresponding executable Windows file `f.exe`.
+
+Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+
+b2fJ supports Java 1.8 but has a smaller standard Java library. Please refer to the [project website](https://mzattera.github.io/b2fJ/) for details.
+
+Please notice that version 0.2.2 of b2fJ has a [bug](https://github.com/mzattera/b2fJ/issues/8) that limits the actual usefulness of the code that can be written;
+it is still provided as a "proof of concept" of object oriented programming in BrainFuck.
+
+
   
 ## The 6502bf emulator
 
- * DEC mode
- * SYSCALLS
- * Loop detection (for debug JMP/JSR/BRK/brances)
- * ...
+FuckBench uses a 6502 emulator written in FuckBrainFuck (`<root>\6502bf.fbf`) to translate 6502 code to BrainFuck.
+The emulator implements a standard 6502 CPU, with the below caveats:
+
+ * It does not support "decimal" mode of operations at the moment.
+ * It uses the undocumentd opcode 66 (hex 42) to implement some "SYSCALLS", that is to expose some functionalities
+   such as BrainFuck I/O or to interface with C libraries. Each functionality is identified by the content of the byte following the 66 opcode;
+   functonalities are implemented in the `SYSCALL_` block in the emulator and also exposed as 6502 assembly macros in `<root>\cc65\6502bf.inc`.
+ * It implements automatic loop detection for JMP/JSR/BRK/branch instructions; that is the emulator will quit if one of these instructions 
+   jumps back to the instruction itself. This is used when testing the emulator.
   
 ### Changing 6502 emulator
 
- * Add new SYSCALLS
- * Careful in changing mem[] position -> Linker
- * ...
+If you change the emulator, please notice that the Java linker (`<root>\eclipse\6502bf tools\src\org\mzattera\bf6502\Linker.java` needs to know the position of the `mem` array
+(this is the emulted 6502 memory).
  
 ### Compiling 6502 emulator
 
-Run `<root>\bin\FB_build_emu.bat` to rebuild the 6502bf emulator (`6502bf.bf`).
+Run `<root>\bin\FB_build_emu.bat` to rebuild the 6502bf emulator (`<root>\6502bf.bf`).
+The folder `<root>\test\ca65^` contains code to test the emulator, they are used by `FB_run_tests.bat` as ecplained below.
+
+
 
 ## Making a new release
 

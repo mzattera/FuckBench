@@ -115,6 +115,7 @@ public class Linker {
 
 		// Writes 6502 code at the beginning of the BrainFuck file.
 		try (FormattedPrintWriterWrapper writer = new FormattedPrintWriterWrapper(outputFileName, "ASCII", 72)) {
+			
 			// Skip variables at the beginning of the tape
 			for (int i = 0; i < toSkip; ++i)
 				writer.print(">");

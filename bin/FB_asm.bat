@@ -20,10 +20,10 @@ if exist %1.exe del /F /Q %1.exe
 rem compiles %1.ca65 into %1.out
 echo on
 
-"%FB_CC65%\bin\ca65" %FB_CA65_PARAMS% -o %1.o %1.s
+"%FB_CC65%\bin\ca65" --cpu 6502 -I "%FB_CC65%\asminc" -t none -o %1.o %1.s
 @java -jar "%FB_BIN%CheckFile.jar" %1.o
 if errorlevel 0 (
-	"%FB_CC65%\bin\ld65" %FB_LA65_PARAMS% -o %1.out %1.o 6502bf.lib
+	"%FB_CC65%\bin\ld65" -L "%FB_CLIB%" -C "%FB_CLIB%\6502bf.cfg" -o %1.out %1.o 6502bf.lib
 
 	@del /F /Q %1.o
 )

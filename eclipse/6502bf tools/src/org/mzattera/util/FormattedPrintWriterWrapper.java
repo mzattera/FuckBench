@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.mzattera.bf6502.TweakCCode;
+
 /**
  * @author mzatt
  *
@@ -25,6 +27,16 @@ public final class FormattedPrintWriterWrapper implements AutoCloseable {
 		if (this.lineSize <= 0)
 			throw new IllegalArgumentException("Line size must be > 0: " + this.lineSize);
 		available = lineSize;
+
+		// Header at the beginning of the file
+		writer.println("BrainFuck code generated on the FuckBench");
+		writer.println("  https://github.com/mzattera/FuckBench");
+		writer.println();
+		writer.println("This code requires a tape of at least " + TweakCCode.TAPE_SIZE);
+		writer.println("16 bit wrapping cells to work");
+		writer.println("It will also be slow");
+		writer.println("For best results compile it with FuckBench");
+		writer.println();
 	}
 
 	public FormattedPrintWriterWrapper print(String s) {
