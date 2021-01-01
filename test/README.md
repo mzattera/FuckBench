@@ -1,4 +1,4 @@
-This folder contains a set of tests, also used for regression tests at each release.
+This folder contains a set of examples/tests, also used as regression tests at each release.
 
 Each different source file type is kept in a separate folder, to avoid confusion between
 original (that is test written by developers) and files generated during compilation process

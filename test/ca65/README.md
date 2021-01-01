@@ -3,4 +3,4 @@ edited to build correctly using cc65's assembler and linker for Windows.
 
 These are funtional tests to ensure the 6502bf emulator is working properly.
 
-`bin\FB_build_6502test.bat` can be used to (re)build the tests.
+`bin\FB_build_6502test.bat` can be used to (re)build and execute the tests.
