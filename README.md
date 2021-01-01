@@ -21,6 +21,7 @@ As far the author knows, FuckBench made possible:
  * To write the first multi-threaded program in BrainFuck: [MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)
    from Java source ([MultiThreadDemo.java](https://github.com/mzattera/FuckBench/blob/master/examples/MultiThreadDemo.java)).
 
+These files are available, with other examples, under the `examples` folder.
  
 ## How does it work?
  
@@ -97,7 +98,7 @@ FB_bf f
 
 to compile BrainFuck `f.bf` source file into `f.c` C code and corresponding executable Windows file `f.exe`.
 
-Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 ### Compiling FuckBrainFuck code
 
@@ -109,7 +110,7 @@ FB_fbf f
 
 to compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
-Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 `<root>\notepad++` folder contains a custom language definition for the FuckBrainFuck language, to be used with [Notepad++](https://notepad-plus-plus.org/) editor.
 This is optional but higly recommended if you want to write FuckBrainFuck code.
@@ -127,7 +128,7 @@ FB_asm f
 
 to compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
-Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 The file `<root>\cc65\6502bf.inc` contains a set of macros that exposes features available in the 6502bf emulator.
 
@@ -148,7 +149,7 @@ FB_cl f
 
 to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
-Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 Please notice that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#s4) from ANSI C.
 
@@ -169,7 +170,7 @@ this is returned by the standard `clock()` function.
 The `time()` function takes the value returend by `clock()` and divides it by `CLOCKS_PER_SEC` to have a (rough) estimate
 of seconds passed since the program started. The file `<root>\examples\watch.c` can be used to test the clock;
 it is supposed to print a line every second, but the timing will depend on how fast your machine is
-(how many 6502 instructionsit executes in a second). You can fine tune `CLOCKS_PER_SEC` for your machine by changing 
+(how many 6502 emulated instructions it executes per second). You can fine tune `CLOCKS_PER_SEC` for your machine by changing 
 `CPS` macro in `<root>\cc65\fbtime.c` (rebuild the libraries if you do so, as explained above).
 Keep im mind `watch` can be so slow to not be able to print a line per second, no matter how low `CPS` is ;-)
 
@@ -185,7 +186,7 @@ Please notice that the above will compile successfully but, because `time()` and
 up to that point in the code, they will always return same value at each execution, therefore the random number generator will always be
 initialized with the same seed.
 
-The only way to properly initialize the random number generator in FB, it to ask for a random seed to the user.
+The only way to properly initialize the random number generator in FB is to ask the user to input a random seed.
 
 
 
@@ -202,7 +203,7 @@ FB_java f
 
 to compile `f.java` source file into `f.bf` BrainFuck code, `f.c` C code (for `f.bf`) and corresponding executable Windows file `f.exe`.
 
-Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
+Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 b2fJ supports Java 1.8 but has a smaller standard Java library. Please refer to the [project website](https://mzattera.github.io/b2fJ/) for details.
 
@@ -226,7 +227,7 @@ The emulator implements a standard 6502 CPU, with the below caveats:
 ### Changing 6502 emulator
 
 If you change the emulator, please notice that the Java linker (`<root>\eclipse\6502bf tools\src\org\mzattera\bf6502\Linker.java` needs to know the position of the `mem` array
-(this is the emulted 6502 memory).
+(this is the emulted 6502 memory) on the tape. This information is provided by the FuckBrainFuck compiler when it compiles the emulator 8check the compiler output towards the end).
  
 ### Compiling 6502 emulator
 
