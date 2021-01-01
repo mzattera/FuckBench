@@ -16,9 +16,9 @@ Currently, FB supports compiling the following languages to BF:
 
 As far the author knows, FuckBench made possible:
 
- * To write the first recursive program in BrainFuck: [fib_c.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/fib_c.bf)
+ * To generate the first recursive program in BrainFuck ([fib_c.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/fib_c.bf)),
    from C source ([fib.c](https://github.com/mzattera/FuckBench/blob/master/examples/fib.c)).
- * To write the first multi-threaded program in BrainFuck: [MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)
+ * To generate the first multi-threaded program in BrainFuck [MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf),
    from Java source ([MultiThreadDemo.java](https://github.com/mzattera/FuckBench/blob/master/examples/MultiThreadDemo.java)).
 
 These files are available, with other examples, under the `examples` folder.
@@ -227,12 +227,12 @@ The emulator implements a standard 6502 CPU, with the below caveats:
 ### Changing 6502 emulator
 
 If you change the emulator, please notice that the Java linker (`<root>\eclipse\6502bf tools\src\org\mzattera\bf6502\Linker.java` needs to know the position of the `mem` array
-(this is the emulted 6502 memory) on the tape. This information is provided by the FuckBrainFuck compiler when it compiles the emulator 8check the compiler output towards the end).
+(this is the emulted 6502 memory) on the tape. This information is provided by the FuckBrainFuck compiler when it compiles the emulator (check the compiler output towards the end).
  
 ### Compiling 6502 emulator
 
 Run `<root>\bin\FB_build_emu.bat` to rebuild the 6502bf emulator (`<root>\6502bf.bf`).
-The folder `<root>\test\ca65^` contains code to test the emulator, they are used by `FB_run_tests.bat` as ecplained below.
+The folder `<root>\test\ca65` contains code to test the emulator, they are used by `FB_run_tests.bat` as ecplained below.
 
 
 
