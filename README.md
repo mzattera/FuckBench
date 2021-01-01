@@ -9,6 +9,7 @@ higly optimized C files using the [Esotope](https://github.com/lifthrasiir/esoto
 If a C compiler is available, a Windows executable is also created.
 
 Currently, FB supports compiling the following languages to BF:
+ * Java
  * ANSI C
  * 6502 Assembly
  * [FuckBrainFuck](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck)
@@ -38,7 +39,7 @@ Others are made available under the `<root>\redistr` folder, for your convenienc
  
   1. Download latest FuckBench release and unzip it in a folder on your machine. We will refer to this folder as `<root>`.
   2. I strongly suggest to add `<root>\bin` to your path, such that FB tools can be invoked from any location in your machine.
-     The below examples assume batch files in the `<root>\bin` folder are accessible from the current colder in the command prompt.
+     The below examples assume batch files in the `<root>\bin` folder are accessible from the command line.
   3. Install [Java](https://www.oracle.com/java/technologies/javase-downloads.html).
      FB needs Java 15 or later.
 	 Normally, Java installer updates PATH environment variable as required, if not, make sure the folder used by your
@@ -110,7 +111,8 @@ to compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
 
-`<root>\notepad++` folder contains a custom language definition for the FuckBrainFuck language, to be used ith [Notepad++](https://notepad-plus-plus.org/) editor.
+`<root>\notepad++` folder contains a custom language definition for the FuckBrainFuck language, to be used with [Notepad++](https://notepad-plus-plus.org/) editor.
+This is optional but higly recommended if you want to write FuckBrainFuck code.
 
 ### Compiling 6502 assembly
 
