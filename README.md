@@ -12,6 +12,14 @@ Currently, FB supports compiling the following languages to BF:
  * ANSI C
  * 6502 Assembly
  * [FuckBrainFuck](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck)
+
+As far the author knows, FuckBench made possible:
+
+ * To write the first recursive program in BrainFuck: [fib_c.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/fib_c.bf)
+   from C source ([fib.c](https://github.com/mzattera/FuckBench/blob/master/examples/fib.c)).
+ * To write the first multi-threaded program in BrainFuck: [MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)
+   from Java source ([MultiThreadDemo.java](https://github.com/mzattera/FuckBench/blob/master/examples/MultiThreadDemo.java)).
+
  
 ## How does it work?
  
