@@ -207,7 +207,7 @@ Again, if Python or C compiler have not been configured, compilation will stop a
 
 b2fJ supports Java 1.8 but has a smaller standard Java library. Please refer to the [project website](https://mzattera.github.io/b2fJ/) for details.
 
-Please notice that version 0.2.2 of b2fJ has a [bug](https://github.com/mzattera/b2fJ/issues/8) that limits the actual usefulness of the code that can be written;
+Please notice that, since version 0.2.2, b2fJ has a [bug](https://github.com/mzattera/b2fJ/issues/8) that limits the actual usefulness of the code that can be written;
 it is still provided as a "proof of concept" of object-oriented programming in brainfuck.
 
 
