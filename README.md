@@ -131,8 +131,6 @@ Again, if Python or C compilers have not been configured, compilation will stop 
 
 The file `<root>\cc65\6502bf.inc` contains a set of macros that exposes features available in the 6502bf emulator.
 
-[Parameters](https://cc65.github.io/doc/ca65.html#ss2.1) used by the assembler can be configured in `<root>\bin\FB_config.bat`.
-
 The code can use zeropage variables (except for 26 bytes reserved by ca65) and the whole of RAM (starting from $200),
 with the exception of a software stack located in high memory. For more information, please refer to `<root>\cc65\6502bf.cfg`
 configuration file and [cc65 documentation](https://cc65.github.io/doc/customizing.html).
@@ -151,8 +149,6 @@ FB_cl f
 to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compilers have not been configured, compilation will stop at some intermediate steps.
-
-[Parameters](https://cc65.github.io/doc/cc65.html#ss2.1) used by the compiler can be configured in `<root>\bin\FB_config.bat`.
 
 Please notice that cc65 somehow [differs](https://cc65.github.io/doc/cc65.html#s4) from ANSI C.
 

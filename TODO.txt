@@ -1,4 +1,3 @@
-Document first recursive and first mutithread code
 
 umpus to the BF code colection
 
