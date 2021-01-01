@@ -17,7 +17,7 @@ copy /Y "%FB_CC65%\lib\none.lib" 6502bf.lib
 for %%i in (*.s) do (
 	echo %%i
 	if exist 6502bf.lib (
-		"%FB_CC65%\bin\ca65" %FB_CA65_PARAMS% "%%i"
+		"%FB_CC65%\bin\ca65" --cpu 6502 -I "%FB_CC65%\asminc" -t none -o "%%~ni.o" "%%i"
 		if exist "%%~ni.o" (
 			"%FB_CC65%\bin\ar65" a 6502bf.lib "%%~ni.o"
 		) else (
@@ -29,7 +29,7 @@ for %%i in (*.s) do (
 for %%i in (*.c) do (
 	echo %%i
 	if exist 6502bf.lib (
-		call "%FB_BIN%FB_cc.bat" "%%~ni"
+		"%FB_CC65%\bin\cl65" -c --cpu 6502 -Oi -t none -o "%%~ni.o" "%%i"
 		if exist "%%~ni.o" (
 			"%FB_CC65%\bin\ar65" a 6502bf.lib "%%~ni.o"
 		) else (

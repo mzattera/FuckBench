@@ -8,7 +8,7 @@
 
 @rem The below example is using GCC.
 
-gcc -O3 -o %1.exe %1.c
+rem gcc -O3 -o %1.exe %1.c
 
 
 

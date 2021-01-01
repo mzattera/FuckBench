@@ -26,7 +26,7 @@ java -classpath "%FB_LINK_CLASSPATH%" js.tinyvm.TinyVM --writeorder LE --classpa
 
 @echo off
 echo.
-echo === Compiling JVM...
+echo === Compiling b2fJ JVM...
 echo.
 
 del /F /Q %1.class
@@ -50,7 +50,7 @@ if exist javavm\*.o del /S /Q /F javavm\*.o
 if exist platform\fb\*.o del /S /Q /F platform\fb\*.o
 
 set "CC=%FB_CC65%%\bin\cl65"
-set "CC_PARAMS=-c --cpu 6502 -Oi -t none -I .\javavm -I .\platform\fb"
+set "CC_PARAMS=-c --cpu 6502 -Oi -t none -I .\javavm -I .\platform\fb" -W
 set "CC_CLI=%CC% %CC_PARAMS%"
 
 %CC_CLI% javavm\exceptions.c
@@ -86,7 +86,7 @@ rmdir /S /Q %FB_BUILD%
 cd "%FB_CD%""
 
 echo.
-echo ====================
+echo =========================
 echo.
 
 rem links program into .bf and compiles it

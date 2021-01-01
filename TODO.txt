@@ -1,36 +1,6 @@
-The whole input and output hierarchy should be checked that does not create buffers that are not needed.
+Document first recursive and first mutithread code
 
-Checked: 
-AutoCloseable
-BufferedInputStream
-BufferedOutputStream
-Closeable
-FilteredInputStream
-FilteredOutputStream
-InputStream
-InputStreamReader
-OutputStream
-PrintStream
-Reader
-
-
-*** FIXES TO b2fJ ****************************************************************************************************************************************
-
->>> Port to FB
-
-
-** Next in FuckBench *************************************************************************************************************************************
-
-FB_java.bat uses a workaround that fixes issues with cc65 and spaces in path; maybe we can use same approach in FB_cl?
-If this is possible, we can then use the cc65 redistributed with b2fj instead of having to install it
-have FB_Java.bat to use loop instead compiling files one by one, maybe linker can use *.o; if so, update b2fJ as well.
-
-Downgrade to Java 8? Update README.md accordingly
-
-Put Python under redistr? Maybe use https://www.jython.org (needs Java 8) will simplify batch files
-
-Batch to auto rebuild Java tools
-
+umpus to the BF code colection
 
 
 SET LOCAL

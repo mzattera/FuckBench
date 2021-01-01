@@ -15,7 +15,7 @@ rem This is optional and only needed if you want to generate C out of BF code.
 rem You can leave it unset but compilation will stop after generationg BrainFuck code.
 
 rem set FB_PYTHON=
-set "FB_PYTHON=D:\Programs\WPy64-2.7.13.1Zero\python-2.7.13.amd64\python.exe"
+rem set "FB_PYTHON=D:\Programs\WPy64-2.7.13.1Zero\python-2.7.13.amd64\python.exe"
 
 
 

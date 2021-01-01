@@ -30,7 +30,7 @@ public final class FormattedPrintWriterWrapper implements AutoCloseable {
 
 		// Header at the beginning of the file
 		writer.println("BrainFuck code generated on the FuckBench");
-		writer.println("  https://github.com/mzattera/FuckBench");
+		writer.println("See you on github (/mzattera/FuckBench)");
 		writer.println();
 		writer.println("This code requires a tape of at least " + TweakCCode.TAPE_SIZE);
 		writer.println("16 bit wrapping cells to work");

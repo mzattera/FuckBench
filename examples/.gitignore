@@ -1,17 +1,3 @@
-/bf_hello.c
-/bf_hello.exe
-/fbf_hello.bf
-/fbf_hello.c
-/fbf_hello.exe
-/asm_hello.bf
-/asm_hello.c
-/asm_hello.exe
-/c_hello_c.bf
-/c_hello_c.c
-/c_hello_c.exe
-/fib_c.bf
-/fib_c.c
-/fib_c.exe
 *.exe
 *_c.bf
 *_c.c
