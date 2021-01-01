@@ -2,7 +2,7 @@
 
 ## What is it?
 
-FuckBench (*FB*) is a set of Windows batch files and tools to compile from several languages into [BrainFuck](https://en.wikipedia.org/wiki/Brainfuck) (*BF*).
+FuckBench (*FB*) is a set of Windows batch files and tools to compile from several languages into [brainfuck](https://en.wikipedia.org/wiki/Brainfuck) (*BF*).
 
 Optionally, in addition to creating BF code, FB can compile generated BF code into 
 higly optimized C files using the [Esotope](https://github.com/lifthrasiir/esotope-bfc) BF to C compiler.
@@ -16,9 +16,9 @@ Currently, FB supports compiling the following languages to BF:
 
 As far as the author knows, FuckBench made possible:
 
- * To generate the first recursive program in BrainFuck ([fib_c.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/fib_c.bf)),
+ * To generate the first recursive program in brainfuck ([fib_c.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/fib_c.bf)),
    from C source ([fib.c](https://github.com/mzattera/FuckBench/blob/master/examples/fib.c)).
- * To generate the first multi-threaded program in BrainFuck ([MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)),
+ * To generate the first multi-threaded program in brainfuck ([MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)),
    from Java source ([MultiThreadDemo.java](https://github.com/mzattera/FuckBench/blob/master/examples/MultiThreadDemo.java)).
 
 These files are available, with other examples, under the `examples` folder.
@@ -65,7 +65,7 @@ Optional - the below steps are required if you want to compile C code generated 
 	It is up to you to modify this batch file to properly invoke any C compiler you are using.
 	If you are not using any C compler, just leave this file blank.
 
-### Specifications for the BrainFuck environment
+### Specifications for the brainfuck environment
 
 To successfully run, BF code created by FB requires a BF interpreter or compiler with below specifications;
 please notice the section above explains how to use Esotope and any Windows C compiler to create Windows 
@@ -88,7 +88,7 @@ executables out of your BF generated code.
   if $00 is read, it is replaced by $0A before being returned.
   
 	  
-### Compiling BrainFuck code
+### Compiling brainfuck code
 
 If you followed the above optional steps, you can invoke:
 
@@ -96,7 +96,7 @@ If you followed the above optional steps, you can invoke:
 FB_bf f
 ```
 
-to compile BrainFuck `f.bf` source file into `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile brainfuck `f.bf` source file into `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
@@ -108,7 +108,7 @@ You can invoke:
 FB_fbf f
 ```
 
-to compile FuckBrainFuck `f.fbf` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile FuckBrainFuck `f.fbf` source file into `f.bf` brainfuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
@@ -126,7 +126,7 @@ You can invoke:
 FB_asm f
 ```
 
-to compile ca65 assembly file `f.s` source file into `f.bf` BrainFuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
+to compile ca65 assembly file `f.s` source file into `f.bf` brainfuck code, `f.c` C code and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
@@ -147,7 +147,7 @@ You can invoke:
 FB_cl f
 ```
 
-to compile `f.c` source file into `f_c.bf` BrainFuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
+to compile `f.c` source file into `f_c.bf` brainfuck code, `f_c.c` C code (for `f_c.bf`) and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
@@ -201,25 +201,25 @@ You can invoke:
 FB_java f
 ```
 
-to compile `f.java` source file into `f.bf` BrainFuck code, `f.c` C code (for `f.bf`) and corresponding executable Windows file `f.exe`.
+to compile `f.java` source file into `f.bf` brainfuck code, `f.c` C code (for `f.bf`) and corresponding executable Windows file `f.exe`.
 
 Again, if Python or C compiler have not been configured, compilation will stop at some intermediate steps.
 
 b2fJ supports Java 1.8 but has a smaller standard Java library. Please refer to the [project website](https://mzattera.github.io/b2fJ/) for details.
 
 Please notice that version 0.2.2 of b2fJ has a [bug](https://github.com/mzattera/b2fJ/issues/8) that limits the actual usefulness of the code that can be written;
-it is still provided as a "proof of concept" of object oriented programming in BrainFuck.
+it is still provided as a "proof of concept" of object oriented programming in brainfuck.
 
 
   
 ## The 6502bf emulator
 
-FuckBench uses a 6502 emulator written in FuckBrainFuck (`<root>\6502bf.fbf`) to translate 6502 code to BrainFuck.
+FuckBench uses a 6502 emulator written in FuckBrainFuck (`<root>\6502bf.fbf`) to translate 6502 code to brainfuck.
 The emulator implements a standard 6502 CPU, with the below caveats:
 
  * It does not support "decimal" mode of operations at the moment.
  * It uses the undocumentd opcode 66 (hex 42) to implement some "SYSCALLS", that is to expose some functionalities
-   such as BrainFuck I/O or to interface with C libraries. Each functionality is identified by the content of the byte following the 66 opcode;
+   such as brainfuck I/O or to interface with C libraries. Each functionality is identified by the content of the byte following the 66 opcode;
    functonalities are implemented in the `SYSCALL_` block in the emulator and also exposed as 6502 assembly macros in `<root>\cc65\6502bf.inc`.
  * It implements automatic loop detection for JMP/JSR/BRK/branch instructions; that is the emulator will quit if one of these instructions 
    jumps back to the instruction itself. This is used when testing the emulator.
