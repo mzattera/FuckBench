@@ -50,7 +50,7 @@ if exist javavm\*.o del /S /Q /F javavm\*.o
 if exist platform\fb\*.o del /S /Q /F platform\fb\*.o
 
 set "CC=%FB_CC65%%\bin\cl65"
-set "CC_PARAMS=-c --cpu 6502 -Oi -t none -I .\javavm -I .\platform\fb" -W
+set "CC_PARAMS=-c --cpu 6502 -Oi -t none -I .\javavm -I .\platform\fb -W -unused-param,-unused-var"
 set "CC_CLI=%CC% %CC_PARAMS%"
 
 %CC_CLI% javavm\exceptions.c
