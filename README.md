@@ -16,7 +16,7 @@ Currently, FB supports compiling the following languages to BF:
 
 As far as the author knows, FuckBench made possible to generate the first multi-threaded program in brainfuck ([MultiThreadDemo.bf](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.bf)),
    from Java source ([MultiThreadDemo.java](https://github.com/mzattera/FuckBench/blob/master/examples/MultiThreadDemo.java)).
-
+A [compiled version](https://github.com/mzattera/FuckBench/blob/master/examples/compiled/MultiThreadDemo.exe) is also available.
  
 ## How does it work?
  
