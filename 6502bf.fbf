@@ -49,9 +49,6 @@
 #dim CONST_1
 set CONST_1 1
 
-#dim CONST_2
-set CONST_2 2
-
 #dim CONST_64
 set CONST_64 64
 
@@ -60,12 +57,6 @@ set CONST_128 128
 
 #dim CONST_255
 set CONST_255 255
-
-#dim CONST_256
-set CONST_256 256
-
-#dim CONST_4096
-set CONST_4096 4096
 
 #dim CONST_FF00
 set CONST_FF00 65280
@@ -107,53 +98,6 @@ set CONST_FF00 65280
 	returnfrom _doElse
 #endblock
 
--- -----------------------------------------------------------------------------------
-
--- Clears tape cells starting from _ct_start, it will clear as many cells as contained in _ct_start.
--- For example, if _ct_start=3 this will clear _ct_start and the next 2 cells on the right.
--- _ct_start must be greater than 0.
-#block _clean_tape _ct_start
-  moveto _ct_start
-  -- unfortunately, we need to leave a 1 in first cell as a marker, this means the code for the first cell is special
-  brainfuck -[        if there is at least 2 cells to clear enter the main body
-  brainfuck   >[-]<   clears next cell
-  brainfuck   [->+<]  copies current into next
-  brainfuck   +>-     increase first cell making it 1 then move to next cell notice the next is decremented twice because the check is done immediately
-  brainfuck   [
-  brainfuck     >[-]<  clears next cell
-  brainfuck     [->+<] copies current
-  brainfuck     >-     next is decremented by one
-  brainfuck   ]
-  brainfuck   -[+<-]   go back to the cell with 1
-  brainfuck ]
-  returnfrom _ct_start
-#endblock
-
--- -----------------------------------------------------------------------------------
--- MATH FUNCTIONS
--- -----------------------------------------------------------------------------------
-
--- Work area for math functions.
--- These MUST be consecutive cell for the algorithm to work
-#dim _mf_c0 _mf_c1 _mf_c2 _mf_c3
-#custom 2
-
--- Original code: https://esolangs.org/wiki/Brainfuck_algorithms#Divmod_algorithm
-#block divmod _d_n _d_d _d_result _d_mod
-  -- >n d
-  -- # >0 d-n%d n%d n/d
-  set _mf_c0 6
-  _clean_tape _mf_c0
-  copy _d_n _mf_c0
-  copy _d_d _mf_c1
-  moveto _mf_c0
-  brainfuck [->[->+>>]>[<<+>>[-<+>]>+>>]<<<<<]
-  brainfuck >[>>>]>[[-<+>]>+>>]<<<<<
-  returnfrom _mf_c0
-  copy _mf_c3 _d_result
-  copy _mf_c2 _d_mod
-#endblock
-
 -- ------------------
 -- BITWISE FUNCTIONS
 -- ------------------
@@ -162,20 +106,40 @@ set CONST_FF00 65280
 -- Original code: https://codegolf.stackexchange.com/questions/9178/bitwise-operators-in-brainfuck
 
 -- Work area for the bitwise algorithms.
+-- See each block to see how much workarea total  they need
 -- These MUST be consecutive cell for the algorithm to work
 #dim _bw_c0 _bw_c1 _bw_c2 _bw_c3 _bw_c4 _bw_c5
 #custom 53
 
 -- Resets the working area for the bitwise algorithms.
+-- This works only fro 16 bit cells, 32 bit cells ill require a bigger workign area.
+-- The implementation is a bit verbose (clears 59 cells), but we prefer to do it fast.
 #block _clean_bw_wa
-  -- TODO	For each function calculate separately the working area needed and clear only that one. Use libraries\lib.fbf
-  set _bw_c0 59
-  _clean_tape _bw_c0
+	moveto _bw_c0
+
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> 
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> 
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> 
+
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> 
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> 
+	brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>
+
+	brainfuck <<<<< <<<<< 
+	brainfuck <<<<< <<<<< 
+	brainfuck <<<<< <<<<< 
+
+	brainfuck <<<<< <<<<< 
+	brainfuck <<<<< <<<<< 
+	brainfuck <<<<< <<<<
+	
+	returnfrom _bw_c0
 #endblock
 
 #block NOT _not_a _not_res
   -- Assumes A is in cell 0, stores NOT A in cell 1, pointer starts and ends in cell 0.
-  _clean_bw_wa
+  -- Uses only 2 cells; notice that this algorithm will take forever for 32 bit cells.
+  set _bw_c1 0
   copy _not_a _bw_c0
   moveto _bw_c0
   brainfuck +[>-<-]
@@ -185,6 +149,7 @@ set CONST_FF00 65280
 
 #block ROL _rol_a _rol_res
   -- Assumes A is in cell 0, stores A ROL 1 in cell 1, pointer starts and ends in cell 0.
+  -- Uses 59 cells, regardless their size.
   _clean_bw_wa
   copy _rol_a _bw_c0
   moveto _bw_c0
@@ -195,6 +160,7 @@ set CONST_FF00 65280
 
 #block OR _or_a _or_b _or_res
   -- Assumes A and B are in cells 1 and 2, stores A OR B in cell 2, pointer starts in cell 0 and ends in cell 5.
+  -- Uses 59 16-bit cells or 106 32-bit cells.
   _clean_bw_wa
   copy _or_a _bw_c1
   copy _or_b _bw_c2
@@ -206,6 +172,7 @@ set CONST_FF00 65280
 
 #block AND _and_a _and_b _and_res
   -- Assumes A and B are in cells 1 and 2, stores A AND B in cell 4, pointer starts in cell 0 and ends in cell 5.
+  -- Uses 59 16-bit cells or 106 32-bit cells.
   _clean_bw_wa
   copy _and_a _bw_c1
   copy _and_b _bw_c2
@@ -217,6 +184,7 @@ set CONST_FF00 65280
 
 #block XOR _xor_a _xor_b _xor_res
   -- Assumes A and B are in cells 1 and 2, stores A XOR B in cell 2, pointer starts in cell 0 and ends in cell 5.
+  -- Uses 59 16-bit cells or 106 32-bit cells.
   _clean_bw_wa
   copy _xor_a _bw_c1
   copy _xor_b _bw_c2
@@ -284,8 +252,12 @@ set CONST_FF00 65280
 -- Original algorithm from: https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_for_ANY_sized_cell_.28ie_8bit.2C_16bit.2C_etc.29
 -- Notice this uses _outv_N as working area, it expects 5 of them to be available and contogue.
 #block out _o_v
-  set _outv_0 12
-  _clean_tape _outv_0
+  -- Clean working area
+  moveto _outv_1
+  brainfuck [-]>[-]>[-]>[-]>[-]> [-]>[-]>[-]>[-]>[-]> [-]>
+  brainfuck <<<<< <<<<< <
+  returnfrom _outv_1
+  
   copy _o_v _outv_0
   moveto _outv_0
   brainfuck [>>+>+<<<-]>>>[<<<+>>>-]<<+>[<->[>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]
@@ -305,7 +277,8 @@ set CONST_FF00 65280
   copy _o16_v _outv_0
   set _outv_1 4
   uneq _outv_1 0
-    divmod _outv_0 CONST_4096 _outv_2 _outv_0
+    div _outv_0 4096 _outv_2
+    mod _outv_0 4096 _outv_0
     SHL_4 _outv_0 _outv_0
     inc _outv_2 '0'
     comp _outv_2 '9' _outv_3
@@ -534,19 +507,22 @@ set CONST_FF00 65280
 #block set_flags
   copy status _stsv_1
   set C_flag 0
-  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
+  mod _stsv_1 2 _stsv_0
+  div _stsv_1 2 _stsv_1
   ifnoteq _stsv_0 0
     set C_flag 1
   end
   
   set Z_flag 0
-  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
+  mod _stsv_1 2 _stsv_0
+  div _stsv_1 2 _stsv_1
   ifnoteq _stsv_0 0
     set Z_flag 1
   end
   
   set I_flag 0
-  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
+  mod _stsv_1 2 _stsv_0
+  div _stsv_1 2 _stsv_1
   ifnoteq _stsv_0 0
     set I_flag 1
   end
@@ -561,7 +537,8 @@ set CONST_FF00 65280
   div _stsv_1 8 _stsv_1
   
   set V_flag 0
-  divmod _stsv_1 CONST_2 _stsv_1 _stsv_0
+  mod _stsv_1 2 _stsv_0
+  div _stsv_1 2 _stsv_1
   ifnoteq _stsv_0 0
     set V_flag 1
   end
@@ -2636,7 +2613,8 @@ _endif
 
 #block execute_ROR _ror_v
   -- Beware of overwriting tmp0
-  divmod _ror_v CONST_2 _ror_v tmp4
+  mod _ror_v 2 tmp4
+  div _ror_v 2 _ror_v
   SHL_7 C_flag C_flag
   add _ror_v C_Flag _ror_v
   copy tmp4 C_flag
@@ -2748,7 +2726,8 @@ _endif
   
   addr_absolute
   dec P 1
-  divmod P CONST_256 tmp0 tmp1
+  div P 256 tmp0
+  mod P 256 tmp1
   push_stack tmp0
   push_stack tmp1
   copy operand_addr P
@@ -2860,7 +2839,8 @@ _endif
 	copy P tmp4
 
 	inc P 2
-	divmod P CONST_256 tmp0 tmp1
+	div P 256 tmp0
+	mod P 256 tmp1
 	push_stack tmp0
 	push_stack tmp1
 	set_status
@@ -3064,7 +3044,8 @@ _endif
 
 	-- # char read goes into A,X as return value
 	sub tmp0 tmp2 tmp2
-	divmod tmp2 CONST_256 X A
+	div tmp2 256 X
+	mod tmp2 256 A
 	
 	inc P 1
     set exception 0
@@ -3073,10 +3054,12 @@ _endif
   -- 50 Writes clock
   -- The internal "clock" (instruction counter) it is pushed to the 6502 stack.
   ifeq tmp0 80
-	divmod ticLo CONST_256 tmp1 tmp0
+	div ticLo 256 tmp1
+	mod ticLo 256 tmp0
 	push_stack tmp0
 	push_stack tmp1
-	divmod ticHi CONST_256 tmp1 tmp0
+	div ticHi 256 tmp1
+	mod ticHi 256 tmp0
 	push_stack tmp0
 	push_stack tmp1
 	
