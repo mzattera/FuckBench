@@ -112,7 +112,7 @@ set CONST_FF00 65280
 #custom 53
 
 -- Resets the working area for the bitwise algorithms.
--- This works only fro 16 bit cells, 32 bit cells ill require a bigger workign area.
+-- This works only for 16 bit cells, 32 bit cells ill require a bigger workign area.
 -- The implementation is a bit verbose (clears 59 cells), but we prefer to do it fast.
 #block _clean_bw_wa
 	moveto _bw_c0
@@ -476,7 +476,7 @@ set CONST_FF00 65280
 -- STATUS & STACK
 -- ------------------
 
--- Local vaiables
+-- Local variables
 #dim _stsv_0 _stsv_1
 
 -- Set "status" register, based on content of single status flags.
@@ -490,7 +490,7 @@ set CONST_FF00 65280
   add 1 status status
   SHL status status
   -- B flag does not really exist in the CPU, it is pushed as 1 by BRK & PHP or 0 by IRQ / NMI
-  -- Always pushes B flag as 1, since we do not have hardware interrups
+  -- Always pushes B flag as 1, since we do not have hardware interrupts
   add 1 status status
   SHL status status
   add D_flag status status
@@ -2172,7 +2172,7 @@ _endif
 
 #block BPL_relative
   -- set exception 0
-  ifeq N_Flag 0
+  ifeq N_flag 0
     execute_BRA
   end
   inc P 2
@@ -2180,7 +2180,7 @@ _endif
 
 #block BMI_relative
   -- set exception 0
-  ifeq N_Flag 1
+  ifeq N_flag 1
     execute_BRA
   end
   inc P 2
@@ -2188,7 +2188,7 @@ _endif
 
 #block BVC_relative
   -- set exception 0
-  ifeq V_Flag 0
+  ifeq V_flag 0
     execute_BRA
   end
   inc P 2
@@ -2196,7 +2196,7 @@ _endif
 
 #block BVS_relative
   -- set exception 0
-  ifeq V_Flag 1
+  ifeq V_flag 1
     execute_BRA
   end
   inc P 2
@@ -2220,7 +2220,7 @@ _endif
 
 #block BNE_relative
   -- set exception 0
-  ifeq Z_Flag 0
+  ifeq Z_flag 0
     execute_BRA
   end
   inc P 2
@@ -2228,7 +2228,7 @@ _endif
 
 #block BEQ_relative
   -- set exception 0
-  ifeq Z_Flag 1
+  ifeq Z_flag 1
     execute_BRA
   end
   inc P 2
@@ -2308,8 +2308,8 @@ _endif
 #endblock
 
 #block execute_CMP _ec_reg
-  set N_Flag 0
-  set Z_Flag 0
+  set N_flag 0
+  set Z_flag 0
   set C_Flag 0
   rtable mem operand_addr tmp0
   comp _ec_reg tmp0 tmp1
@@ -2317,11 +2317,11 @@ _endif
     set C_Flag 1
   end
   ifeq tmp1 1
-    set Z_Flag 1
+    set Z_flag 1
     set C_Flag 1
   end
   ifeq tmp1 2
-    set N_Flag 1
+    set N_flag 1
   end
   -- set exception 0
 #endblock
@@ -2387,21 +2387,21 @@ _endif
 #endblock
 
 #block execute_BIT
-  set N_Flag 0
-  set V_Flag 0
-  set Z_Flag 0
+  set N_flag 0
+  set V_flag 0
+  set Z_flag 0
   rtable mem operand_addr tmp0
   AND tmp0 CONST_128 tmp1
   ifnoteq tmp1 0
-    set N_Flag 1
+    set N_flag 1
   end
   AND tmp0 CONST_64 tmp1
   ifnoteq tmp1 0
-    set V_Flag 1
+    set V_flag 1
   end
   AND tmp0 A tmp1
   ifeq tmp1 0
-    set Z_Flag 1
+    set Z_flag 1
   end
   -- set exception 0
 #endblock
