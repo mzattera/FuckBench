@@ -233,6 +233,15 @@ The folder `<root>\test\ca65` contains code to test the emulator, they are used 
 
 ## Making a new release
 
+  1. Optionally, refresh software released under the `redistr` folder.
+  Make sure `bin\config.bat` reflects any change you made (es. folder names).
+   
+  2. Make sure `config.bat` and `FB_cc.bat` do NOT configure Python or C compiler (let users do it).
+
+  3. Rebuild java tools and make sure they are exported as JARs into the bin folder (manual for now)
+
+  4. Run `FB_run_tests.bat` as explained below.
+
 `<root>\bin\FB_run_tests.bat` runs a battery of tests for FB; in the process, it also rebuilds FB assets.
 Because of this, it can be used as preparation for a new release. 
 It can also be used to run regression tests, enabling only some checks, as explained below.

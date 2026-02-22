@@ -157,31 +157,33 @@ public class TweakCCode {
 			}
 		}
 
+		// Below optimisation is temporarily removed following: https://github.com/mzattera/FuckBench/issues/9
+		
 		// Looks for table access patterns and replace them with shorter code
 		for (++i; i < source.size(); ++i) {
 			String line = source.get(i);
 
-			Matcher m = READ_TABLE_PATTERN[0].matcher(line);
-			if (m.matches()) {
-				// found a possible begin of a read array pattern
-				String rpl = replaceRead(source, i);
-				if (rpl != null) {
-					addFormatted(rpl, newCode, line);
-					i += (READ_TABLE_PATTERN.length - 1);
-					continue;
-				}
-			}
-
-			m = WRITE_TABLE_PATTERN[0].matcher(line);
-			if (m.matches()) {
-				// found a possible begin of a read array pattern
-				String rpl = replaceWrite(source, i);
-				if (rpl != null) {
-					addFormatted(rpl, newCode, line);
-					i += (WRITE_TABLE_PATTERN.length - 1);
-					continue;
-				}
-			}
+//			Matcher m = READ_TABLE_PATTERN[0].matcher(line);
+//			if (m.matches()) {
+//				// found a possible begin of a read array pattern
+//				String rpl = replaceRead(source, i);
+//				if (rpl != null) {
+//					addFormatted(rpl, newCode, line);
+//					i += (READ_TABLE_PATTERN.length - 1);
+//					continue;
+//				}
+//			}
+//
+//			m = WRITE_TABLE_PATTERN[0].matcher(line);
+//			if (m.matches()) {
+//				// found a possible begin of a read array pattern
+//				String rpl = replaceWrite(source, i);
+//				if (rpl != null) {
+//					addFormatted(rpl, newCode, line);
+//					i += (WRITE_TABLE_PATTERN.length - 1);
+//					continue;
+//				}
+//			}
 
 			newCode.add(line);
 		}
@@ -199,6 +201,7 @@ public class TweakCCode {
 	 * @param line    first lin ein the replaced pattern (to find indentation)
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private static void addFormatted(String rpl, List<String> newCode, String line) {
 		int tab = 0;
 		Matcher m = TABS.matcher(line);
@@ -222,6 +225,7 @@ public class TweakCCode {
 	 * @return null if the patters cannot be found at given line; replacement code
 	 *         instead.
 	 */
+	@SuppressWarnings("unused")
 	private static String replaceRead(List<String> source, int i) {
 		final int[] z = { 0, 0, 2, 0, 0, 0, -1, -2, -1, -1, 0, 0, -4, -4, -4, -2, -2, -6 };
 		int idx = matches(source, i, READ_TABLE_PATTERN, z);
@@ -245,6 +249,7 @@ public class TweakCCode {
 	 * @return null if the patters cannot be found at given line; replacement code
 	 *         instead.
 	 */
+	@SuppressWarnings("unused")
 	private static String replaceWrite(List<String> source, int i) {
 		final int[] z = { 0, 0, 2, 0, 0, -2, -2, -1, -2, -2, -4, -4, -4, -6 };
 		int idx = matches(source, i, WRITE_TABLE_PATTERN, z);
